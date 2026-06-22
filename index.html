@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мобильный ТСД</title>
+    <title>Универсальный Мобильный ТСД</title>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
@@ -16,10 +16,19 @@
         
         .main-container { padding: 15px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 15px; flex: 1; }
         
-        .instruction-card { background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 4px solid #f39c12; font-size: 13px; line-height: 1.5; color: #444; }
-        .instruction-card h3 { margin: 0 0 10px 0; color: #214e34; font-size: 15px; display: flex; align-items: center; gap: 5px;}
-        .instruction-card ol { margin: 0; padding-left: 20px; }
-        .instruction-card li { margin-bottom: 5px; }
+        /* Сворачиваемая инструкция */
+        .instruction-card { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 4px solid #f39c12; font-size: 13px; line-height: 1.5; color: #444; }
+        .instruction-card summary { cursor: pointer; padding: 15px; outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+        .instruction-card summary::-webkit-details-marker { display: none; } /* Убираем стандартный треугольник */
+        .instruction-card summary::after { content: '▼'; font-size: 12px; color: #888; transition: transform 0.2s; }
+        .instruction-card[open] summary::after { transform: rotate(180deg); }
+        .instruction-card[open] summary { border-bottom: 1px solid #eee; }
+        .instruction-content { padding: 0 15px 15px 15px; }
+        .instruction-card h3 { margin: 0; color: #214e34; font-size: 15px; display: flex; align-items: center; gap: 5px;}
+        .instruction-card ol { margin: 10px 0 0 0; padding-left: 20px; }
+        .instruction-card li { margin-bottom: 8px; }
+        
+        .browser-note { background-color: #fff3cd; border-left: 3px solid #ffc107; color: #856404; padding: 10px; border-radius: 4px; margin-top: 12px; font-size: 12px; }
 
         .input-card { background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-top: 4px solid #214e34; }
         .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
@@ -58,34 +67,41 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; flex-direction: column;}
         .modal-content { background: white; padding: 20px; border-radius: 12px; width: 95%; max-width: 420px; text-align: center; position: relative;}
         
-        /* Исправленный контейнер камеры */
         #reader { width: 100%; min-height: 250px; border-radius: 8px; overflow: hidden; background: #000; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;}
         #reader video { object-fit: cover !important; width: 100%; height: 100%; }
         
-        .btn-torch { width: 100%; padding: 12px; background-color: #f1c40f; color: #333; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        .btn-torch { width: 100%; padding: 12px; background-color: #f1c40f; color: #333; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;}
         .close-modal { width: 100%; padding: 12px; background: #eee; color: #333; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
         .download-btn { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px;}
         
         #finalQrCanvas { display: none; margin: 0 auto; max-width: 100%; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
-        .qr-warning { color: #e74c3c; font-size: 13px; margin-bottom: 10px; font-weight: bold; display: none;}
+        .qr-warning { color: #e74c3c; font-size: 13px; margin-bottom: 15px; font-weight: bold; display: none; background: #fadbd8; padding: 10px; border-radius: 6px;}
     </style>
 </head>
 <body>
     <header>
-        <h1>📱Мобильный ТСД</h1>
+        <h1>📱 Универсальный Мобильный ТСД</h1>
     </header>
 
     <div class="main-container">
-        <div class="instruction-card">
-            <h3>📖 Как это работает:</h3>
-            <ol>
-                <li>Отсканируй ШК камерой или введи код товара вручную.</li>
-                <li>Количество можно менять кнопками или вбивать цифрами.</li>
-                <li>Собери партию товаров (до <b>40-50 строк</b>).</li>
-                <li>Нажми кнопку <b>Сгенерировать QR</b>.</li>
-                <li>В Excel на ПК запусти макрос кнопкой <b>«Получить данные из QR-кода»</b> и отсканируй ручным сканером код с экрана телефона.</li>
-            </ol>
-        </div>
+        <!-- Сворачиваемая инструкция -->
+        <details class="instruction-card">
+            <summary>
+                <h3>📖 Как это работает</h3>
+            </summary>
+            <div class="instruction-content">
+                <ol>
+                    <li>Отсканируй ШК камерой или введи код товара вручную.</li>
+                    <li>Количество можно менять кнопками или вбивать цифрами.</li>
+                    <li>Собери партию товаров (до <b>40-50 строк</b>).</li>
+                    <li>Нажми кнопку <b>Сгенерировать QR</b>.</li>
+                    <li>В Excel на ПК запусти макрос кнопкой <b>«Получить данные из QR-кода»</b> и отсканируй ручным сканером код с экрана телефона.</li>
+                </ol>
+                <div class="browser-note">
+                    <b>💡 Важно:</b> Для быстрой работы сканера используйте браузер <b>Google Chrome</b>! В Яндекс.Браузере и встроенных браузерах алгоритм может работать медленно и зависать.
+                </div>
+            </div>
+        </details>
 
         <div class="input-card">
             <div class="input-group">
@@ -124,6 +140,7 @@
         </div>
     </div>
 
+    <!-- Модальное окно Сканера -->
     <div class="modal-overlay" id="scannerModal">
         <div class="modal-content">
             <h3 style="margin-top: 0; color: #214e34; margin-bottom: 15px;">Наведи камеру на штрихкод</h3>
@@ -133,10 +150,11 @@
         </div>
     </div>
 
+    <!-- Модальное окно QR -->
     <div class="modal-overlay" id="qrModal">
         <div class="modal-content">
             <h3 style="margin-top: 0; color: #214e34;">Передача в Excel</h3>
-            <div class="qr-warning" id="qrWarning">⚠️ Строк больше 20! Сканируй код СТРОГО в пустую ячейку Excel перед нажатием макроса!</div>
+            <div class="qr-warning" id="qrWarning">⚠️ Строк больше 20! Сначала нажми кнопку «Получить данные из QR-кода» в Excel, а затем сканируй этот код ручным сканером!</div>
             <canvas id="finalQrCanvas" width="340" height="420"></canvas>
             <button class="download-btn" onclick="downloadQR()">💾 Скачать картинку</button>
             <button class="close-modal" onclick="closeQRModal()">Закрыть</button>
@@ -232,7 +250,7 @@
             if (confirm("Точно удалить все товары?")) { currentCart = []; saveState(); renderCart(); }
         }
 
-        // --- ИСПРАВЛЕННЫЙ СТАБИЛЬНЫЙ СКАНЕР ---
+        // --- СКАНЕР И УПРАВЛЕНИЕ ФОНАРИКОМ ---
         function playBeep() {
             try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const osc = ctx.createOscillator(); const gainNode = ctx.createGain();
                 osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime); gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
@@ -248,11 +266,10 @@
                 html5QrCode = new Html5Qrcode("reader");
             }
             
-            // Безопасные настройки для 100% работы на любых устройствах
             const config = { 
                 fps: 20, 
                 qrbox: { width: 280, height: 120 },
-                aspectRatio: 1.777778, // Защита от сплющивания (16:9)
+                aspectRatio: 1.777778, 
                 formatsToSupport: [ 
                     Html5QrcodeSupportedFormats.EAN_13, 
                     Html5QrcodeSupportedFormats.EAN_8, 
@@ -260,7 +277,6 @@
                 ]
             };
 
-            // Используем стандартный запрос основной камеры (facingMode: "environment")
             html5QrCode.start(
                 { facingMode: "environment" }, 
                 config, 
@@ -268,9 +284,9 @@
                     playBeep(); stopScanner();
                     addOrUpdateItem(decodedText.trim(), 1);
                 },
-                (errorMessage) => { /* В фоне, чтобы не спамить */ }
+                (errorMessage) => { }
             ).catch(err => {
-                document.getElementById('reader').innerHTML = '<div style="color:#e74c3c; padding: 20px;">Камера заблокирована браузером или занята другим приложением. Перезагрузите страницу.</div>';
+                document.getElementById('reader').innerHTML = '<div style="color:#e74c3c; padding: 20px;">Камера заблокирована или недоступна.</div>';
                 console.error(err);
             });
         }
@@ -278,24 +294,32 @@
         function stopScanner() {
             document.getElementById('scannerModal').style.display = 'none';
             torchEnabled = false;
-            document.getElementById('torchBtn').innerText = "🔦 Вкл. фонарик";
-            if (html5QrCode && html5QrCode.getState() === 2) { // 2 = SCANNING
+            let torchBtn = document.getElementById('torchBtn');
+            torchBtn.innerText = "🔦 Вкл. фонарик";
+            torchBtn.style.backgroundColor = "#f1c40f";
+            
+            if (html5QrCode && html5QrCode.getState() === 2) { 
                 html5QrCode.stop().catch(err => console.error("Ошибка остановки:", err));
             }
         }
 
-        window.toggleTorch = function() {
+        window.toggleTorch = async function() {
             if (!html5QrCode || html5QrCode.getState() !== 2) return;
-            torchEnabled = !torchEnabled;
             
-            html5QrCode.applyVideoConstraints({
-                advanced: [{ torch: torchEnabled }]
-            }).then(() => {
-                document.getElementById('torchBtn').innerText = torchEnabled ? "💡 Выкл. фонарик" : "🔦 Вкл. фонарик";
-            }).catch(err => {
-                alert("Фонарик не поддерживается на вашем устройстве.");
+            torchEnabled = !torchEnabled;
+            let torchBtn = document.getElementById('torchBtn');
+            
+            try {
+                await html5QrCode.applyVideoConstraints({
+                    advanced: [{ torch: torchEnabled }]
+                });
+                torchBtn.innerText = torchEnabled ? "💡 Выкл. фонарик" : "🔦 Вкл. фонарик";
+                torchBtn.style.backgroundColor = torchEnabled ? "#e67e22" : "#f1c40f";
+            } catch (err) {
                 torchEnabled = !torchEnabled;
-            });
+                console.error("Ошибка фонарика:", err);
+                alert("Ваш браузер аппаратно блокирует вспышку.\n\n🍏 На iPhone (Safari) фонарик в браузере заблокирован самой Apple.\n🤖 На Android используйте Google Chrome.");
+            }
         }
 
         // --- ГЕНЕРАЦИЯ КАРТИНКИ QR-КОДА ---
@@ -303,6 +327,7 @@
             if (currentCart.length === 0) { alert("Сначала добавьте товары!"); return; }
             let payload = currentCart.map(item => `${item.code}-${item.qty}`).join(' ');
             
+            // Включаем предупреждение с правильным текстом про кнопку, если больше 20 строк
             document.getElementById("qrWarning").style.display = currentCart.length > 20 ? "block" : "none";
             
             let tempDiv = document.createElement("div");
