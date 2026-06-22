@@ -2,14 +2,27 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ЖЕСТКАЯ БЛОКИРОВКА ЗУМА: Решает проблему "уплывающего" экрана на Android -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    
+    <!-- НАСТРОЙКИ ДЛЯ РАБОЧЕГО СТОЛА (PWA) -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Мой ТСД">
+    <meta name="theme-color" content="#214e34">
+    
+    <!-- КРАСИВАЯ ЦВЕТНАЯ ИКОНКА (Генерируется автоматически из SVG) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2327ae60'/><text y='68' x='15' font-size='65'>📦</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2327ae60'/><text y='68' x='15' font-size='65'>📦</text></svg>">
+
     <title>Мобильный ТСД</title>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
     <style>
         * { box-sizing: border-box; font-family: 'Arial', sans-serif; }
-        body { margin: 0; padding: 0; background-color: #f0f4f1; color: #333; min-height: 100vh; display: flex; flex-direction: column; }
+        body { margin: 0; padding: 0; background-color: #f0f4f1; color: #333; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
         
         header { background-color: #214e34; color: white; padding: 15px 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
         header h1 { margin: 0; font-size: 20px; letter-spacing: 0.5px; }
@@ -19,7 +32,7 @@
         /* Сворачиваемая инструкция */
         .instruction-card { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 4px solid #f39c12; font-size: 13px; line-height: 1.5; color: #444; }
         .instruction-card summary { cursor: pointer; padding: 15px; outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none; }
-        .instruction-card summary::-webkit-details-marker { display: none; } /* Убираем стандартный треугольник */
+        .instruction-card summary::-webkit-details-marker { display: none; }
         .instruction-card summary::after { content: '▼'; font-size: 12px; color: #888; transition: transform 0.2s; }
         .instruction-card[open] summary::after { transform: rotate(180deg); }
         .instruction-card[open] summary { border-bottom: 1px solid #eee; }
@@ -29,18 +42,21 @@
         .instruction-card li { margin-bottom: 8px; }
         
         .browser-note { background-color: #fff3cd; border-left: 3px solid #ffc107; color: #856404; padding: 10px; border-radius: 4px; margin-top: 12px; font-size: 12px; }
+        .install-note { display: flex; align-items: center; gap: 8px; background-color: #e8f8f5; border: 1px solid #a3e4d7; color: #117a65; padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 12px; font-weight: bold;}
 
+        /* НОВЫЙ ДИЗАЙН ПАНЕЛИ ВВОДА */
         .input-card { background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-top: 4px solid #214e34; }
-        .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
-        .input-field { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; outline: none; transition: 0.2s;}
+        .input-group { display: flex; gap: 10px; margin-bottom: 12px; }
+        .input-group:last-child { margin-bottom: 0; }
+        .input-field { flex: 1; padding: 14px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; outline: none; transition: 0.2s; width: 100%;}
         .input-field:focus { border-color: #214e34; box-shadow: 0 0 0 2px rgba(33,78,52,0.1); }
-        .qty-field { width: 80px; text-align: center; font-weight: bold; }
+        .qty-field { flex: 0 0 90px; text-align: center; font-weight: bold; }
         
-        .btn { padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-add { background-color: #214e34; color: white; width: 100%; }
-        .btn-add:active { background-color: #163624; }
-        .btn-scan { background-color: #f39c12; color: white; width: 100%; }
+        .btn { padding: 14px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-scan { background-color: #f39c12; color: white; flex: 0 0 110px; }
         .btn-scan:active { background-color: #d68910; }
+        .btn-add { background-color: #214e34; color: white; flex: 1; }
+        .btn-add:active { background-color: #163624; }
 
         .cart-card { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-direction: column; flex: 1; }
         .cart-header { padding: 15px; background: #f9fbf9; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: #214e34;}
@@ -87,30 +103,36 @@
         <!-- Сворачиваемая инструкция -->
         <details class="instruction-card">
             <summary>
-                <h3>📖 Инструкция</h3>
+                <h3>📖 Как это работает?</h3>
             </summary>
             <div class="instruction-content">
-                <ol>
+                <div class="install-note">
+                    📲 <b>Как установить:</b> Открой меню браузера (три точки) и выбери <b>«Добавить на главный экран»</b>. Приложение появится среди твоих иконок!
+                </div>
+                <ol style="margin-top: 15px;">
                     <li>Отсканируй ШК камерой или введи код товара вручную.</li>
                     <li>Количество можно менять кнопками или вбивать цифрами.</li>
                     <li>Собери партию товаров (до <b>40-50 строк</b>).</li>
                     <li>Нажми кнопку <b>Сгенерировать QR</b>.</li>
-                    <li>В Excel на нажми на кнопку <b>«Получить данные из QR-кода»</b> и отсканируй ручным сканером QR-код с экрана телефона.</li>
+                    <li>В Excel нажми на кнопку <b>«Получить данные из QR-кода»</b> и отсканируй ручным сканером код с экрана телефона.</li>
                 </ol>
                 <div class="browser-note">
-                    <b>💡 Важно:</b> Для быстрой работы сканера используйте браузер <b>Google Chrome</b>! В Яндекс.Браузере и встроенных браузерах скан камерой может работать медленно и не распознавать штрих-кода.
+                    <b>💡 Важно:</b> Для быстрой работы сканера используйте браузер <b>Google Chrome</b>!
                 </div>
             </div>
         </details>
 
+        <!-- ОБНОВЛЕННАЯ ПАНЕЛЬ ВВОДА -->
         <div class="input-card">
+            <!-- Ряд 1: Штрихкод и Скан -->
             <div class="input-group">
                 <input type="number" id="codeInput" class="input-field" placeholder="Штрихкод или Артикул" inputmode="numeric">
-                <input type="number" id="qtyInput" class="input-field qty-field" value="1" min="1" inputmode="numeric">
-            </div>
-            <div class="input-group" style="margin-bottom: 0;">
-                <button class="btn btn-add" onclick="manualAdd()">➕ Добавить</button>
                 <button class="btn btn-scan" onclick="startScanner()">📷 Скан</button>
+            </div>
+            <!-- Ряд 2: Количество и Добавить -->
+            <div class="input-group">
+                <input type="number" id="qtyInput" class="input-field qty-field" value="1" min="1" inputmode="numeric" title="Количество">
+                <button class="btn btn-add" onclick="manualAdd()">➕ Добавить</button>
             </div>
         </div>
 
@@ -250,7 +272,6 @@
             if (confirm("Точно удалить все товары?")) { currentCart = []; saveState(); renderCart(); }
         }
 
-        // --- СКАНЕР И УПРАВЛЕНИЕ ФОНАРИКОМ ---
         function playBeep() {
             try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const osc = ctx.createOscillator(); const gainNode = ctx.createGain();
                 osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime); gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
@@ -322,12 +343,10 @@
             }
         }
 
-        // --- ГЕНЕРАЦИЯ КАРТИНКИ QR-КОДА ---
         window.showTransferQR = function() {
             if (currentCart.length === 0) { alert("Сначала добавьте товары!"); return; }
             let payload = currentCart.map(item => `${item.code}-${item.qty}`).join(' ');
             
-            // Включаем предупреждение с правильным текстом про кнопку, если больше 20 строк
             document.getElementById("qrWarning").style.display = currentCart.length > 20 ? "block" : "none";
             
             let tempDiv = document.createElement("div");
