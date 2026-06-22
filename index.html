@@ -16,13 +16,11 @@
         
         .main-container { padding: 15px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 15px; flex: 1; }
         
-        /* Блок инструкции */
         .instruction-card { background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 4px solid #f39c12; font-size: 13px; line-height: 1.5; color: #444; }
         .instruction-card h3 { margin: 0 0 10px 0; color: #214e34; font-size: 15px; display: flex; align-items: center; gap: 5px;}
         .instruction-card ol { margin: 0; padding-left: 20px; }
         .instruction-card li { margin-bottom: 5px; }
 
-        /* Блок ввода */
         .input-card { background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-top: 4px solid #214e34; }
         .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
         .input-field { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; outline: none; transition: 0.2s;}
@@ -35,7 +33,6 @@
         .btn-scan { background-color: #f39c12; color: white; width: 100%; }
         .btn-scan:active { background-color: #d68910; }
 
-        /* Таблица собранного */
         .cart-card { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-direction: column; flex: 1; }
         .cart-header { padding: 15px; background: #f9fbf9; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: #214e34;}
         .table-wrapper { overflow-y: auto; max-height: 42vh; }
@@ -44,7 +41,6 @@
         td { padding: 10px 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
         .code-cell { font-family: monospace; font-size: 16px; font-weight: bold; color: #111; letter-spacing: 0.5px;}
         
-        /* Улучшенные элементы управления количеством */
         .qty-controls { display: flex; align-items: center; gap: 5px; }
         .qty-btn { background: #eee; border: none; border-radius: 4px; width: 32px; height: 32px; font-size: 18px; font-weight: bold; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center;}
         .qty-btn:active { background: #ddd; }
@@ -54,7 +50,6 @@
         .btn-remove { background: none; border: none; color: #e74c3c; font-size: 20px; cursor: pointer; padding: 5px; }
         .no-data { padding: 30px; text-align: center; color: #999; font-style: italic; }
 
-        /* Подвал действий */
         .action-footer { display: flex; gap: 10px; padding: 15px; background: white; border-top: 1px solid #eee; flex-wrap: wrap;}
         .btn-qr { background-color: #8e44ad; color: white; flex: 1; min-width: 200px; }
         .btn-clear { background-color: #e74c3c; color: white; width: 60px; flex: 0 0 auto;}
@@ -63,9 +58,9 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; flex-direction: column;}
         .modal-content { background: white; padding: 20px; border-radius: 12px; width: 95%; max-width: 420px; text-align: center; position: relative;}
         
-        /* Контейнер камеры высокого разрешения */
-        #reader { width: 100%; border-radius: 8px; overflow: hidden; background: #000; margin-bottom: 10px;}
-        #reader video { object-fit: cover !important; }
+        /* Исправленный контейнер камеры */
+        #reader { width: 100%; min-height: 250px; border-radius: 8px; overflow: hidden; background: #000; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;}
+        #reader video { object-fit: cover !important; width: 100%; height: 100%; }
         
         .btn-torch { width: 100%; padding: 12px; background-color: #f1c40f; color: #333; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;}
         .close-modal { width: 100%; padding: 12px; background: #eee; color: #333; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
@@ -85,10 +80,10 @@
             <h3>📖 Как это работает:</h3>
             <ol>
                 <li>Отсканируй ШК камерой или введи код товара вручную.</li>
-                <li>Количество можно менять кнопками или вбивать цифрами с клавиатуры.</li>
+                <li>Количество можно менять кнопками или вбивать цифрами.</li>
                 <li>Собери партию товаров (до <b>40-50 строк</b>).</li>
                 <li>Нажми кнопку <b>Сгенерировать QR</b>.</li>
-                <li>В Excel на ПК запусти макрос кнопкой <b>«Получить данные из QR-кода»</b> и отсканируй ручным сканером код с экрана телефона.</li>
+                <li>В Excel на ПК выдели ПУСТУЮ ячейку, пикни QR ручным сканером с экрана телефона, и запусти макрос.</li>
             </ol>
         </div>
 
@@ -132,7 +127,7 @@
     <div class="modal-overlay" id="scannerModal">
         <div class="modal-content">
             <h3 style="margin-top: 0; color: #214e34; margin-bottom: 15px;">Наведи камеру на штрихкод</h3>
-            <div id="reader"></div>
+            <div id="reader"><div style="color:white;">Запуск камеры...</div></div>
             <button class="btn-torch" id="torchBtn" onclick="toggleTorch()">🔦 Вкл. фонарик</button>
             <button class="close-modal" onclick="stopScanner()">Отмена</button>
         </div>
@@ -142,10 +137,8 @@
         <div class="modal-content">
             <h3 style="margin-top: 0; color: #214e34;">Передача в Excel</h3>
             <div class="qr-warning" id="qrWarning">⚠️ Строк больше 20! Сканируй код СТРОГО в пустую ячейку Excel перед нажатием макроса!</div>
-            
             <canvas id="finalQrCanvas" width="340" height="420"></canvas>
-            
-            <button class="download-btn" onclick="downloadQR()">💾 Скачать как картинку</button>
+            <button class="download-btn" onclick="downloadQR()">💾 Скачать картинку</button>
             <button class="close-modal" onclick="closeQRModal()">Закрыть</button>
         </div>
     </div>
@@ -163,14 +156,10 @@
 
         window.onload = function() {
             const savedCart = localStorage.getItem('tsd_lite_cart');
-            if (savedCart) {
-                try { currentCart = JSON.parse(savedCart); renderCart(); } catch(e) {}
-            }
+            if (savedCart) { try { currentCart = JSON.parse(savedCart); renderCart(); } catch(e) {} }
         };
 
-        function saveState() {
-            localStorage.setItem('tsd_lite_cart', JSON.stringify(currentCart));
-        }
+        function saveState() { localStorage.setItem('tsd_lite_cart', JSON.stringify(currentCart)); }
 
         function manualAdd() {
             const code = codeInput.value.trim();
@@ -182,11 +171,8 @@
 
         function addOrUpdateItem(code, qty) {
             const existingIndex = currentCart.findIndex(item => item.code === code);
-            if (existingIndex !== -1) {
-                currentCart[existingIndex].qty += qty;
-            } else {
-                currentCart.unshift({ code: code, qty: qty });
-            }
+            if (existingIndex !== -1) { currentCart[existingIndex].qty += qty; } 
+            else { currentCart.unshift({ code: code, qty: qty }); }
             saveState(); renderCart();
         }
 
@@ -216,48 +202,37 @@
             updateTotalStats();
         }
 
-        // Прямое редактирование с клавиатуры без потери фокуса
         window.setQty = function(index, value) {
             let val = parseInt(value) || 1;
             if (val < 1) val = 1;
             currentCart[index].qty = val;
-            saveState();
-            updateTotalStats();
+            saveState(); updateTotalStats();
         }
 
-        // Изменение количества кнопками
         window.changeQty = function(index, delta) {
             const inputElement = document.getElementById(`qty-input-${index}`);
-            let currentVal = parseInt(inputElement.value) || 1;
-            let newVal = currentVal + delta;
+            let newVal = (parseInt(inputElement.value) || 1) + delta;
             if (newVal < 1) newVal = 1;
-            
-            inputElement.value = newVal;
-            currentCart[index].qty = newVal;
-            saveState();
-            updateTotalStats();
+            inputElement.value = newVal; currentCart[index].qty = newVal;
+            saveState(); updateTotalStats();
         }
 
         function updateTotalStats() {
             let totalItemsCount = 0;
             currentCart.forEach(item => totalItemsCount += item.qty);
             cartStats.innerText = `${currentCart.length} строк (${totalItemsCount} шт.)`;
-            
-            if (currentCart.length > 50) {
-                cartStats.style.color = "#e74c3c"; cartStats.style.fontWeight = "bold";
-            } else {
-                cartStats.style.color = "#666"; cartStats.style.fontWeight = "normal";
-            }
+            cartStats.style.color = currentCart.length > 50 ? "#e74c3c" : "#666";
+            cartStats.style.fontWeight = currentCart.length > 50 ? "bold" : "normal";
         }
 
         window.removeItem = function(index) { currentCart.splice(index, 1); saveState(); renderCart(); }
 
         window.clearCart = function() {
             if (currentCart.length === 0) return;
-            if (confirm("Точно удалить все собранные товары?")) { currentCart = []; saveState(); renderCart(); }
+            if (confirm("Точно удалить все товары?")) { currentCart = []; saveState(); renderCart(); }
         }
 
-        // --- ЛОГИКА ТУРБО-СКАНЕРА ВЫСОКОГО РАЗРЕШЕНИЯ С ФОНАРИКОМ ---
+        // --- ИСПРАВЛЕННЫЙ СТАБИЛЬНЫЙ СКАНЕР ---
         function playBeep() {
             try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const osc = ctx.createOscillator(); const gainNode = ctx.createGain();
                 osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime); gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
@@ -267,27 +242,27 @@
 
         function startScanner() {
             document.getElementById('scannerModal').style.display = 'flex';
+            document.getElementById('reader').innerHTML = '<div style="color:white;">Запуск камеры...</div>';
             
             if (!html5QrCode) {
                 html5QrCode = new Html5Qrcode("reader");
             }
             
-            // Запрашиваем 4К/FullHD поток и макро-фокус напрямую у линзы телефона
-            const videoConstraints = {
-                facingMode: "environment",
-                width: { ideal: 3840 }, 
-                height: { ideal: 2160 },
-                focusMode: "continuous" 
-            };
-
+            // Безопасные настройки для 100% работы на любых устройствах
             const config = { 
-                fps: 30, 
-                qrbox: { width: 300, height: 130 },
-                aspectRatio: 1.777778
+                fps: 20, 
+                qrbox: { width: 280, height: 120 },
+                aspectRatio: 1.777778, // Защита от сплющивания (16:9)
+                formatsToSupport: [ 
+                    Html5QrcodeSupportedFormats.EAN_13, 
+                    Html5QrcodeSupportedFormats.EAN_8, 
+                    Html5QrcodeSupportedFormats.CODE_128 
+                ]
             };
 
+            // Используем стандартный запрос основной камеры (facingMode: "environment")
             html5QrCode.start(
-                videoConstraints, 
+                { facingMode: "environment" }, 
                 config, 
                 (decodedText) => {
                     playBeep(); stopScanner();
@@ -295,26 +270,22 @@
                 },
                 (errorMessage) => { /* В фоне, чтобы не спамить */ }
             ).catch(err => {
-                console.warn("Максимальное разрешение недоступно, откат на стандартный режим:", err);
-                // Запасной запуск, если камера телефона заблокирует 4К запрос
-                html5QrCode.start({ facingMode: "environment" }, config, (decodedText) => {
-                    playBeep(); stopScanner(); addOrUpdateItem(decodedText.trim(), 1);
-                }).catch(e => alert("Ошибка запуска камеры: " + e));
+                document.getElementById('reader').innerHTML = '<div style="color:#e74c3c; padding: 20px;">Камера заблокирована браузером или занята другим приложением. Перезагрузите страницу.</div>';
+                console.error(err);
             });
         }
 
         function stopScanner() {
             document.getElementById('scannerModal').style.display = 'none';
             torchEnabled = false;
-            document.getElementById('torchBtn').innerText = "残留 Вкл. Фонарик";
-            if (html5QrCode && html5QrCode.isScanning) {
+            document.getElementById('torchBtn').innerText = "🔦 Вкл. фонарик";
+            if (html5QrCode && html5QrCode.getState() === 2) { // 2 = SCANNING
                 html5QrCode.stop().catch(err => console.error("Ошибка остановки:", err));
             }
         }
 
-        // Управление фонариком (вспышкой)
         window.toggleTorch = function() {
-            if (!html5QrCode || !html5QrCode.isScanning) return;
+            if (!html5QrCode || html5QrCode.getState() !== 2) return;
             torchEnabled = !torchEnabled;
             
             html5QrCode.applyVideoConstraints({
@@ -322,7 +293,7 @@
             }).then(() => {
                 document.getElementById('torchBtn').innerText = torchEnabled ? "💡 Выкл. фонарик" : "🔦 Вкл. фонарик";
             }).catch(err => {
-                alert("Фонарик не поддерживается на вашем устройстве в текущем браузере.");
+                alert("Фонарик не поддерживается на вашем устройстве.");
                 torchEnabled = !torchEnabled;
             });
         }
@@ -335,9 +306,7 @@
             document.getElementById("qrWarning").style.display = currentCart.length > 20 ? "block" : "none";
             
             let tempDiv = document.createElement("div");
-            new QRCode(tempDiv, {
-                text: payload, width: 300, height: 300, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M 
-            });
+            new QRCode(tempDiv, { text: payload, width: 300, height: 300, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M });
             
             setTimeout(() => {
                 let qrCanvasRaw = tempDiv.querySelector("canvas");
