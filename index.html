@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ТСД: Мобильный Сборщик</title>
+    <title>Универсальный Мобильный ТСД</title>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
@@ -38,59 +38,63 @@
         /* Таблица собранного */
         .cart-card { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-direction: column; flex: 1; }
         .cart-header { padding: 15px; background: #f9fbf9; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: #214e34;}
-        .table-wrapper { overflow-y: auto; max-height: 40vh; }
+        .table-wrapper { overflow-y: auto; max-height: 42vh; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-        th { background-color: #f1f5f2; color: #555; padding: 10px 15px; position: sticky; top: 0; border-bottom: 1px solid #ddd;}
-        td { padding: 12px 15px; border-bottom: 1px solid #eee; }
-        .code-cell { font-family: monospace; font-size: 16px; font-weight: bold; color: #111; letter-spacing: 1px;}
-        .qty-controls { display: flex; align-items: center; gap: 10px; }
-        .qty-btn { background: #eee; border: none; border-radius: 4px; width: 30px; height: 30px; font-size: 18px; font-weight: bold; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center;}
+        th { background-color: #f1f5f2; color: #555; padding: 10px 15px; position: sticky; top: 0; border-bottom: 1px solid #ddd; z-index: 10;}
+        td { padding: 10px 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        .code-cell { font-family: monospace; font-size: 16px; font-weight: bold; color: #111; letter-spacing: 0.5px;}
+        
+        /* Улучшенные элементы управления количеством */
+        .qty-controls { display: flex; align-items: center; gap: 5px; }
+        .qty-btn { background: #eee; border: none; border-radius: 4px; width: 32px; height: 32px; font-size: 18px; font-weight: bold; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center;}
         .qty-btn:active { background: #ddd; }
-        .qty-display { font-weight: bold; font-size: 16px; width: 30px; text-align: center; }
+        .qty-input-table { width: 55px; height: 32px; text-align: center; font-size: 15px; font-weight: bold; border: 1px solid #ccc; border-radius: 4px; outline: none; }
+        .qty-input-table:focus { border-color: #214e34; }
         
         .btn-remove { background: none; border: none; color: #e74c3c; font-size: 20px; cursor: pointer; padding: 5px; }
         .no-data { padding: 30px; text-align: center; color: #999; font-style: italic; }
 
         /* Подвал действий */
         .action-footer { display: flex; gap: 10px; padding: 15px; background: white; border-top: 1px solid #eee; flex-wrap: wrap;}
-        .btn-qr { background-color: #8e44ad; color: white; flex: 1; min-width: 200px;}
+        .btn-qr { background-color: #8e44ad; color: white; flex: 1; min-width: 200px; }
         .btn-clear { background-color: #e74c3c; color: white; width: 60px; flex: 0 0 auto;}
 
         /* Модальные окна */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; flex-direction: column;}
         .modal-content { background: white; padding: 20px; border-radius: 12px; width: 95%; max-width: 420px; text-align: center; position: relative;}
         
-        /* Улучшенные стили для камеры */
-        #reader { width: 100%; border-radius: 8px; overflow: hidden; background: #000; margin-bottom: 15px;}
-        #reader video { object-fit: cover; width: 100%; height: 100%; } /* Убираем искажение пропорций */
+        /* Контейнер камеры высокого разрешения */
+        #reader { width: 100%; border-radius: 8px; overflow: hidden; background: #000; margin-bottom: 10px;}
+        #reader video { object-fit: cover !important; }
         
-        .close-modal { width: 100%; padding: 12px; background: #eee; color: #333; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px;}
+        .btn-torch { width: 100%; padding: 12px; background-color: #f1c40f; color: #333; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        .close-modal { width: 100%; padding: 12px; background: #eee; color: #333; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
         .download-btn { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px;}
         
-        /* Холст для финального изображения с QR */
         #finalQrCanvas { display: none; margin: 0 auto; max-width: 100%; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .qr-warning { color: #e74c3c; font-size: 13px; margin-bottom: 10px; font-weight: bold; display: none;}
     </style>
 </head>
 <body>
     <header>
-        <h1>📱 Сборщик Данных (Освещение)</h1>
+        <h1>📱 Универсальный Мобильный ТСД</h1>
     </header>
 
     <div class="main-container">
         <div class="instruction-card">
             <h3>📖 Как это работает:</h3>
             <ol>
-                <li>Отсканируй ШК камерой или введи ЛМ-код вручную.</li>
+                <li>Отсканируй ШК камерой или введи код товара вручную.</li>
+                <li>Количество можно менять кнопками или вбивать цифрами с клавиатуры.</li>
                 <li>Собери партию товаров (до <b>40-50 строк</b>).</li>
-                <li>Нажми фиолетовую кнопку <b>Сгенерировать QR</b>.</li>
-                <li>Выдели <b>ПУСТУЮ ЯЧЕЙКУ</b> в Excel на компьютере, пикни QR ручным сканером в нее, и нажми макрос!</li>
+                <li>Нажми кнопку <b>Сгенерировать QR</b>.</li>
+                <li>В Excel на ПК запусти макрос кнопкой <b>«Получить данные из QR-кода»</b> и отсканируй ручным сканером код с экрана телефона.</li>
             </ol>
         </div>
 
         <div class="input-card">
             <div class="input-group">
-                <input type="number" id="codeInput" class="input-field" placeholder="Штрихкод или ЛМ-код" inputmode="numeric">
+                <input type="number" id="codeInput" class="input-field" placeholder="Штрихкод или Артикул" inputmode="numeric">
                 <input type="number" id="qtyInput" class="input-field qty-field" value="1" min="1" inputmode="numeric">
             </div>
             <div class="input-group" style="margin-bottom: 0;">
@@ -101,7 +105,7 @@
 
         <div class="cart-card">
             <div class="cart-header">
-                <span>Собранные товары:</span>
+                <span>Собранный документ:</span>
                 <span id="cartStats" style="color: #666; font-size: 12px;">0 строк (0 шт.)</span>
             </div>
             <div class="table-wrapper">
@@ -109,7 +113,7 @@
                     <thead>
                         <tr>
                             <th>Код товара</th>
-                            <th style="width: 100px;">Кол-во</th>
+                            <th style="width: 130px;">Количество</th>
                             <th style="width: 40px;"></th>
                         </tr>
                     </thead>
@@ -127,8 +131,9 @@
 
     <div class="modal-overlay" id="scannerModal">
         <div class="modal-content">
-            <h3 style="margin-top: 0; color: #214e34;">Наведи на штрихкод</h3>
+            <h3 style="margin-top: 0; color: #214e34; margin-bottom: 15px;">Наведи камеру на штрихкод</h3>
             <div id="reader"></div>
+            <button class="btn-torch" id="torchBtn" onclick="toggleTorch()">🔦 Вкл. фонарик</button>
             <button class="close-modal" onclick="stopScanner()">Отмена</button>
         </div>
     </div>
@@ -136,7 +141,7 @@
     <div class="modal-overlay" id="qrModal">
         <div class="modal-content">
             <h3 style="margin-top: 0; color: #214e34;">Передача в Excel</h3>
-            <div class="qr-warning" id="qrWarning">⚠️ Строк больше 20! Сканируй код СТРОГО в ячейку Excel!</div>
+            <div class="qr-warning" id="qrWarning">⚠️ Строк больше 20! Сканируй код СТРОГО в пустую ячейку Excel перед нажатием макроса!</div>
             
             <canvas id="finalQrCanvas" width="340" height="420"></canvas>
             
@@ -147,15 +152,15 @@
 
     <script>
         let currentCart = [];
-        let html5QrcodeScanner = null;
+        let html5QrCode = null;
         let generatedImageUrl = "";
+        let torchEnabled = false;
 
         const codeInput = document.getElementById('codeInput');
         const qtyInput = document.getElementById('qtyInput');
         const cartTableBody = document.getElementById('cartTableBody');
         const cartStats = document.getElementById('cartStats');
 
-        // Восстановление данных
         window.onload = function() {
             const savedCart = localStorage.getItem('tsd_lite_cart');
             if (savedCart) {
@@ -177,48 +182,72 @@
 
         function addOrUpdateItem(code, qty) {
             const existingIndex = currentCart.findIndex(item => item.code === code);
-            if (existingIndex !== -1) { currentCart[existingIndex].qty += qty; } 
-            else { currentCart.unshift({ code: code, qty: qty }); }
+            if (existingIndex !== -1) {
+                currentCart[existingIndex].qty += qty;
+            } else {
+                currentCart.unshift({ code: code, qty: qty });
+            }
             saveState(); renderCart();
         }
 
         function renderCart() {
-            cartTableBody.innerHTML = ''; let totalItemsCount = 0;
+            cartTableBody.innerHTML = '';
             if (currentCart.length === 0) {
                 cartTableBody.innerHTML = '<tr><td colspan="3" class="no-data">Пусто. Введи или отсканируй товар.</td></tr>';
             } else {
+                const fragment = document.createDocumentFragment();
                 currentCart.forEach((item, index) => {
-                    totalItemsCount += item.qty;
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td class="code-cell">${item.code}</td>
                         <td>
                             <div class="qty-controls">
                                 <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
-                                <span class="qty-display">${item.qty}</span>
+                                <input type="number" id="qty-input-${index}" class="qty-input-table" value="${item.qty}" min="1" oninput="setQty(${index}, this.value)" inputmode="numeric">
                                 <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
                             </div>
                         </td>
                         <td style="text-align: right;"><button class="btn-remove" onclick="removeItem(${index})">✖</button></td>
                     `;
-                    cartTableBody.appendChild(tr);
+                    fragment.appendChild(tr);
                 });
+                cartTableBody.appendChild(fragment);
             }
+            updateTotalStats();
+        }
+
+        // Прямое редактирование с клавиатуры без потери фокуса
+        window.setQty = function(index, value) {
+            let val = parseInt(value) || 1;
+            if (val < 1) val = 1;
+            currentCart[index].qty = val;
+            saveState();
+            updateTotalStats();
+        }
+
+        // Изменение количества кнопками
+        window.changeQty = function(index, delta) {
+            const inputElement = document.getElementById(`qty-input-${index}`);
+            let currentVal = parseInt(inputElement.value) || 1;
+            let newVal = currentVal + delta;
+            if (newVal < 1) newVal = 1;
             
+            inputElement.value = newVal;
+            currentCart[index].qty = newVal;
+            saveState();
+            updateTotalStats();
+        }
+
+        function updateTotalStats() {
+            let totalItemsCount = 0;
+            currentCart.forEach(item => totalItemsCount += item.qty);
             cartStats.innerText = `${currentCart.length} строк (${totalItemsCount} шт.)`;
             
             if (currentCart.length > 50) {
-                cartStats.style.color = "#e74c3c";
-                cartStats.style.fontWeight = "bold";
+                cartStats.style.color = "#e74c3c"; cartStats.style.fontWeight = "bold";
             } else {
-                cartStats.style.color = "#666";
-                cartStats.style.fontWeight = "normal";
+                cartStats.style.color = "#666"; cartStats.style.fontWeight = "normal";
             }
-        }
-
-        window.changeQty = function(index, delta) {
-            const newQty = currentCart[index].qty + delta;
-            if (newQty > 0) { currentCart[index].qty = newQty; saveState(); renderCart(); }
         }
 
         window.removeItem = function(index) { currentCart.splice(index, 1); saveState(); renderCart(); }
@@ -228,7 +257,7 @@
             if (confirm("Точно удалить все собранные товары?")) { currentCart = []; saveState(); renderCart(); }
         }
 
-        // --- ЛОГИКА СКАНЕРА КАМЕРЫ (МАКСИМАЛЬНО УСКОРЕННАЯ) ---
+        // --- ЛОГИКА ТУРБО-СКАНЕРА ВЫСОКОГО РАЗРЕШЕНИЯ С ФОНАРИКОМ ---
         function playBeep() {
             try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const osc = ctx.createOscillator(); const gainNode = ctx.createGain();
                 osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime); gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
@@ -239,45 +268,70 @@
         function startScanner() {
             document.getElementById('scannerModal').style.display = 'flex';
             
-            // Настройки для максимально быстрого фокуса и захвата ШК
-            const config = { 
-                fps: 30, // Высокая частота обновления
-                qrbox: { width: 300, height: 120 }, // Широкое, но узкое окно — идеально для ШК
-                disableFlip: true, // Отключаем отзеркаливание (экономит ресурсы)
-                formatsToSupport: [ 
-                    Html5QrcodeSupportedFormats.EAN_13, 
-                    Html5QrcodeSupportedFormats.EAN_8, 
-                    Html5QrcodeSupportedFormats.CODE_128
-                ],
-                experimentalFeatures: { useBarCodeDetectorIfSupported: true }, // Использование аппаратного чипа распознавания
-                videoConstraints: {
-                    facingMode: "environment", // Основная камера
-                    focusMode: "continuous", // Постоянный следящий фокус
-                    width: { ideal: 1920 }, // HD разрешение для четкости тонких линий
-                    height: { ideal: 1080 }
-                }
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("reader");
+            }
+            
+            // Запрашиваем 4К/FullHD поток и макро-фокус напрямую у линзы телефона
+            const videoConstraints = {
+                facingMode: "environment",
+                width: { ideal: 3840 }, 
+                height: { ideal: 2160 },
+                focusMode: "continuous" 
             };
 
-            html5QrcodeScanner = new Html5QrcodeScanner("reader", config, false);
-            html5QrcodeScanner.render(onScanSuccess);
+            const config = { 
+                fps: 30, 
+                qrbox: { width: 300, height: 130 },
+                aspectRatio: 1.777778
+            };
+
+            html5QrCode.start(
+                videoConstraints, 
+                config, 
+                (decodedText) => {
+                    playBeep(); stopScanner();
+                    addOrUpdateItem(decodedText.trim(), 1);
+                },
+                (errorMessage) => { /* В фоне, чтобы не спамить */ }
+            ).catch(err => {
+                console.warn("Максимальное разрешение недоступно, откат на стандартный режим:", err);
+                // Запасной запуск, если камера телефона заблокирует 4К запрос
+                html5QrCode.start({ facingMode: "environment" }, config, (decodedText) => {
+                    playBeep(); stopScanner(); addOrUpdateItem(decodedText.trim(), 1);
+                }).catch(e => alert("Ошибка запуска камеры: " + e));
+            });
         }
 
-        function stopScanner() { document.getElementById('scannerModal').style.display = 'none'; if (html5QrcodeScanner) html5QrcodeScanner.clear(); }
+        function stopScanner() {
+            document.getElementById('scannerModal').style.display = 'none';
+            torchEnabled = false;
+            document.getElementById('torchBtn').innerText = "残留 Вкл. Фонарик";
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().catch(err => console.error("Ошибка остановки:", err));
+            }
+        }
 
-        function onScanSuccess(decodedText) {
-            playBeep();
-            stopScanner();
-            const scannedCode = decodedText.trim();
-            // По умолчанию при сканировании камерой добавляем 1 штуку
-            addOrUpdateItem(scannedCode, 1);
+        // Управление фонариком (вспышкой)
+        window.toggleTorch = function() {
+            if (!html5QrCode || !html5QrCode.isScanning) return;
+            torchEnabled = !torchEnabled;
+            
+            html5QrCode.applyVideoConstraints({
+                advanced: [{ torch: torchEnabled }]
+            }).then(() => {
+                document.getElementById('torchBtn').innerText = torchEnabled ? "💡 Выкл. фонарик" : "🔦 Вкл. фонарик";
+            }).catch(err => {
+                alert("Фонарик не поддерживается на вашем устройстве в текущем браузере.");
+                torchEnabled = !torchEnabled;
+            });
         }
 
         // --- ГЕНЕРАЦИЯ КАРТИНКИ QR-КОДА ---
         window.showTransferQR = function() {
             if (currentCart.length === 0) { alert("Сначала добавьте товары!"); return; }
-            if (currentCart.length > 50) { alert("⚠️ ВНИМАНИЕ! Более 50 строк. Рекомендуется разбить на две партии для стабильности."); }
-            
             let payload = currentCart.map(item => `${item.code}-${item.qty}`).join(' ');
+            
             document.getElementById("qrWarning").style.display = currentCart.length > 20 ? "block" : "none";
             
             let tempDiv = document.createElement("div");
@@ -291,21 +345,16 @@
                     let canvas = document.getElementById("finalQrCanvas");
                     let ctx = canvas.getContext("2d");
                     
-                    ctx.fillStyle = "#ffffff";
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                    ctx.fillStyle = "#214e34";
-                    ctx.textAlign = "center";
-                    ctx.font = "bold 20px Arial";
-                    ctx.fillText("Выгрузка ТСД: Отдел 13", canvas.width / 2, 35);
+                    ctx.fillStyle = "#214e34"; ctx.textAlign = "center"; ctx.font = "bold 18px Arial";
+                    ctx.fillText("Выгрузка ТСД: Весь Магазин", canvas.width / 2, 35);
                     
-                    ctx.fillStyle = "#555555";
-                    ctx.font = "14px Arial";
+                    ctx.fillStyle = "#555555"; ctx.font = "13px Arial";
                     let dateStr = new Date().toLocaleString('ru-RU');
-                    ctx.fillText("Создано: " + dateStr + " | Позиций: " + currentCart.length, canvas.width / 2, 60);
+                    ctx.fillText("Создано: " + dateStr + " | Строк: " + currentCart.length, canvas.width / 2, 60);
 
                     ctx.drawImage(qrCanvasRaw, 20, 80, 300, 300);
-                    
                     generatedImageUrl = canvas.toDataURL("image/png");
                     canvas.style.display = "block";
                 }
@@ -318,9 +367,8 @@
             if(!generatedImageUrl) return;
             let link = document.createElement("a");
             let dateForName = new Date().toLocaleString('ru-RU').replace(/[\/:\s,]/g, '_');
-            link.download = `QR_Отдел13_${dateForName}.png`;
-            link.href = generatedImageUrl;
-            link.click();
+            link.download = `TSD_Export_${dateForName}.png`;
+            link.href = generatedImageUrl; link.click();
         };
 
         window.closeQRModal = function() { document.getElementById("qrModal").style.display = "none"; };
