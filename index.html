@@ -4,11 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="mobile-web-app-capable" content="yes">
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Мой ТСД">
     <meta name="theme-color" content="#214e34">
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2327ae60'/><text y='68' x='15' font-size='65'>📦</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2327ae60'/><text y='68' x='15' font-size='65'>📦</text></svg>">
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
 
     <title>Мобильный ТСД</title>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
@@ -23,7 +27,6 @@
         
         .main-container { padding: 15px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 15px; flex: 1; }
         
-        /* Сворачиваемая инструкция */
         .instruction-card { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 4px solid #f39c12; font-size: 13px; color: #444; width: 100%; overflow: hidden; }
         .instruction-card summary { cursor: pointer; padding: 15px; outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none; }
         .instruction-card summary::-webkit-details-marker { display: none; }
@@ -78,7 +81,6 @@
         .close-modal { width: 100%; padding: 12px; background: #eee; color: #333; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
         .download-btn { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px;}
         
-        /* Изначально canvas скрыт, он покажется только после генерации */
         #finalQrCanvas { display: none; margin: 0 auto; max-width: 100%; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background-color: #fff;}
         .qr-warning { color: #e74c3c; font-size: 13px; margin-bottom: 15px; font-weight: bold; display: none; background: #fadbd8; padding: 10px; border-radius: 6px;}
     </style>
@@ -87,7 +89,6 @@
     <header><h1>📱 Мобильный ТСД</h1></header>
 
     <div class="main-container">
-        <!-- Сворачиваемая инструкция -->
         <details class="instruction-card">
             <summary><h3>📖 Как это работает?</h3></summary>
             <div class="instruction-content">
@@ -136,7 +137,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно Сканера -->
     <div class="modal-overlay" id="scannerModal">
         <div class="modal-content">
             <h3 style="margin-top: 0; color: #214e34; margin-bottom: 15px;">Наведи камеру</h3>
@@ -146,7 +146,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно QR -->
     <div class="modal-overlay" id="qrModal">
         <div class="modal-content">
             <h3 style="margin-top: 0; color: #214e34; margin-bottom: 10px;">Передача в Excel</h3>
@@ -264,14 +263,12 @@
             catch (e) { alert("Фонарик недоступен на этом устройстве"); torchEnabled = !torchEnabled; }
         }
 
-        // --- ВОССТАНОВЛЕННЫЙ КОД ГЕНЕРАЦИИ QR ---
         window.showTransferQR = function() {
             if (currentCart.length === 0) { alert("Сначала добавьте товары!"); return; }
             let payload = currentCart.map(item => `${item.code}-${item.qty}`).join(' ');
             
             document.getElementById("qrWarning").style.display = currentCart.length > 20 ? "block" : "none";
             
-            // Создаем временный невидимый блок для генерации самого QR
             let tempDiv = document.createElement("div");
             new QRCode(tempDiv, { 
                 text: payload, 
@@ -282,35 +279,28 @@
                 correctLevel : QRCode.CorrectLevel.M 
             });
             
-            // Даем библиотеке миллисекунды, чтобы она успела отрисовать код во временный блок
             setTimeout(() => {
                 let qrCanvasRaw = tempDiv.querySelector("canvas");
                 if(qrCanvasRaw) {
                     let canvas = document.getElementById("finalQrCanvas");
                     let ctx = canvas.getContext("2d");
                     
-                    // Рисуем белый фон рамки
                     ctx.fillStyle = "#ffffff"; 
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                    // Добавляем красивый заголовок
                     ctx.fillStyle = "#214e34"; 
                     ctx.textAlign = "center"; 
                     ctx.font = "bold 18px Arial";
                     ctx.fillText("Выгрузка ТСД", canvas.width / 2, 35);
                     
-                    // Добавляем дату и количество строк
                     ctx.fillStyle = "#555555"; 
                     ctx.font = "13px Arial";
                     let dateStr = new Date().toLocaleString('ru-RU');
                     ctx.fillText("Создано: " + dateStr + " | Строк: " + currentCart.length, canvas.width / 2, 60);
 
-                    // Копируем сам QR-код из временного блока в центр красивой рамки
                     ctx.drawImage(qrCanvasRaw, 20, 80, 300, 300);
                     
                     generatedImageUrl = canvas.toDataURL("image/png");
-                    
-                    // ВАЖНО: Делаем canvas видимым!
                     canvas.style.display = "block";
                 }
             }, 300);
@@ -329,7 +319,7 @@
         
         window.closeQRModal = function() { 
             document.getElementById("qrModal").style.display = "none"; 
-            document.getElementById("finalQrCanvas").style.display = "none"; // Прячем канвас при закрытии
+            document.getElementById("finalQrCanvas").style.display = "none"; 
         };
     </script>
 </body>
