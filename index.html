@@ -191,7 +191,7 @@
         // === БАЗА МАСТЕР-ШТРИХКОДОВ (КОРОБОК) ===
         const MASTER_CODES = {
             "14630557641291": { code: "4601501761856", qtyInBox: 50 }, 
-            "2000000000018": { code: "12345678", qtyInBox: 10 }       
+            "2000000000018": { code: "12345678", qtyInBox: 10 }        
         };
 
         let currentCart = []; 
@@ -209,6 +209,7 @@
         function processInput(rawCode, manualQty = 1) {
             let text = rawCode.trim();
 
+            // Восстановление готовой карточки из QR
             if (text.includes('-') && text.includes(' ')) {
                 if (confirm("Обнаружен код готовой карточки! Восстановить эти данные? (Текущий список будет удален)")) {
                     currentCart = [];
@@ -224,13 +225,26 @@
                 return;
             }
 
+            // Парсер Честного Знака (DataMatrix)
             let cleanText = text.replace(/[\u001d]/g, ''); 
             if (cleanText.startsWith("01") && cleanText.length > 18 && text.includes("21")) {
                 let gtin = cleanText.substring(2, 16);
                 text = gtin.startsWith("0") ? gtin.substring(1) : gtin;
             }
 
+            // =========================================================
+            // НОВОЕ: ПРЕОБРАЗОВАНИЕ EAN-13 в UPC-A (МАКИТА И ДР.)
+            // Если сканер считал 13 цифр и первая цифра "0", отрезаем её, 
+            // чтобы получить оригинальный 12-значный артикул поставщика.
+            // =========================================================
+            if (text.length === 13 && text.startsWith("0")) {
+                text = text.substring(1);
+            }
+            // =========================================================
+
             let finalQty = parseInt(manualQty) || 1;
+            
+            // Проверка по мастер-штрихкодам коробок
             if (MASTER_CODES[text]) {
                 let boxData = MASTER_CODES[text];
                 text = boxData.code; 
