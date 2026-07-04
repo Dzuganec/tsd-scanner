@@ -70,7 +70,7 @@
         
         /* Стили для встроенного штрихкода */
         .inline-barcode-container { padding-left: 5px; text-align: left; }
-        .inline-barcode-container svg { width: 100%; max-width: 140px; height: auto; max-height: 55px; display: block; margin: 0; }
+        .inline-barcode-container svg { width: 100%; max-width: 140px; height: auto; max-height: 55px; display: block; margin: 0; position: relative; left: -5px; }
         .code-cell { font-family: monospace; font-size: 15px; font-weight: bold; padding-left: 5px;}
         
         .qty-controls { display: flex; align-items: center; justify-content: flex-start; gap: 3px; }
@@ -233,9 +233,9 @@
             }
 
             // =========================================================
-            // НОВОЕ: ПРЕОБРАЗОВАНИЕ EAN-13 в UPC-A (МАКИТА И ДР.)
+            // НОРМАЛИЗАТОР UPC-A КОДОВ (МАКИТА И ДР.)
             // Если сканер считал 13 цифр и первая цифра "0", отрезаем её, 
-            // чтобы получить оригинальный 12-значный артикул поставщика.
+            // чтобы получить оригинальный 12-значный артикул для Excel.
             // =========================================================
             if (text.length === 13 && text.startsWith("0")) {
                 text = text.substring(1);
@@ -339,18 +339,60 @@
         window.removeItem = function(index) { currentCart.splice(index, 1); saveState(); renderCart(); }
         window.clearCart = function() { if(confirm("Удалить все товары из карточки?")) { currentCart = []; saveState(); renderCart(); } }
 
+        // =======================================================================
+        // УПРАВЛЕНИЕ КАМЕРОЙ: МАКСИМАЛЬНАЯ РЕЗКОСТЬ И ТУРБО-ФОКУС ДЛЯ iOS
+        // =======================================================================
         function startScanner() {
             document.getElementById('scannerModal').style.display = 'flex';
             if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-            html5QrCode.start({ facingMode: "environment" }, { fps: 20, qrbox: { width: 280, height: 180 } }, 
+            
+            const config = {
+                fps: 25, // Высокая герцовка кадров для быстрого отклика
+                qrbox: function(viewfinderWidth, viewfinderHeight) {
+                    // Широкое окно сканирования под длинные линейные штрихкоды
+                    return { 
+                        width: Math.floor(viewfinderWidth * 0.85), 
+                        height: Math.floor(viewfinderHeight * 0.6) 
+                    };
+                },
+                // Ограничиваем список только нашими рабочими форматами (минус нагрузка на ЦП)
+                formatsToSupport: [
+                    Html5QrcodeSupportedFormats.EAN_13,
+                    Html5QrcodeSupportedFormats.UPC_A,
+                    Html5QrcodeSupportedFormats.DATA_MATRIX,
+                    Html5QrcodeSupportedFormats.CODE_128
+                ]
+            };
+
+            // Запрашиваем у Safari принудительный поток 1080p (Full HD)
+            html5QrCode.start(
+                { 
+                    facingMode: "environment", 
+                    videoConstraints: { 
+                        width: { ideal: 1920 }, 
+                        height: { ideal: 1080 },
+                        aspectRatio: 1.777777778
+                    } 
+                }, 
+                config, 
                 (text) => { 
                     if(navigator.vibrate) navigator.vibrate(100); 
                     html5QrCode.stop(); 
-                    document.getElementById('scannerModal').style.display='none';
+                    document.getElementById('scannerModal').style.display = 'none';
                     processInput(text, 1); 
                 },
                 (err) => {}
-            );
+            ).catch(err => {
+                // Запасной запуск, если Full HD аппаратно не поддерживается устройством
+                html5QrCode.start({ facingMode: "environment" }, { fps: 20, qrbox: { width: 280, height: 180 } }, 
+                    (text) => {
+                        if(navigator.vibrate) navigator.vibrate(100);
+                        html5QrCode.stop();
+                        document.getElementById('scannerModal').style.display = 'none';
+                        processInput(text, 1);
+                    }, (err) => {}
+                );
+            });
         }
 
         function stopScanner() { 
