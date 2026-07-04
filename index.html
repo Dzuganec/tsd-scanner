@@ -16,7 +16,7 @@
 
     <title>Мой ТСД</title>
     
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     
@@ -234,8 +234,8 @@
 
             // =========================================================
             // НОРМАЛИЗАТОР UPC-A КОДОВ (МАКИТА И ДР.)
-            // Если сканер считал 13 цифр и первая цифра "0", отрезаем её, 
-            // чтобы получить оригинальный 12-значный артикул для Excel.
+            // Если сканер или камера считали 13 цифр и первая цифра "0", 
+            // отрезаем её, чтобы получить оригинальный 12-значный артикул.
             // =========================================================
             if (text.length === 13 && text.startsWith("0")) {
                 text = text.substring(1);
@@ -340,48 +340,49 @@
         window.clearCart = function() { if(confirm("Удалить все товары из карточки?")) { currentCart = []; saveState(); renderCart(); } }
 
         // =======================================================================
-        // УПРАВЛЕНИЕ КАМЕРОЙ: БЕЗОПАСНЫЙ ЗАПУСК ДЛЯ ВСЕХ УСТРОЙСТВ
+        // ИСПРАВЛЕННОЕ УПРАВЛЕНИЕ КАМЕРОЙ: ЗАЩИТА ОТ ЧЕРНОГО ЭКРАНА (iOS / Android)
         // =======================================================================
         function startScanner() {
+            // 1. Сначала плавно выводим модальное окно на экран
             document.getElementById('scannerModal').style.display = 'flex';
-            if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
             
-            // Оставляем только нужные форматы и широкую рамку для удобства
-            const config = {
-                fps: 20, 
-                qrbox: function(viewfinderWidth, viewfinderHeight) {
-                    return { 
-                        width: Math.floor(viewfinderWidth * 0.85), 
-                        height: Math.floor(viewfinderHeight * 0.6) 
-                    };
-                },
-                formatsToSupport: [
-                    Html5QrcodeSupportedFormats.EAN_13,
-                    Html5QrcodeSupportedFormats.UPC_A,
-                    Html5QrcodeSupportedFormats.DATA_MATRIX,
-                    Html5QrcodeSupportedFormats.CODE_128
-                ]
-            };
+            // 2. Делаем микропаузу в 150мс, чтобы браузер успел рассчитать размеры блока #reader,
+            // иначе видеопоток инициализируется в "нулевую" область и выдает черный экран.
+            setTimeout(() => {
+                if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
+                
+                const config = {
+                    fps: 15, // Стабильная частота считывания кадров
+                    qrbox: { width: 250, height: 250 }, // Оптимальный квадрат захвата
+                    formatsToSupport: [
+                        Html5QrcodeSupportedFormats.EAN_13,
+                        Html5QrcodeSupportedFormats.UPC_A,
+                        Html5QrcodeSupportedFormats.DATA_MATRIX,
+                        Html5QrcodeSupportedFormats.CODE_128
+                    ]
+                };
 
-            // Самый безопасный запуск (система сама выберет оптимальные параметры)
-            html5QrCode.start(
-                { facingMode: "environment" }, 
-                config, 
-                (text) => { 
-                    if(navigator.vibrate) navigator.vibrate(100); 
-                    html5QrCode.stop().then(() => {
-                        document.getElementById('scannerModal').style.display = 'none';
-                        processInput(text, 1); 
-                    }).catch(err => {
-                        document.getElementById('scannerModal').style.display = 'none';
-                        processInput(text, 1);
-                    });
-                },
-                (err) => {}
-            ).catch(err => {
-                alert("Ошибка! Браузер заблокировал доступ к камере. Проверьте настройки разрешений.");
-                document.getElementById('scannerModal').style.display = 'none';
-            });
+                // Запускаем стандартный, максимально совместимый видеопоток
+                html5QrCode.start(
+                    { facingMode: "environment" }, 
+                    config, 
+                    (text) => { 
+                        if(navigator.vibrate) navigator.vibrate(100); 
+                        html5QrCode.stop().then(() => {
+                            document.getElementById('scannerModal').style.display = 'none';
+                            processInput(text, 1); 
+                        }).catch(e => {
+                            document.getElementById('scannerModal').style.display = 'none';
+                            processInput(text, 1);
+                        });
+                    },
+                    (err) => { /* Игнорируем фоновые ошибки поиска кодов в пустых кадрах */ }
+                ).catch(err => {
+                    // ЕСЛИ СИСТЕМА ВСЕ РАВНО ЗАКРОЕТ ДОСТУП — ВЫВЕДЕМ ТОЧНУЮ ОШИБКУ НА ЭКРАН:
+                    document.getElementById('scannerModal').style.display = 'none';
+                    alert("🚫 Камера заблокирована!\n\nПричина от браузера:\n" + err + "\n\nВажно: убедитесь, что сайт открыт по протоколу HTTPS:// и браузеру выдан доступ к камере.");
+                });
+            }, 150);
         }
 
         function stopScanner() { 
