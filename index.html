@@ -340,22 +340,21 @@
         window.clearCart = function() { if(confirm("Удалить все товары из карточки?")) { currentCart = []; saveState(); renderCart(); } }
 
         // =======================================================================
-        // УПРАВЛЕНИЕ КАМЕРОЙ: МАКСИМАЛЬНАЯ РЕЗКОСТЬ И ТУРБО-ФОКУС ДЛЯ iOS
+        // УПРАВЛЕНИЕ КАМЕРОЙ: БЕЗОПАСНЫЙ ЗАПУСК ДЛЯ ВСЕХ УСТРОЙСТВ
         // =======================================================================
         function startScanner() {
             document.getElementById('scannerModal').style.display = 'flex';
             if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
             
+            // Оставляем только нужные форматы и широкую рамку для удобства
             const config = {
-                fps: 25, // Высокая герцовка кадров для быстрого отклика
+                fps: 20, 
                 qrbox: function(viewfinderWidth, viewfinderHeight) {
-                    // Широкое окно сканирования под длинные линейные штрихкоды
                     return { 
                         width: Math.floor(viewfinderWidth * 0.85), 
                         height: Math.floor(viewfinderHeight * 0.6) 
                     };
                 },
-                // Ограничиваем список только нашими рабочими форматами (минус нагрузка на ЦП)
                 formatsToSupport: [
                     Html5QrcodeSupportedFormats.EAN_13,
                     Html5QrcodeSupportedFormats.UPC_A,
@@ -364,34 +363,24 @@
                 ]
             };
 
-            // Запрашиваем у Safari принудительный поток 1080p (Full HD)
+            // Самый безопасный запуск (система сама выберет оптимальные параметры)
             html5QrCode.start(
-                { 
-                    facingMode: "environment", 
-                    videoConstraints: { 
-                        width: { ideal: 1920 }, 
-                        height: { ideal: 1080 },
-                        aspectRatio: 1.777777778
-                    } 
-                }, 
+                { facingMode: "environment" }, 
                 config, 
                 (text) => { 
                     if(navigator.vibrate) navigator.vibrate(100); 
-                    html5QrCode.stop(); 
-                    document.getElementById('scannerModal').style.display = 'none';
-                    processInput(text, 1); 
+                    html5QrCode.stop().then(() => {
+                        document.getElementById('scannerModal').style.display = 'none';
+                        processInput(text, 1); 
+                    }).catch(err => {
+                        document.getElementById('scannerModal').style.display = 'none';
+                        processInput(text, 1);
+                    });
                 },
                 (err) => {}
             ).catch(err => {
-                // Запасной запуск, если Full HD аппаратно не поддерживается устройством
-                html5QrCode.start({ facingMode: "environment" }, { fps: 20, qrbox: { width: 280, height: 180 } }, 
-                    (text) => {
-                        if(navigator.vibrate) navigator.vibrate(100);
-                        html5QrCode.stop();
-                        document.getElementById('scannerModal').style.display = 'none';
-                        processInput(text, 1);
-                    }, (err) => {}
-                );
+                alert("Ошибка! Браузер заблокировал доступ к камере. Проверьте настройки разрешений.");
+                document.getElementById('scannerModal').style.display = 'none';
             });
         }
 
