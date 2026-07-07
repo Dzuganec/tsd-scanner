@@ -16,6 +16,7 @@
 
     <title>Мой ТСД</title>
     
+    <!-- Фиксированная стабильная версия библиотеки для исключения багов веб-камеры -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
@@ -29,7 +30,7 @@
         
         .main-container { padding: 15px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 15px; flex: 1; }
         
-        /* Стили Инструкции */
+        /* --- Стили для Инструкции --- */
         .instruction-card { background: white; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border-left: 4px solid #f39c12; font-size: 13px; color: #444; width: 100%; overflow: hidden; }
         .instruction-card summary { cursor: pointer; padding: 15px; outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none; }
         .instruction-card summary::-webkit-details-marker { display: none; }
@@ -126,8 +127,8 @@
                     <li>Отсканируй штрих-код камерой телефона с помощью кнопки 📷 <b>Скан</b> или введи артикул вручную.</li>
                     <li>Так же можно отсканировать DataMatrix (Честный знак ✅).</li>
                     <li>Введи количество товара меняй и нажми кнопку ➕ <b>Добавить</b>.</li>
-                    <li>Собери карточку из товаров (до 50 строк). Если нужно — скрипт сам попытается найти артикулы на сайте магазина.</li>
-                    <li>Нажми <b>Сгенерировать QR</b>. Если QR-код не считывается, то выкрути яркость телефона на максимум.</li>
+                    <li>Собери карточку из товаров (до 50 строк). Если нужно — скрипт сам попытается найти артикулы в базе сайта Лемана ПРО.</li>
+                    <li>Нажми <b>Сгенерировать QR</b>. Яркость экрана виртуально выкрутится на максимум.</li>
                     <li>В Excel нажми кнопку <b>«Получить данные из QR-кода»</b> и отсканируй QR с телефона.</li>
                 </ol>
                 <div class="browser-note">
@@ -210,19 +211,19 @@
         
         function saveState() { localStorage.setItem('tsd_lite_cart', JSON.stringify(currentCart)); }
 
-        // === ИНТЕГРАЦИЯ: ПОИСК С ЖЕСТКИМ ТАЙМАУТОМ (ЗАЩИТА ОТ ЗАВИСАНИЙ) ===
+        // === ИНТЕГРАЦИЯ: УЛЬТРА-СКАНИРОВАНИЕ САЙТА ЛЕМАНА ПРО ===
         async function fetchArticleFromSite(barcode) {
-            if(barcode.length <= 8) return barcode; // Короткие артикулы не ищем
+            // Если ввели уже короткий артикул (8 цифр), искать его не нужно
+            if(barcode.length <= 8) return barcode; 
             
             document.getElementById('loader').style.display = 'flex';
             
-            // Используем AbortController для прерывания зависших запросов
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 2500); // Ровно 2.5 секунды на поиск, иначе отбой
+            const timeoutId = setTimeout(() => controller.abort(), 3500); // Даем прокси 3.5 секунды
             
             try {
-                let targetUrl = 'https://lemanapro.ru/search/?q=' + barcode;
-                // Используем другой быстрый прокси
+                // Используем региональный сайт (Волгоград), он реже блокирует ботов
+                let targetUrl = 'https://volgograd.lemanapro.ru/search/?q=' + barcode;
                 let proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
                 
                 let response = await fetch(proxyUrl, { signal: controller.signal });
@@ -232,21 +233,45 @@
                     let data = await response.json();
                     let html = data.contents;
                     
-                    let match = html.match(/(?:Арт\.|Артикул)[\s:]*(\d{6,9})/i) || html.match(/"productId"\s*:\s*"(\d{6,9})"/i);
-                    if (match && match[1]) {
+                    let lmCode = null;
+
+                    // Если прокси словил капчу от антибота, выходим
+                    if(html.includes("qrator") || html.includes("cloudflare")) {
+                        console.log("Блок антибота. Возврат ШК.");
+                    } else {
+                        // СПОСОБ 1: Ищем в ссылках на товар (самый надежный для Лемана ПРО)
+                        // Пример: href="/catalogue/product/ramka-svetodiodnaya-89371273/"
+                        let linkMatch = html.match(/href="[^"]*-(\d{8})\/"/i);
+                        if (linkMatch) lmCode = linkMatch[1];
+                        
+                        // СПОСОБ 2: Ищем в скрытом JSON (данные React)
+                        if (!lmCode) {
+                            let jsonMatch = html.match(/"productId"\s*:\s*"(\d{7,9})"/i) || html.match(/"skus"\s*:\s*\["(\d{7,9})"\]/i);
+                            if (jsonMatch) lmCode = jsonMatch[1];
+                        }
+                        
+                        // СПОСОБ 3: Прямой текст на странице (если страница успела отрендериться)
+                        if (!lmCode) {
+                            let textMatch = html.match(/Арт\.\s*(\d{7,9})/i) || html.match(/Артикул[\s:]*(\d{7,9})/i);
+                            if (textMatch) lmCode = textMatch[1];
+                        }
+                    }
+
+                    // Если нашли артикул — вибрируем и возвращаем его!
+                    if (lmCode) {
                         document.getElementById('loader').style.display = 'none';
                         if(navigator.vibrate) navigator.vibrate([50, 50, 50]); 
-                        return match[1]; 
+                        return lmCode; 
                     }
                 }
             } catch (e) {
-                // Если сработал Timeout или прокси заблокировал локальный файл - просто игнорируем
-                console.log("Поиск прерван, используем ШК:", e.message);
+                console.log("Таймаут или ошибка сети, оставляем ШК", e.message);
             }
             
+            // Если все способы провалились, возвращаем исходный штрихкод (пойдет в Карантин)
             clearTimeout(timeoutId);
             document.getElementById('loader').style.display = 'none';
-            return barcode; // Идем дальше со штрихкодом (он попадет в Карантин в Excel)
+            return barcode; 
         }
 
         async function processInput(rawCode, manualQty = 1) {
@@ -270,6 +295,7 @@
                 text = gtin.startsWith("0") ? gtin.substring(1) : gtin;
             }
 
+            // НОРМАЛИЗАТОР UPC-A (МАКИТА)
             if (text.length === 13 && text.startsWith("0")) text = text.substring(1);
 
             let finalQty = parseInt(manualQty) || 1;
@@ -343,15 +369,42 @@
         window.clearCart = function() { if(confirm("Удалить все?")) { currentCart = []; saveState(); renderCart(); } }
 
         function startScanner() {
+            // 1. Сначала плавно выводим модальное окно на экран
             document.getElementById('scannerModal').style.display = 'flex';
+            
+            // 2. Делаем микропаузу в 150мс, чтобы браузер успел рассчитать размеры блока #reader,
+            // иначе видеопоток инициализируется в "нулевую" область и выдает черный экран.
             setTimeout(() => {
                 if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-                const config = { fps: 15, qrbox: { width: 250, height: 250 }, formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.CODE_128] };
-                html5QrCode.start({ facingMode: "environment" }, config, (text) => { 
-                    html5QrCode.stop().then(() => { document.getElementById('scannerModal').style.display = 'none'; processInput(text, 1); });
-                }, () => {}).catch(err => { 
-                    document.getElementById('scannerModal').style.display = 'none'; 
-                    alert("Ошибка камеры! Убедитесь что сайт открыт через HTTPS."); 
+                
+                const config = {
+                    fps: 15, 
+                    qrbox: { width: 250, height: 250 }, 
+                    formatsToSupport: [
+                        Html5QrcodeSupportedFormats.EAN_13,
+                        Html5QrcodeSupportedFormats.UPC_A,
+                        Html5QrcodeSupportedFormats.DATA_MATRIX,
+                        Html5QrcodeSupportedFormats.CODE_128
+                    ]
+                };
+
+                html5QrCode.start(
+                    { facingMode: "environment" }, 
+                    config, 
+                    (text) => { 
+                        if(navigator.vibrate) navigator.vibrate(100); 
+                        html5QrCode.stop().then(() => {
+                            document.getElementById('scannerModal').style.display = 'none';
+                            processInput(text, 1); 
+                        }).catch(e => {
+                            document.getElementById('scannerModal').style.display = 'none';
+                            processInput(text, 1);
+                        });
+                    },
+                    (err) => { /* Игнорируем фоновые ошибки поиска кодов в пустых кадрах */ }
+                ).catch(err => {
+                    document.getElementById('scannerModal').style.display = 'none';
+                    alert("🚫 Камера заблокирована!\n\nПричина от браузера:\n" + err + "\n\nВажно: убедитесь, что сайт открыт по протоколу HTTPS:// и браузеру выдан доступ к камере.");
                 });
             }, 150);
         }
