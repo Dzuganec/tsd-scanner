@@ -61,7 +61,7 @@
         .instruction-card[open] summary::after { transform: rotate(180deg); }
         .instruction-content { padding: 0 15px 15px; font-size: 14px; color: var(--text-muted); }
         .instruction-content ol { margin: 10px 0 0 0; padding-left: 22px; }
-        .instruction-content li { margin-bottom: 10px; line-height: 1.4; color: var(--text-main);}
+        .instruction-content li { margin-bottom: 12px; line-height: 1.4; color: var(--text-main);}
         .install-note { background-color: var(--info-bg); border: 1px solid var(--info-border); color: var(--info-text); padding: 12px; border-radius: 10px; margin-bottom: 15px; font-size: 13px; font-weight: bold; }
         .browser-note { background-color: var(--warn-bg); border: 1px solid var(--warn-border); color: var(--warn-text); padding: 12px; border-radius: 10px; margin-top: 15px; font-size: 13px; font-weight: bold; }
 
@@ -119,7 +119,11 @@
         .num-btn { background: var(--numpad-btn); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 12px; font-size: 24px; font-weight: bold; padding: 15px 0; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.1s;}
         .num-btn:active { background: var(--border-color); transform: scale(0.95);}
         .num-btn.action-c { color: #e74c3c; font-size: 20px;}
-        .num-btn.action-ok { background: var(--btn-add); color: white; border-color: var(--btn-add); font-size: 20px; grid-column: span 2;}
+        .num-btn.action-back { color: #f39c12; font-size: 22px; } /* Кнопка Backspace */
+        .numpad-actions { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-numpad-close { flex: 1; background: var(--border-color); color: var(--text-main); border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer;}
+        .btn-numpad-ok { flex: 2; background: var(--btn-add); color: white; border: none; border-radius: 12px; font-size: 20px; font-weight: bold; padding: 15px 0; cursor: pointer; box-shadow: 0 4px 10px rgba(33, 78, 52, 0.3);}
+        .btn-numpad-close:active, .btn-numpad-ok:active { transform: scale(0.98); }
 
         /* НАСТРОЙКИ */
         .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color); font-size: 16px; font-weight: bold;}
@@ -139,32 +143,14 @@
         /* === КРАСИВЫЙ АРХИВ === */
         .archive-list { display: flex; flex-direction: column; gap: 10px; max-height: 55vh; overflow-y: auto; padding: 5px; margin: 0 -5px;}
         .archive-item { 
-            background: var(--input-bg); 
-            border: 1px solid var(--border-color); 
-            border-radius: 14px; 
-            padding: 15px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            text-align: left; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03); 
+            background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 14px; 
+            padding: 15px; display: flex; justify-content: space-between; align-items: center; 
+            text-align: left; box-shadow: 0 4px 10px rgba(0,0,0,0.03); 
         }
         .archive-info { display: flex; flex-direction: column; gap: 6px; }
         .archive-date { color: var(--text-main); font-weight: bold; font-size: 15px; }
         .archive-stats { color: var(--text-muted); font-size: 13px; font-weight: 500;}
-        .archive-btn { 
-            background: var(--btn-add); 
-            color: white; 
-            border: none; 
-            padding: 10px 16px; 
-            border-radius: 10px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            font-size: 14px; 
-            transition: 0.2s; 
-            white-space: nowrap; 
-            box-shadow: 0 2px 8px rgba(33, 78, 52, 0.3);
-        }
+        .archive-btn { background: var(--btn-add); color: white; border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.2s; white-space: nowrap; box-shadow: 0 2px 8px rgba(33, 78, 52, 0.3);}
         .archive-btn:active { transform: scale(0.95); box-shadow: none; }
     </style>
 </head>
@@ -180,21 +166,22 @@
 
     <div class="main-container">
         
-        <!-- === ИСПРАВЛЕННАЯ ИНСТРУКЦИЯ СО ВСЕМИ ПУНКТАМИ === -->
+        <!-- ИНСТРУКЦИЯ -->
         <details class="card instruction-card">
             <summary>📖 Как это работает?</summary>
             <div class="instruction-content">
                 <div class="install-note">
-                    📲 <b>Установка:</b> В меню браузера выбери «На экран "Домой"» (iPhone) или «Добавить на главный экран» (Android).
+                    📲 <b>Установка:</b> В браузере нажмите «На экран "Домой"» (iPhone) или «Добавить на главный экран» (Android).
                 </div>
                 <ol>
-                    <li>Отсканируй штрих-код камерой телефона с помощью желтой кнопки 📷 <b>СКАНИРОВАТЬ</b> внизу экрана или введи артикул вручную.</li>
-                    <li>Так же можно отсканировать <b>DataMatrix (Честный знак ✅)</b>.</li>
-                    <li>Введи количество товара меняй и нажми кнопку <b>➕ Добавить</b>. Либо используй <b>Режим «Пулемет»</b>: камера не закрывается, просто сканируй один за другим и вбивай количество во всплывающем калькуляторе.</li>
-                    <li>Собери карточку из товаров (до 50 строк). Если нужно — скрипт сам попытается найти артикулы в базе сайта Лемана ПРО. (Чтобы изменить количество, просто <b>нажми на цифру</b> в таблице).</li>
-                    <li>В меню <b>⚙️ Настройки</b> можно отключить звук (пик), вибрацию или непрерывный скан.</li>
-                    <li>Нажми <b>Сгенерировать QR</b> (кнопка 📲 <b>В EXCEL</b>). Яркость экрана виртуально выкрутится на максимум.</li>
-                    <li>В Excel нажми кнопку <b>«Получить данные из QR-кода»</b> и отсканируй QR с телефона.</li>
+                    <li>Нажмите огромную желтую кнопку <b>📷 СКАНИРОВАТЬ</b> внизу экрана или введите артикул вручную.</li>
+                    <li>Также сканер читает <b>DataMatrix (Честный ЗНАК ✅)</b> и вытягивает из него правильный GTIN.</li>
+                    <li><b>Режим «Пулемет»:</b> Камера не закрывается! Сканируйте штрихкоды один за другим, а количество вбивайте во всплывающем окне.</li>
+                    <li>Чтобы изменить количество добавленного товара, просто <b>нажмите на цифру</b> в таблице.</li>
+                    <li>Соберите карточку из товаров (рекомендуется <b>до 50 строк</b>).</li>
+                    <li>В меню <b>⚙️ Настройки</b> можно отключить звук (пик), вибрацию или сам режим непрерывного сканирования.</li>
+                    <li>Нажмите <b>📲 В EXCEL</b>. Яркость экрана виртуально выкрутится на максимум.</li>
+                    <li>В Excel нажмите кнопку <b>«Получить данные из QR-кода»</b> и отсканируйте QR с экрана телефона.</li>
                 </ol>
                 <div class="browser-note">
                     💡 <b>Важно:</b> Для быстрой работы камеры используйте браузер <b>Google Chrome</b> или <b>Safari</b>!
@@ -259,7 +246,7 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА NUMPAD -->
+    <!-- МОДАЛКА NUMPAD (С кнопками Отмена и Backspace) -->
     <div class="modal-overlay numpad-modal" id="numpadModal">
         <div class="modal-content numpad-content">
             <div class="numpad-title" id="numpadTitle">Количество товара</div>
@@ -276,7 +263,11 @@
                 <button class="num-btn" onclick="numPress(9)">9</button>
                 <button class="num-btn action-c" onclick="numClear()">C</button>
                 <button class="num-btn" onclick="numPress(0)">0</button>
-                <button class="num-btn action-ok" onclick="numConfirm()">OK</button>
+                <button class="num-btn action-back" onclick="numBackspace()">⌫</button>
+            </div>
+            <div class="numpad-actions">
+                <button class="btn-numpad-close" onclick="numCancel()">Отмена</button>
+                <button class="btn-numpad-ok" onclick="numConfirm()">OK</button>
             </div>
         </div>
     </div>
@@ -423,20 +414,23 @@
         window.removeItem = function(index) { currentCart.splice(index, 1); saveState(); renderCart(); }
         window.clearCart = function() { if(confirm("Очистить корзину?")) { currentCart = []; saveState(); renderCart(); } }
 
-        // === NUMPAD (КАЛЬКУЛЯТОР КОЛИЧЕСТВА) ===
-        let numpadValue = "1";
+        // === NUMPAD (КАЛЬКУЛЯТОР КОЛИЧЕСТВА С BACKSPACE И ОТМЕНОЙ) ===
+        let numpadValue = "0";
         let isNewNumpadEntry = true;
         let numpadMode = ""; 
         let numpadTargetCode = "";
         let numpadTargetIndex = -1;
         let numpadTargetBoxQty = 1;
 
-        function updateNumpadDisplay() { document.getElementById('numpadDisplay').innerText = numpadValue; }
+        function updateNumpadDisplay() { 
+            document.getElementById('numpadDisplay').innerText = numpadValue === "" ? "0" : numpadValue; 
+        }
         
         function showNumpadForScan(code) {
-            numpadMode = 'scan'; numpadTargetCode = code; numpadValue = "1"; isNewNumpadEntry = true;
+            numpadMode = 'scan'; numpadTargetCode = code; isNewNumpadEntry = true;
             numpadTargetBoxQty = 1;
-            for(let key in MASTER_CODES) { if(MASTER_CODES[key].code === code && MASTER_CODES[key].qtyInBox) { numpadTargetBoxQty = MASTER_CODES[key].qtyInBox; numpadValue = numpadTargetBoxQty.toString(); break; } }
+            for(let key in MASTER_CODES) { if(MASTER_CODES[key].code === code && MASTER_CODES[key].qtyInBox) { numpadTargetBoxQty = MASTER_CODES[key].qtyInBox; break; } }
+            numpadValue = numpadTargetBoxQty.toString();
             document.getElementById('numpadTitle').innerText = "ШК: " + code;
             updateNumpadDisplay(); document.getElementById('numpadModal').style.display = 'flex';
         }
@@ -448,11 +442,37 @@
         }
 
         function numPress(n) {
-            if(isNewNumpadEntry) { numpadValue = n.toString(); isNewNumpadEntry = false; } 
-            else { if(numpadValue.length < 4) numpadValue += n.toString(); }
+            if(isNewNumpadEntry || numpadValue === "0") { 
+                numpadValue = n.toString(); 
+                isNewNumpadEntry = false; 
+            } else { 
+                if(numpadValue.length < 4) numpadValue += n.toString(); 
+            }
             updateNumpadDisplay();
         }
-        function numClear() { numpadValue = "1"; isNewNumpadEntry = true; updateNumpadDisplay(); }
+
+        function numClear() { 
+            numpadValue = "0"; 
+            isNewNumpadEntry = true; 
+            updateNumpadDisplay(); 
+        }
+
+        function numBackspace() {
+            if (isNewNumpadEntry) return;
+            numpadValue = numpadValue.slice(0, -1);
+            if (numpadValue === "") {
+                numpadValue = "0";
+                isNewNumpadEntry = true;
+            }
+            updateNumpadDisplay();
+        }
+
+        function numCancel() {
+            document.getElementById('numpadModal').style.display = 'none';
+            if (numpadMode === 'scan') {
+                setTimeout(() => { isScannerPaused = false; }, 500); // Возвращаемся к камере
+            }
+        }
         
         function numConfirm() {
             let finalQty = parseInt(numpadValue) || 1;
