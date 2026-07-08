@@ -93,18 +93,20 @@
         .btn-remove { background: none; border: none; color: #e74c3c; font-size: 20px; padding: 10px; width: 100%;}
         .no-data { padding: 30px; color: var(--text-muted); font-style: italic; }
 
-        /* НИЖНЯЯ ПЛАВАЮЩАЯ ПАНЕЛЬ (КНОПКИ ТСД) - ИСПРАВЛЕН ПЕРЕНОС ТЕКСТА */
+        /* НИЖНЯЯ ПЛАВАЮЩАЯ ПАНЕЛЬ (ИСПРАВЛЕНА КНОПКА EXCEL) */
         .bottom-action-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--bg-card); padding: 15px calc(15px + env(safe-area-inset-bottom)); box-shadow: 0 -5px 15px rgba(0,0,0,0.05); display: flex; gap: 10px; z-index: 50;}
         .btn-fab { 
             border: none; border-radius: 14px; font-weight: bold; font-size: 16px; 
             color: white; display: flex; align-items: center; justify-content: center; 
             gap: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: 0.2s; height: 55px;
-            white-space: nowrap; /* Жесткий запрет на перенос строк */
-            padding: 0 8px; 
+            white-space: nowrap; 
         }
         .btn-fab:active { transform: translateY(3px); box-shadow: none; }
-        .btn-fab-scan { flex: 1.4; background: #f39c12; font-size: 17px; }
-        .btn-fab-qr { flex: 1; background: #8e44ad; font-size: 16px; }
+        
+        /* Сканировать занимает всё свободное место */
+        .btn-fab-scan { flex: 1; background: #f39c12; font-size: 17px; }
+        /* В EXCEL занимает фиксированный размер под текст */
+        .btn-fab-qr { flex: 0 0 auto; background: #8e44ad; font-size: 16px; padding: 0 20px; }
 
         /* МОДАЛЬНЫЕ ОКНА */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); z-index: 9999; justify-content: flex-end; align-items: center; flex-direction: column; padding: 10px; backdrop-filter: blur(3px);}
@@ -180,11 +182,11 @@
                 </div>
                 <ol>
                     <li>Нажми огромную желтую кнопку <b>📷 СКАНИРОВАТЬ</b> внизу экрана или введи артикул вручную.</li>
-                    <li>Также сканер читает <b>DataMatrix (Честный ЗНАК ✅)</b> — сканер сам вытянет из него правильный GTIN.</li>
-                    <li><b>Режим «Пулемет»:</b> Камера не закрывается! Сканируй штрихкоды один за другим, а количество вбивай во всплывающем калькуляторе.</li>
-                    <li>Собери карточку из товаров (рекомендуется <b>до 50 строк</b>). Чтобы изменить количество, просто <b>нажми на цифру</b> в таблице.</li>
+                    <li>Также сканер читает <b>DataMatrix (Честный ЗНАК ✅)</b> — сканер сам вытянет из него правильный Штрих-код.</li>
+                    <li><b>Режим «Пулемет»:</b> Камера не закрывается! Сканируй штрихкоды один за другим, а количество вбивай во всплывающем окне.</li>
+                    <li>Собери карточку из товаров (рекомендуется <b>до 50 строк</b>).</li>
                     <li>В меню <b>⚙️ Настройки</b> можно отключить звук (пик), вибрацию или сам режим непрерывного сканирования.</li>
-                    <li>Нажми <b>📲 В EXCEL</b>. Яркость экрана виртуально выкрутится на максимум.</li>
+                    <li>Нажми <b>📲 В EXCEL</b>.</li>
                     <li>В Excel нажми кнопку <b>«Получить данные из QR-кода»</b> и отсканируй QR с экрана телефона.</li>
                 </ol>
                 <div class="browser-note">
@@ -502,7 +504,7 @@
             }
         }
 
-        // === СКАНЕР (АДАПТИРОВАН ДЛЯ ИСКЛЮЧЕНИЯ МАКРО-ЛИНЗЫ НА IOS) ===
+        // === ИСПРАВЛЕННЫЙ СКАНЕР (АППАРАТНОЕ УСКОРЕНИЕ + БЛОКИРОВКА МАКРО-ЛИНЗЫ НА IOS) ===
         let isScannerPaused = false;
 
         function startScanner() {
@@ -513,8 +515,13 @@
             setTimeout(() => {
                 if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
                 
-                // Изменен размер зоны сканирования на прямоугольник 280х150 и FPS 30 для скорости
-                const config = { fps: 30, qrbox: { width: 280, height: 150 }, formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.CODE_128] };
+                // Включено аппаратное ускорение и изменена зона фокуса для мгновенного считывания
+                const config = { 
+                    fps: 30, 
+                    qrbox: { width: 280, height: 150 }, 
+                    formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.CODE_128],
+                    experimentalFeatures: { useBarCodeDetectorIfSupported: true } // Ускорение через Apple Vision API
+                };
                 
                 const startVideo = (cameraSettings) => {
                     html5QrCode.start(cameraSettings, config, (text) => { 
@@ -529,35 +536,31 @@
                         showNumpadForScan(cleanCode); 
                     }, () => {}).catch(err => { 
                         document.getElementById('scannerModal').style.display = 'none'; 
-                        alert("Ошибка камеры! Проверьте разрешения в браузере."); 
+                        alert("Ошибка камеры! Проверьте разрешения."); 
                     });
                 };
 
                 let isIOS = (/iPad|iPhone|iPod/.test(navigator.userAgent)) || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
 
                 if (isIOS) {
-                    // Принудительный поиск базовой камеры на iPhone 13/14/15/16 Pro
+                    // Жесткая блокировка виртуальных и широкоугольных линз на iPhone
                     Html5Qrcode.getCameras().then(devices => {
                         let selectedCameraId = null;
                         if (devices && devices.length > 0) {
-                            let exactBack = devices.find(d => {
-                                let l = d.label.toLowerCase();
-                                return l === "back camera" || l === "задняя камера";
-                            });
-                            if (exactBack) {
-                                selectedCameraId = exactBack.id;
+                            let backCams = devices.filter(d => d.label.toLowerCase().includes("back") || d.label.toLowerCase().includes("задн"));
+                            
+                            if (backCams.length > 0) {
+                                let mainCam = backCams.find(d => {
+                                    let l = d.label.toLowerCase();
+                                    return !l.includes("ultra") && !l.includes("tele") && 
+                                           !l.includes("dual") && !l.includes("triple") &&
+                                           !l.includes("сверх") && !l.includes("теле") &&
+                                           !l.includes("двойн") && !l.includes("тройн");
+                                });
+                                selectedCameraId = mainCam ? mainCam.id : backCams[0].id;
                             } else {
-                                for (let device of devices) {
-                                    let label = device.label.toLowerCase();
-                                    if ((label.includes("back") || label.includes("задн")) && 
-                                        !label.includes("ultra") && !label.includes("telephoto") && 
-                                        !label.includes("dual") && !label.includes("triple")) {
-                                        selectedCameraId = device.id;
-                                        break;
-                                    }
-                                }
+                                selectedCameraId = devices[devices.length - 1].id;
                             }
-                            if (!selectedCameraId) selectedCameraId = devices[devices.length - 1].id;
                             startVideo(selectedCameraId);
                         } else {
                             startVideo({ facingMode: "environment" });
@@ -566,7 +569,7 @@
                         startVideo({ facingMode: "environment" });
                     });
                 } else {
-                    // Идеально работающий стандарт для Android
+                    // Android - стандартный режим
                     startVideo({ facingMode: "environment" });
                 }
             }, 150);
