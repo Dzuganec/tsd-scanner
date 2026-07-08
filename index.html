@@ -40,18 +40,16 @@
         }
 
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent;}
-        
-        /* ИСПРАВЛЕННАЯ ПРОКРУТКА: Убрали overflow:hidden, разрешили скролл всего body */
         body { margin: 0; padding: 0; background-color: var(--bg-body); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; overflow-y: auto; transition: 0.3s; }
         
-        /* ШАПКА: Закреплена сверху, чтобы не уезжала при скролле */
+        /* ШАПКА */
         header { position: sticky; top: 0; background-color: var(--header-bg); color: var(--header-text); padding: calc(15px + env(safe-area-inset-top)) 20px 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; z-index: 100;}
         header h1 { margin: 0; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px;}
         .header-controls { display: flex; gap: 8px; align-items: center; }
         .btn-icon { background: rgba(255,255,255,0.15); color: var(--header-text); border: none; width: 36px; height: 36px; border-radius: 8px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .btn-icon:active { transform: scale(0.9); }
 
-        /* ОСНОВНОЙ КОНТЕЙНЕР: С запасом снизу под плавающие кнопки */
+        /* ОСНОВНОЙ КОНТЕЙНЕР */
         .main-container { padding: 10px 15px 110px 15px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 10px; flex: 1; }
         .card { background: var(--bg-card); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
         
@@ -76,8 +74,6 @@
         /* КОРЗИНА */
         .cart-card { display: flex; flex-direction: column; }
         .cart-header { padding: 12px 15px; background: var(--table-head); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 14px;}
-        
-        /* ИСПРАВЛЕННАЯ КНОПКА ОЧИСТКИ */
         .btn-clear { background: #e74c3c; color: white; border: none; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 6px rgba(231, 76, 60, 0.3);}
         .btn-clear:active { transform: scale(0.95); box-shadow: none;}
         
@@ -176,9 +172,9 @@
                 </div>
                 <ol>
                     <li>Нажми огромную желтую кнопку <b>📷 СКАНИРОВАТЬ</b> внизу экрана или введи артикул вручную.</li>
-                    <li>Также сканер читает <b>DataMatrix (Честный ЗНАК ✅)</b> — сканер сам вытянет из него правильный штрих-код.</li>
+                    <li>Также сканер читает <b>DataMatrix (Честный ЗНАК ✅)</b> — сканер сам вытянет из него правильный Штрих-код.</li>
                     <li><b>Режим «Пулемет»:</b> Камера не закрывается! Сканируй штрихкоды один за другим, а количество вбивай во всплывающем окне.</li>
-                    <li>Собери карточку из товаров (рекомендуется <b>до 50 строк</b>). Чтобы изменить количество, просто <b>нажми на цифру</b> в таблице.</li>
+                    <li>Собери карточку из товаров (рекомендуется <b>до 50 строк</b>).</li>
                     <li>В меню <b>⚙️ Настройки</b> можно отключить звук (пик), вибрацию или сам режим непрерывного сканирования.</li>
                     <li>Нажми <b>📲 В EXCEL</b>. Яркость экрана виртуально выкрутится на максимум.</li>
                     <li>В Excel нажми кнопку <b>«Получить данные из QR-кода»</b> и отсканируй QR с экрана телефона.</li>
@@ -199,10 +195,8 @@
         <div class="card cart-card">
             <div class="cart-header">
                 <span id="cartStats">0 строк (0 шт.)</span>
-                <!-- КНОПКА ОЧИСТКИ ТЕПЕРЬ ПОЛНОЦЕННАЯ -->
                 <button class="btn-clear" onclick="clearCart()">Очистить всё 🗑️</button>
             </div>
-            <!-- Убран overflow-y отсюда, теперь прокручивается вся страница -->
             <div class="table-wrapper">
                 <table>
                     <thead><tr><th>Штрихкод</th><th>Кол-во</th><th></th></tr></thead>
@@ -241,7 +235,7 @@
     <!-- МОДАЛКА СКАНЕРА -->
     <div class="modal-overlay" id="scannerModal">
         <div class="modal-content">
-            <h3 style="margin-top: 0; margin-bottom: 10px;">Наведите камеру на штрих-код</h3>
+            <h3 style="margin-top: 0; margin-bottom: 10px;">Наведите камеру на код</h3>
             <div id="reader"></div>
             <button class="btn-modal btn-torch" id="torchBtn" onclick="toggleTorch()">🔦 Фонарик</button>
             <button class="btn-modal btn-close" onclick="stopScanner()">Завершить</button>
@@ -500,7 +494,7 @@
             }
         }
 
-        // === СКАНЕР ===
+        // === СКАНЕР (АДАПТИРОВАН ДЛЯ IOS) ===
         let isScannerPaused = false;
 
         function startScanner() {
@@ -512,29 +506,64 @@
                 if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
                 const config = { fps: 15, qrbox: { width: 250, height: 250 }, formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.CODE_128] };
                 
-                html5QrCode.start({ facingMode: "environment" }, config, (text) => { 
-                    if(isScannerPaused) return; 
-                    let cleanCode = normalizeBarcode(text);
-                    if(!cleanCode) return;
-                    
-                    isScannerPaused = true;
-                    playBeep();
-                    if (settings.vibro && navigator.vibrate) navigator.vibrate(100);
+                const startVideo = (cameraSettings) => {
+                    html5QrCode.start(cameraSettings, config, (text) => { 
+                        if(isScannerPaused) return; 
+                        let cleanCode = normalizeBarcode(text);
+                        if(!cleanCode) return;
+                        
+                        isScannerPaused = true;
+                        playBeep();
+                        if (settings.vibro && navigator.vibrate) navigator.vibrate(100);
 
-                    // КАЛЬКУЛЯТОР ВСПЛЫВАЕТ ВСЕГДА ПРИ СКАНИРОВАНИИ
-                    showNumpadForScan(cleanCode); 
-                    
-                }, () => {}).catch(err => { 
-                    document.getElementById('scannerModal').style.display = 'none'; 
-                    alert("Ошибка камеры! Проверьте разрешения."); 
-                });
+                        showNumpadForScan(cleanCode); 
+                    }, () => {}).catch(err => { 
+                        document.getElementById('scannerModal').style.display = 'none'; 
+                        alert("Ошибка камеры! Проверьте разрешения."); 
+                    });
+                };
+
+                let isIOS = (/iPad|iPhone|iPod/.test(navigator.userAgent)) || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+
+                if (isIOS) {
+                    Html5Qrcode.getCameras().then(devices => {
+                        let selectedCameraId = null;
+                        if (devices && devices.length > 0) {
+                            for (let device of devices) {
+                                let label = device.label.toLowerCase();
+                                if ((label.includes("back") || label.includes("задн")) && 
+                                    !label.includes("ultra") && !label.includes("telephoto") && 
+                                    !label.includes("dual") && !label.includes("triple")) {
+                                    selectedCameraId = device.id;
+                                    break;
+                                }
+                            }
+                            if (!selectedCameraId) {
+                                for (let device of devices) {
+                                    if (device.label.toLowerCase().includes("back") || device.label.toLowerCase().includes("задн")) {
+                                        selectedCameraId = device.id;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!selectedCameraId) selectedCameraId = devices[devices.length - 1].id;
+                            startVideo(selectedCameraId);
+                        } else {
+                            startVideo({ facingMode: "environment" });
+                        }
+                    }).catch(err => {
+                        startVideo({ facingMode: "environment" });
+                    });
+                } else {
+                    startVideo({ facingMode: "environment" });
+                }
             }, 150);
         }
 
         function stopScanner() { document.getElementById('scannerModal').style.display = 'none'; if (html5QrCode && html5QrCode.getState() === 2) html5QrCode.stop(); }
         window.toggleTorch = async function() { if (!html5QrCode || html5QrCode.getState() !== 2) return; torchEnabled = !torchEnabled; try { await html5QrCode.applyVideoConstraints({ advanced: [{ torch: torchEnabled }] }); } catch (e) { torchEnabled = !torchEnabled; } }
 
-        // === АРХИВ ===
+        // === ИСПРАВЛЕННЫЙ КРАСИВЫЙ АРХИВ ===
         function saveToArchive() {
             if (currentCart.length === 0) return;
             let history = JSON.parse(localStorage.getItem('tsd_archive') || '[]');
