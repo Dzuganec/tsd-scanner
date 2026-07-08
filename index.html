@@ -40,20 +40,22 @@
         }
 
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent;}
-        body { margin: 0; padding: 0; background-color: var(--bg-body); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: 0.3s; }
         
-        /* ШАПКА */
-        header { background-color: var(--header-bg); color: var(--header-text); padding: calc(15px + env(safe-area-inset-top)) 20px 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; z-index: 100;}
+        /* ИСПРАВЛЕННАЯ ПРОКРУТКА: Убрали overflow:hidden, разрешили скролл всего body */
+        body { margin: 0; padding: 0; background-color: var(--bg-body); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; overflow-y: auto; transition: 0.3s; }
+        
+        /* ШАПКА: Закреплена сверху, чтобы не уезжала при скролле */
+        header { position: sticky; top: 0; background-color: var(--header-bg); color: var(--header-text); padding: calc(15px + env(safe-area-inset-top)) 20px 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; z-index: 100;}
         header h1 { margin: 0; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px;}
         .header-controls { display: flex; gap: 8px; align-items: center; }
         .btn-icon { background: rgba(255,255,255,0.15); color: var(--header-text); border: none; width: 36px; height: 36px; border-radius: 8px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .btn-icon:active { transform: scale(0.9); }
 
-        /* ОСНОВНОЙ КОНТЕЙНЕР */
-        .main-container { padding: 10px 15px 130px 15px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 10px; flex: 1; overflow-y: auto; }
+        /* ОСНОВНОЙ КОНТЕЙНЕР: С запасом снизу под плавающие кнопки */
+        .main-container { padding: 10px 15px 110px 15px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 10px; flex: 1; }
         .card { background: var(--bg-card); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
         
-        /* ИНСТРУКЦИЯ (ИСПРАВЛЕНО: flex-shrink: 0 не дает карточке сжиматься) */
+        /* ИНСТРУКЦИЯ */
         .instruction-card { border: 2px solid #f39c12; margin-bottom: 5px; flex-shrink: 0; }
         .instruction-card summary { cursor: pointer; padding: 15px; outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none; font-weight: bold; font-size: 15px;}
         .instruction-card summary::-webkit-details-marker { display: none; }
@@ -65,16 +67,19 @@
         .install-note { background-color: var(--info-bg); border: 1px solid var(--info-border); color: var(--info-text); padding: 12px; border-radius: 10px; margin-bottom: 15px; font-size: 13px; font-weight: bold; }
         .browser-note { background-color: var(--warn-bg); border: 1px solid var(--warn-border); color: var(--warn-text); padding: 12px; border-radius: 10px; margin-top: 15px; font-size: 13px; font-weight: bold; }
 
-        /* РУЧНОЙ ВВОД (ИСПРАВЛЕНО: flex-shrink: 0) */
+        /* РУЧНОЙ ВВОД */
         .input-card { padding: 10px; display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
         .input-field { flex: 1; padding: 12px; background: var(--input-bg); color: var(--text-main); border: 1px solid var(--input-border); border-radius: 10px; font-size: 16px; outline: none; width: 100%;}
         .input-field:focus { border-color: var(--btn-add); }
         .btn-manual-add { background: var(--btn-add); color: white; border: none; border-radius: 10px; padding: 0 15px; height: 45px; font-weight: bold; font-size: 14px;}
         
         /* КОРЗИНА */
-        .cart-card { display: flex; flex-direction: column; flex: 1; min-height: 200px; }
+        .cart-card { display: flex; flex-direction: column; }
         .cart-header { padding: 12px 15px; background: var(--table-head); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 14px;}
-        .btn-clear { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 18px; padding: 0;}
+        
+        /* ИСПРАВЛЕННАЯ КНОПКА ОЧИСТКИ */
+        .btn-clear { background: #e74c3c; color: white; border: none; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 6px rgba(231, 76, 60, 0.3);}
+        .btn-clear:active { transform: scale(0.95); box-shadow: none;}
         
         table { width: 100%; table-layout: fixed; border-collapse: collapse; text-align: left; font-size: 14px; }
         th { background: var(--table-head); color: var(--text-muted); padding: 8px 5px; position: sticky; top: 0; border-bottom: 1px solid var(--border-color); z-index: 5; text-align: center; font-size: 12px;}
@@ -85,13 +90,12 @@
         .inline-barcode-container svg { width: 100%; max-width: 140px; height: auto; max-height: 45px; display: block; margin: 0 auto; background-color: #ffffff; padding: 4px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .code-cell { font-family: monospace; font-size: 14px; font-weight: bold; color: var(--text-main); display: block; }
         
-        /* Кнопка Количества в таблице */
         .qty-box { background: var(--input-bg); border: 2px solid var(--border-color); color: var(--text-main); font-weight: bold; font-size: 16px; border-radius: 8px; padding: 8px 0; width: 100%; cursor: pointer; display: block; transition: 0.2s;}
         .qty-box:active { background: var(--border-color); transform: scale(0.95); }
         .btn-remove { background: none; border: none; color: #e74c3c; font-size: 20px; padding: 10px; width: 100%;}
         .no-data { padding: 30px; color: var(--text-muted); font-style: italic; }
 
-        /* НИЖНЯЯ ПЛАВАЮЩАЯ ПАНЕЛЬ (КНОПКИ ТСД) */
+        /* НИЖНЯЯ ПЛАВАЮЩАЯ ПАНЕЛЬ */
         .bottom-action-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--bg-card); padding: 15px calc(15px + env(safe-area-inset-bottom)); box-shadow: 0 -5px 15px rgba(0,0,0,0.05); display: flex; gap: 10px; z-index: 50;}
         .btn-fab { border: none; border-radius: 14px; font-weight: bold; font-size: 16px; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: 0.2s; height: 55px;}
         .btn-fab:active { transform: translateY(3px); box-shadow: none; }
@@ -110,7 +114,7 @@
         .btn-torch { background: #34495e; color: white; }
         .btn-close { background: var(--border-color); color: var(--text-main); }
 
-        /* === NUMPAD (КАЛЬКУЛЯТОР С КНОПКАМИ ОТМЕНА И СТЕРЕТЬ) === */
+        /* === NUMPAD (КАЛЬКУЛЯТОР) === */
         .numpad-modal { z-index: 10000; justify-content: flex-end; }
         .numpad-content { background: var(--numpad-bg); padding: 15px 20px 25px; }
         .numpad-title { font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0; text-transform: uppercase;}
@@ -163,7 +167,7 @@
 
     <div class="main-container">
         
-        <!-- ИНСТРУКЦИЯ (Окончательная версия) -->
+        <!-- ИНСТРУКЦИЯ -->
         <details class="card instruction-card">
             <summary>📖 Как это работает?</summary>
             <div class="instruction-content">
@@ -172,8 +176,8 @@
                 </div>
                 <ol>
                     <li>Нажми огромную желтую кнопку <b>📷 СКАНИРОВАТЬ</b> внизу экрана или введи артикул вручную.</li>
-                    <li>Также сканер читает <b>DataMatrix (Честный ЗНАК ✅)</b> — сканер сам вытянет из него правильный GTIN.</li>
-                    <li><b>Режим «Пулемет»:</b> Камера не закрывается! Сканируй штрихкоды один за другим, а количество вбивай во всплывающем калькуляторе.</li>
+                    <li>Также сканер читает <b>DataMatrix (Честный ЗНАК ✅)</b> — сканер сам вытянет из него правильный штрих-код.</li>
+                    <li><b>Режим «Пулемет»:</b> Камера не закрывается! Сканируй штрихкоды один за другим, а количество вбивай во всплывающем окне.</li>
                     <li>Собери карточку из товаров (рекомендуется <b>до 50 строк</b>). Чтобы изменить количество, просто <b>нажми на цифру</b> в таблице.</li>
                     <li>В меню <b>⚙️ Настройки</b> можно отключить звук (пик), вибрацию или сам режим непрерывного сканирования.</li>
                     <li>Нажми <b>📲 В EXCEL</b>. Яркость экрана виртуально выкрутится на максимум.</li>
@@ -195,8 +199,10 @@
         <div class="card cart-card">
             <div class="cart-header">
                 <span id="cartStats">0 строк (0 шт.)</span>
-                <button class="btn-clear" onclick="clearCart()" title="Очистить корзину">🗑️</button>
+                <!-- КНОПКА ОЧИСТКИ ТЕПЕРЬ ПОЛНОЦЕННАЯ -->
+                <button class="btn-clear" onclick="clearCart()">Очистить всё 🗑️</button>
             </div>
+            <!-- Убран overflow-y отсюда, теперь прокручивается вся страница -->
             <div class="table-wrapper">
                 <table>
                     <thead><tr><th>Штрихкод</th><th>Кол-во</th><th></th></tr></thead>
@@ -235,14 +241,14 @@
     <!-- МОДАЛКА СКАНЕРА -->
     <div class="modal-overlay" id="scannerModal">
         <div class="modal-content">
-            <h3 style="margin-top: 0; margin-bottom: 10px;">Наведите камеру на код</h3>
+            <h3 style="margin-top: 0; margin-bottom: 10px;">Наведите камеру на штрих-код</h3>
             <div id="reader"></div>
             <button class="btn-modal btn-torch" id="torchBtn" onclick="toggleTorch()">🔦 Фонарик</button>
             <button class="btn-modal btn-close" onclick="stopScanner()">Завершить</button>
         </div>
     </div>
 
-    <!-- МОДАЛКА NUMPAD (КАЛЬКУЛЯТОР СО ВСЕМИ КНОПКАМИ) -->
+    <!-- МОДАЛКА NUMPAD -->
     <div class="modal-overlay numpad-modal" id="numpadModal">
         <div class="modal-content numpad-content">
             <div class="numpad-title" id="numpadTitle">Количество товара</div>
@@ -528,7 +534,7 @@
         function stopScanner() { document.getElementById('scannerModal').style.display = 'none'; if (html5QrCode && html5QrCode.getState() === 2) html5QrCode.stop(); }
         window.toggleTorch = async function() { if (!html5QrCode || html5QrCode.getState() !== 2) return; torchEnabled = !torchEnabled; try { await html5QrCode.applyVideoConstraints({ advanced: [{ torch: torchEnabled }] }); } catch (e) { torchEnabled = !torchEnabled; } }
 
-        // === ИСПРАВЛЕННЫЙ КРАСИВЫЙ АРХИВ ===
+        // === АРХИВ ===
         function saveToArchive() {
             if (currentCart.length === 0) return;
             let history = JSON.parse(localStorage.getItem('tsd_archive') || '[]');
