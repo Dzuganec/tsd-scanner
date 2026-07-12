@@ -93,7 +93,7 @@
         .btn-remove { background: none; border: none; color: #e74c3c; font-size: 20px; padding: 10px; width: 100%;}
         .no-data { padding: 30px; color: var(--text-muted); font-style: italic; }
 
-        /* НИЖНЯЯ ПЛАВАЮЩАЯ ПАНЕЛЬ (ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ ДЛЯ IPHONE) */
+        /* НИЖНЯЯ ПЛАВАЮЩАЯ ПАНЕЛЬ */
         .bottom-action-bar { 
             position: fixed; bottom: 0; left: 0; width: 100%; background: var(--bg-card); 
             padding: 15px calc(15px + env(safe-area-inset-bottom)); box-shadow: 0 -5px 15px rgba(0,0,0,0.05); 
@@ -511,7 +511,7 @@
             }
         }
 
-        // === УМНЫЙ СКАНЕР (ОДИН КОД, НО С ОПТИЧЕСКИМ ОБМАНОМ ДЛЯ IOS) ===
+        // === УМНЫЙ СКАНЕР ===
         let isScannerPaused = false;
 
         function startScanner() {
@@ -521,7 +521,6 @@
             
             let isIOS = (/iPad|iPhone|iPod/.test(navigator.userAgent)) || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
             
-            // Показываем подсказку только пользователям iPhone
             if (isIOS) {
                 document.getElementById('iosScanHint').style.display = 'block';
             } else {
@@ -531,16 +530,64 @@
             setTimeout(() => {
                 if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
                 
-                // Настройки сканера: стабильные 20 FPS и широкая рамка (идеально для 1D штрихкодов)
+                // ВАЖНО: Добавлен QR_CODE и рамка сделана квадратной (260x260)
                 const config = { 
                     fps: 20, 
-                    qrbox: { width: 260, height: 140 }, 
-                    formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.CODE_128] 
+                    qrbox: { width: 260, height: 260 }, 
+                    formatsToSupport: [
+                        Html5QrcodeSupportedFormats.EAN_13, 
+                        Html5QrcodeSupportedFormats.UPC_A, 
+                        Html5QrcodeSupportedFormats.DATA_MATRIX, 
+                        Html5QrcodeSupportedFormats.CODE_128,
+                        Html5QrcodeSupportedFormats.QR_CODE
+                    ] 
                 };
                 
                 const startVideo = (cameraSettings) => {
                     html5QrCode.start(cameraSettings, config, (text) => { 
                         if(isScannerPaused) return; 
+                        
+                        let rawText = text.trim();
+
+                        // === ПЕРЕХВАТ EXCEL QR-КОДА ===
+                        if (rawText.includes("-") && /\d-\d/.test(rawText)) {
+                            isScannerPaused = true;
+                            playBeep();
+                            if (settings.vibro && navigator.vibrate) navigator.vibrate(100);
+
+                            let items = rawText.split(" ");
+                            let addedCount = 0;
+
+                            items.forEach(function(itemStr) {
+                                let parts = itemStr.split("-");
+                                if (parts.length === 2) {
+                                    let barcode = normalizeBarcode(parts[0]);
+                                    let qty = parseInt(parts[1]);
+
+                                    if (barcode && barcode.length > 0 && !isNaN(qty) && qty > 0) {
+                                        const existingIndex = currentCart.findIndex(item => item.code === barcode);
+                                        if (existingIndex !== -1) { 
+                                            currentCart[existingIndex].qty += qty; 
+                                        } else { 
+                                            currentCart.unshift({ code: barcode, qty: qty }); 
+                                        }
+                                        addedCount++;
+                                    }
+                                }
+                            });
+                            
+                            if (addedCount > 0) {
+                                saveState(); 
+                                renderCart();
+                                stopScanner();
+                                setTimeout(() => alert("Успешно распаковано " + addedCount + " позиций из Excel!"), 200);
+                            } else {
+                                isScannerPaused = false;
+                            }
+                            return;
+                        }
+
+                        // === СТАНДАРТНАЯ ЛОГИКА ДЛЯ 1 ТОВАРА ===
                         let cleanCode = normalizeBarcode(text);
                         if(!cleanCode) return;
                         
@@ -550,8 +597,6 @@
 
                         showNumpadForScan(cleanCode); 
                     }, () => {}).then(() => {
-                        // ОПТИЧЕСКИЙ ОБМАН ДЛЯ IOS: Аппаратный зум 2x.
-                        // Заставляет держать телефон дальше от штрихкода -> Макро-линза не включается!
                         if (isIOS) {
                             setTimeout(() => {
                                 try { html5QrCode.applyVideoConstraints({ advanced: [{ zoom: 2.0 }] }); } catch(e) {}
@@ -564,7 +609,6 @@
                 };
 
                 if (isIOS) {
-                    // Принудительно ищем основную линзу, обходя виртуальные и макро
                     Html5Qrcode.getCameras().then(devices => {
                         let selectedCameraId = null;
                         if (devices && devices.length > 0) {
@@ -586,7 +630,6 @@
                         startVideo({ facingMode: "environment" });
                     });
                 } else {
-                    // Android - стандартный запуск, который и так отлично работает
                     startVideo({ facingMode: "environment" });
                 }
             }, 150);
