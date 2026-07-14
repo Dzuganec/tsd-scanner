@@ -73,23 +73,22 @@ header h1 { margin: 0; font-size: 20px; font-weight: 700; display: flex; align-i
 .btn-manual-add { background: var(--btn-add); color: white; border: none; border-radius: 10px; padding: 0 15px; height: 45px; font-weight: bold; font-size: 14px;}
 
 /* КОРЗИНА */
-.cart-card { display: flex; flex-direction: column; }
+.card cart-card { display: flex; flex-direction: column; }
 .cart-header { padding: 12px 15px; background: var(--table-head); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 14px;}
 .btn-clear { background: #e74c3c; color: white; border: none; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 6px rgba(231, 76, 60, 0.3);}
 .btn-clear:active { transform: scale(0.95); box-shadow: none;}
 
-/* ТАБЛИЦА (С 4 КОЛОНКАМИ) */
+/* ТАБЛИЦА */
 table { width: 100%; table-layout: fixed; border-collapse: collapse; text-align: left; font-size: 14px; }
 th { background: var(--table-head); color: var(--text-muted); padding: 8px 5px; position: sticky; top: 0; border-bottom: 1px solid var(--border-color); z-index: 5; text-align: center; font-size: 12px;}
 
-th:nth-child(1) { width: 35%; } /* Штрихкод */
-th:nth-child(2) { width: 35%; text-align: left; padding-left: 5px; } /* Название */
-th:nth-child(3) { width: 20%; } /* Кол-во */
-th:nth-child(4) { width: 10%; } /* Крестик */
+th:nth-child(1) { width: 35%; }
+th:nth-child(2) { width: 35%; text-align: left; padding-left: 5px; }
+th:nth-child(3) { width: 20%; }
+th:nth-child(4) { width: 10%; }
 
 td { padding: 8px 5px; border-bottom: 1px solid var(--border-color); vertical-align: middle; text-align: center;}
 
-/* Добавлена анимация при долгом нажатии */
 .inline-barcode-container { padding: 2px; cursor: pointer; transition: opacity 0.2s; -webkit-user-select: none; user-select: none; }
 .inline-barcode-container:active { opacity: 0.5; }
 
@@ -194,7 +193,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 <ol>
 <li>Нажми огромную желтую кнопку <b>📷 СКАНИРОВАТЬ</b> внизу экрана или введи артикул вручную.</li>
 <li>Также сканер читает <b>DataMatrix (Честный ЗНАК ✅)</b> — сканер сам вытянет из него Штрих-Код.</li>
-<li>Система автоматически найдет <b>название товара</b> в интернете (если это фабричный штрихкод EAN). Для 8-значных ЛМ-кодов будет указано "Неизвестный товар".</li>
+<li>Система автоматически найдет <b>название товара</b> в интернете, обходя блокировки браузера. Для 8-значных ЛМ-кодов будет указано "Внутренний артикул ЛМ".</li>
 <li><b>Режим «🔄 Непрерывный скан»</b> Камера не закрывается! Сканируй штрихкоды один за другим, а количество вбивай во всплывающем окне.</li>
 <li>Собери карточку из товаров (<b>не более 50 строк</b>).</li>
 <li>Нажми <b>📲 В EXCEL</b>. Яркость экрана виртуально выкрутится на максимум.</li>
@@ -381,7 +380,7 @@ window.startPress = function(e, text) {
 pressTimer = window.setTimeout(() => {
 copyToClipboard(text);
 if (settings.vibro && navigator.vibrate) navigator.vibrate([50, 50, 50]);
-}, 600); // 600ms удержания
+}, 600);
 };
 
 window.cancelPress = function() {
@@ -413,6 +412,15 @@ console.error('Ошибка копирования', err);
 }
 document.body.removeChild(textArea);
 }
+
+// === ВСТРОЕННЫЙ ОФЛАЙН-КАТАЛОГ ОДИНАКОВЫХ И ТЯЖЕЛЫХ ШТРИХКОДОВ ===
+// База данных прямо в приложении. Сюда можно списком вставлять ШК из Excel
+const LOCAL_CATALOG = {
+"5055945577679": "Коробка распределительная уличная IP65",
+"5055945577358": "Светодиодный прожектор 50W 4000K",
+"14630557641291": "Заводской короб кабеля (50 шт.)",
+"4601501761856": "Светодиодная лампа Lexman E27"
+};
 
 // === ОСНОВНАЯ ЛОГИКА ===
 const MASTER_CODES = { "14630557641291": { code: "4601501761856", qtyInBox: 50 } };
@@ -446,39 +454,58 @@ addOrUpdateItem(cleanCode, 1);
 document.getElementById('codeInput').value = '';
 }
 
-// === ИНТЕРНЕТ ПОИСК ТОВАРА ПО 2 API (ДВОЙНАЯ НАДЕЖНОСТЬ) ===
+// === БЕСКОМПРОМИССНЫЙ ПОИСК (ОБХОД CORS + 3 БАЗЫ ДАННЫХ) ===
 async function fetchProductName(barcode) {
-// Внутренние артикулы (менее 10 цифр) в интернете не найти
+// 1. Быстрая проверка во встроенном справочнике
+if (LOCAL_CATALOG[barcode]) {
+updateItemName(barcode, LOCAL_CATALOG[barcode]);
+return;
+}
+
+// Короткие внутренние коды (менее 10 цифр) интернет не найдет
 if (barcode.length < 10) {
-updateItemName(barcode, "Неизвестный товар");
+updateItemName(barcode, "Внутренний артикул ЛМ");
 return;
 }
 
 try {
-// Попытка 1: Поиск в глобальной базе UPCitemDB
-let response = await fetch(`https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`);
-if(response.ok) {
-let data = await response.json();
-if (data.items && data.items.length > 0) {
-updateItemName(barcode, data.items[0].title);
+// 2. База непродовольственных товаров (работает напрямую)
+let resProd = await fetch(`https://world.openproductsfacts.org/api/v0/product/${barcode}.json`);
+if(resProd.ok) {
+let dataProd = await resProd.json();
+if (dataProd.product && dataProd.product.product_name) {
+updateItemName(barcode, dataProd.product.product_name);
 return;
 }
 }
 
-// Попытка 2: Если не нашли, ищем в базе OpenFoodFacts (включает химию/быт)
-let response2 = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
-if(response2.ok) {
-let data2 = await response2.json();
-if (data2.product && data2.product.product_name) {
-updateItemName(barcode, data2.product.product_name);
+// 3. База продовольственных и бытовых товаров (работает напрямую)
+let resFood = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+if(resFood.ok) {
+let dataFood = await resFood.json();
+if (dataFood.product && dataFood.product.product_name) {
+updateItemName(barcode, dataFood.product.product_name);
 return;
 }
 }
+
+// 4. ТЯЖЕЛАЯ АРТИЛЛЕРИЯ: Глобальная база UPCitemDB через CORS-прокси (AllOrigins)
+// Этот метод пробивает любые ограничения браузера на сторонние запросы
+let upcUrl = encodeURIComponent(`https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`);
+let resUpc = await fetch(`https://api.allorigins.win/raw?url=${upcUrl}`);
+if (resUpc.ok) {
+let dataUpc = await resUpc.json();
+if (dataUpc.items && dataUpc.items.length > 0) {
+updateItemName(barcode, dataUpc.items[0].title);
+return;
+}
+}
+
 } catch (error) {
-console.log("API Error:", error);
+console.log("Сетевая ошибка внешних API:", error);
 }
 
-// Если обе базы ничего не нашли
+// Если все базы данных мира оказались бессильны
 updateItemName(barcode, "Неизвестный товар");
 }
 
@@ -503,7 +530,7 @@ fetchProductName(code);
 }
 }
 
-// === ОБНОВЛЕННЫЙ РЕНДЕР С ДОЛГИМ НАЖАТИЕМ ===
+// === РЕНДЕР С ОФЛАЙН КАТАЛОГОМ И КОПИРОВАНИЕМ ===
 function renderCart() {
 const tbody = document.getElementById('cartTableBody');
 tbody.innerHTML = '';
