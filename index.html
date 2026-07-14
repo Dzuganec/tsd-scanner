@@ -13,7 +13,6 @@
 
 <title>Мой ТСД</title>
 
-<!-- Используем один надежный движок для всех устройств -->
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
@@ -79,7 +78,7 @@ header h1 { margin: 0; font-size: 20px; font-weight: 700; display: flex; align-i
 .btn-clear { background: #e74c3c; color: white; border: none; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 6px rgba(231, 76, 60, 0.3);}
 .btn-clear:active { transform: scale(0.95); box-shadow: none;}
 
-/* ОБНОВЛЕННАЯ ТАБЛИЦА НА 4 КОЛОНКИ */
+/* ТАБЛИЦА (С 4 КОЛОНКАМИ) */
 table { width: 100%; table-layout: fixed; border-collapse: collapse; text-align: left; font-size: 14px; }
 th { background: var(--table-head); color: var(--text-muted); padding: 8px 5px; position: sticky; top: 0; border-bottom: 1px solid var(--border-color); z-index: 5; text-align: center; font-size: 12px;}
 
@@ -90,16 +89,19 @@ th:nth-child(4) { width: 10%; } /* Крестик */
 
 td { padding: 8px 5px; border-bottom: 1px solid var(--border-color); vertical-align: middle; text-align: center;}
 
-.inline-barcode-container { padding: 2px; }
-.inline-barcode-container svg { width: 100%; max-width: 140px; height: auto; max-height: 45px; display: block; margin: 0 auto; background-color: #ffffff; padding: 4px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-.code-cell { font-family: monospace; font-size: 14px; font-weight: bold; color: var(--text-main); display: block; }
+/* Добавлена анимация при долгом нажатии */
+.inline-barcode-container { padding: 2px; cursor: pointer; transition: opacity 0.2s; -webkit-user-select: none; user-select: none; }
+.inline-barcode-container:active { opacity: 0.5; }
+
+.inline-barcode-container svg { width: 100%; max-width: 140px; height: auto; max-height: 45px; display: block; margin: 0 auto; background-color: #ffffff; padding: 4px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); pointer-events: none;}
+.code-cell { font-family: monospace; font-size: 14px; font-weight: bold; color: var(--text-main); display: block; pointer-events: none;}
 
 .product-name-cell { font-size: 11px; line-height: 1.3; color: var(--text-muted); text-align: left; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; padding-left: 5px; font-weight: 500;}
 
 .qty-box { background: var(--input-bg); border: 2px solid var(--border-color); color: var(--text-main); font-weight: bold; font-size: 16px; border-radius: 8px; padding: 8px 0; width: 100%; cursor: pointer; display: block; transition: 0.2s;}
 .qty-box:active { background: var(--border-color); transform: scale(0.95); }
 .btn-remove { background: none; border: none; color: #e74c3c; font-size: 20px; padding: 10px; width: 100%;}
-.no-data { padding: 30px; color: var(--text-muted); font-style: italic; text-align: center;}
+.no-data { padding: 30px; color: var(--text-muted); font-style: italic; text-align: center; }
 
 /* НИЖНЯЯ ПЛАВАЮЩАЯ ПАНЕЛЬ */
 .bottom-action-bar {
@@ -129,7 +131,7 @@ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px;
 .btn-torch { background: #34495e; color: white; }
 .btn-close { background: var(--border-color); color: var(--text-main); }
 
-/* === NUMPAD (КАЛЬКУЛЯТОР) === */
+/* === NUMPAD === */
 .numpad-modal { z-index: 10000; justify-content: flex-end; }
 .numpad-content { background: var(--numpad-bg); padding: 15px 20px 25px; }
 .numpad-title { font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0; text-transform: uppercase;}
@@ -192,15 +194,14 @@ input:checked + .slider:before { transform: translateX(22px); }
 <ol>
 <li>Нажми огромную желтую кнопку <b>📷 СКАНИРОВАТЬ</b> внизу экрана или введи артикул вручную.</li>
 <li>Также сканер читает <b>DataMatrix (Честный ЗНАК ✅)</b> — сканер сам вытянет из него Штрих-Код.</li>
-<li>Система автоматически найдет <b>название товара</b> в интернете (если это фабричный штрихкод EAN). Для 8-значных ЛМ-кодов будет указано "Внутренний артикул ЛМ".</li>
+<li>Система автоматически найдет <b>название товара</b> в интернете (если это фабричный штрихкод EAN). Для 8-значных ЛМ-кодов будет указано "Неизвестный товар".</li>
 <li><b>Режим «🔄 Непрерывный скан»</b> Камера не закрывается! Сканируй штрихкоды один за другим, а количество вбивай во всплывающем окне.</li>
 <li>Собери карточку из товаров (<b>не более 50 строк</b>).</li>
-<li>В меню <b>⚙️ Настройки</b> можно отключить <b>🔊 Звук (Пик)</b>, <b>📳 Вибрацию</b> или <b>Режим «🔄 Непрерывного сканирования»</b>.</li>
 <li>Нажми <b>📲 В EXCEL</b>. Яркость экрана виртуально выкрутится на максимум.</li>
 <li>В Excel нажми кнопку <b>«Получить данные из QR-кода»</b> и отсканируй QR с экрана телефона.</li>
 </ol>
 <div class="browser-note">
-💡 <b>Важно:</b> Для быстрой работы камеры используйте браузер <b>Google Chrome</b> или <b>Safari</b>!
+💡 <b>Удержание:</b> Нажми и удерживай палец на штрихкоде в таблице, чтобы скопировать его в буфер обмена.
 </div>
 </div>
 </details>
@@ -211,7 +212,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 <button class="btn-manual-add" onclick="manualAdd()">Добавить</button>
 </div>
 
-<!-- КОРЗИНА -->
+<!-- КОРЗИНА С ТАБЛИЦЕЙ И НАЗВАНИЕМ -->
 <div class="card cart-card">
 <div class="cart-header">
 <span id="cartStats">0 строк (0 шт.)</span>
@@ -373,6 +374,46 @@ osc.start(); osc.stop(audioCtx.currentTime + 0.1);
 } catch(e) {}
 }
 
+// === ДОЛГОЕ НАЖАТИЕ ДЛЯ КОПИРОВАНИЯ ===
+let pressTimer;
+
+window.startPress = function(e, text) {
+pressTimer = window.setTimeout(() => {
+copyToClipboard(text);
+if (settings.vibro && navigator.vibrate) navigator.vibrate([50, 50, 50]);
+}, 600); // 600ms удержания
+};
+
+window.cancelPress = function() {
+if (pressTimer) clearTimeout(pressTimer);
+};
+
+window.copyToClipboard = function(text) {
+if (navigator.clipboard && window.isSecureContext) {
+navigator.clipboard.writeText(text).then(() => {
+alert("Штрихкод скопирован: " + text);
+}).catch(err => fallbackCopyTextToClipboard(text));
+} else {
+fallbackCopyTextToClipboard(text);
+}
+};
+
+function fallbackCopyTextToClipboard(text) {
+var textArea = document.createElement("textarea");
+textArea.value = text;
+textArea.style.position = "fixed";
+document.body.appendChild(textArea);
+textArea.focus();
+textArea.select();
+try {
+document.execCommand('copy');
+alert("Штрихкод скопирован: " + text);
+} catch (err) {
+console.error('Ошибка копирования', err);
+}
+document.body.removeChild(textArea);
+}
+
 // === ОСНОВНАЯ ЛОГИКА ===
 const MASTER_CODES = { "14630557641291": { code: "4601501761856", qtyInBox: 50 } };
 let currentCart = [];
@@ -405,14 +446,16 @@ addOrUpdateItem(cleanCode, 1);
 document.getElementById('codeInput').value = '';
 }
 
-// === ФУНКЦИИ ДЛЯ API ПОИСКА ===
+// === ИНТЕРНЕТ ПОИСК ТОВАРА ПО 2 API (ДВОЙНАЯ НАДЕЖНОСТЬ) ===
 async function fetchProductName(barcode) {
-// Если это ЛМ-код или короткий артикул, API его не найдет
+// Внутренние артикулы (менее 10 цифр) в интернете не найти
 if (barcode.length < 10) {
-updateItemName(barcode, "Внутренний артикул ЛМ");
+updateItemName(barcode, "Неизвестный товар");
 return;
 }
+
 try {
+// Попытка 1: Поиск в глобальной базе UPCitemDB
 let response = await fetch(`https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`);
 if(response.ok) {
 let data = await response.json();
@@ -421,9 +464,21 @@ updateItemName(barcode, data.items[0].title);
 return;
 }
 }
+
+// Попытка 2: Если не нашли, ищем в базе OpenFoodFacts (включает химию/быт)
+let response2 = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+if(response2.ok) {
+let data2 = await response2.json();
+if (data2.product && data2.product.product_name) {
+updateItemName(barcode, data2.product.product_name);
+return;
+}
+}
 } catch (error) {
 console.log("API Error:", error);
 }
+
+// Если обе базы ничего не нашли
 updateItemName(barcode, "Неизвестный товар");
 }
 
@@ -448,7 +503,7 @@ fetchProductName(code);
 }
 }
 
-// === ОБНОВЛЕННЫЙ РЕНДЕР С 4 СТОЛБЦАМИ ===
+// === ОБНОВЛЕННЫЙ РЕНДЕР С ДОЛГИМ НАЖАТИЕМ ===
 function renderCart() {
 const tbody = document.getElementById('cartTableBody');
 tbody.innerHTML = '';
@@ -460,7 +515,12 @@ currentCart.forEach((item, index) => {
 const tr = document.createElement('tr');
 let displayName = item.name || "Неизвестный товар";
 tr.innerHTML = `
-<td class="inline-barcode-container"><svg id="barcode-${index}"></svg></td>
+<td class="inline-barcode-container"
+onmousedown="startPress(event, '${item.code}')" onmouseup="cancelPress()" onmouseleave="cancelPress()"
+ontouchstart="startPress(event, '${item.code}')" ontouchend="cancelPress()" ontouchcancel="cancelPress()"
+oncontextmenu="return false;">
+<svg id="barcode-${index}"></svg>
+</td>
 <td class="product-name-cell">${displayName}</td>
 <td><div class="qty-box" onclick="showNumpadForEdit(${index})">${item.qty} шт.</div></td>
 <td><button class="btn-remove" onclick="removeItem(${index})">✖</button></td>`;
@@ -472,7 +532,7 @@ currentCart.forEach((item, index) => {
 try { JsBarcode("#barcode-" + index, item.code, { format: "EAN13", lineColor: "#000", background: "transparent", width: 1.8, height: 45, displayValue: true, fontSize: 13, margin: 2});
 } catch (e) {
 try { JsBarcode("#barcode-" + index, item.code, { format: "CODE128", lineColor: "#000", background: "transparent", width: 1.5, height: 40, displayValue: true, fontSize: 13, margin: 2 });
-} catch (err) { document.getElementById("barcode-" + index).outerHTML = `<span class="code-cell">${item.code}</span>`; }
+} catch (err) { document.getElementById("barcode-" + index).outerHTML = `<span class="code-cell" style="pointer-events:none;">${item.code}</span>`; }
 }
 });
 }
@@ -483,21 +543,12 @@ document.getElementById('cartStats').innerText = `${currentCart.length} стро
 window.removeItem = function(index) { currentCart.splice(index, 1); saveState(); renderCart(); }
 window.clearCart = function() { if(confirm("Очистить корзину?")) { currentCart = []; saveState(); renderCart(); } }
 
-// === NUMPAD (КАЛЬКУЛЯТОР КОЛИЧЕСТВА) ===
-let numpadValue = "1";
-let isNewNumpadEntry = true;
-let numpadMode = "";
-let numpadTargetCode = "";
-let numpadTargetIndex = -1;
-let numpadTargetBoxQty = 1;
-
-function updateNumpadDisplay() {
-document.getElementById('numpadDisplay').innerText = numpadValue === "" ? "0" : numpadValue;
-}
+// === NUMPAD ===
+let numpadValue = "1"; let isNewNumpadEntry = true; let numpadMode = ""; let numpadTargetCode = ""; let numpadTargetIndex = -1; let numpadTargetBoxQty = 1;
+function updateNumpadDisplay() { document.getElementById('numpadDisplay').innerText = numpadValue === "" ? "0" : numpadValue; }
 
 function showNumpadForScan(code) {
-numpadMode = 'scan'; numpadTargetCode = code; isNewNumpadEntry = true;
-numpadTargetBoxQty = 1;
+numpadMode = 'scan'; numpadTargetCode = code; isNewNumpadEntry = true; numpadTargetBoxQty = 1;
 for(let key in MASTER_CODES) { if(MASTER_CODES[key].code === code && MASTER_CODES[key].qtyInBox) { numpadTargetBoxQty = MASTER_CODES[key].qtyInBox; break; } }
 numpadValue = numpadTargetBoxQty.toString();
 document.getElementById('numpadTitle').innerText = "ШК: " + code;
@@ -510,105 +561,78 @@ document.getElementById('numpadTitle').innerText = "Изменить: " + curren
 updateNumpadDisplay(); document.getElementById('numpadModal').style.display = 'flex';
 }
 
-function numPress(n) {
-if(isNewNumpadEntry || numpadValue === "0") {
-numpadValue = n.toString();
-isNewNumpadEntry = false;
-} else {
-if(numpadValue.length < 4) numpadValue += n.toString();
-}
-updateNumpadDisplay();
-}
-
-function numClear() {
-numpadValue = "0";
-isNewNumpadEntry = true;
-updateNumpadDisplay();
-}
-
-function numBackspace() {
-if (isNewNumpadEntry) return;
-numpadValue = numpadValue.slice(0, -1);
-if (numpadValue === "") {
-numpadValue = "0";
-isNewNumpadEntry = true;
-}
-updateNumpadDisplay();
-}
+function numPress(n) { if(isNewNumpadEntry || numpadValue === "0") { numpadValue = n.toString(); isNewNumpadEntry = false; } else { if(numpadValue.length < 4) numpadValue += n.toString(); } updateNumpadDisplay(); }
+function numClear() { numpadValue = "0"; isNewNumpadEntry = true; updateNumpadDisplay(); }
+function numBackspace() { if (isNewNumpadEntry) return; numpadValue = numpadValue.slice(0, -1); if (numpadValue === "") { numpadValue = "0"; isNewNumpadEntry = true; } updateNumpadDisplay(); }
 
 function numCancel() {
 document.getElementById('numpadModal').style.display = 'none';
-if (numpadMode === 'scan') {
-if (settings.continuous) {
-setTimeout(() => { isScannerPaused = false; }, 500);
-} else {
-stopScanner();
-}
-}
+if (numpadMode === 'scan') { if (settings.continuous) { setTimeout(() => { isScannerPaused = false; }, 500); } else { stopScanner(); } }
 }
 
 function numConfirm() {
-let finalQty = parseInt(numpadValue) || 1;
-if(finalQty < 1) finalQty = 1;
+let finalQty = parseInt(numpadValue) || 1; if(finalQty < 1) finalQty = 1;
 document.getElementById('numpadModal').style.display = 'none';
 
 if(numpadMode === 'scan') {
-if(numpadTargetBoxQty > 1 && finalQty === numpadTargetBoxQty) addOrUpdateItem(numpadTargetCode, finalQty);
-else addOrUpdateItem(numpadTargetCode, finalQty);
-
-if (settings.continuous) {
-setTimeout(() => { isScannerPaused = false; }, 500);
-} else {
-stopScanner();
-}
+addOrUpdateItem(numpadTargetCode, finalQty);
+if (settings.continuous) { setTimeout(() => { isScannerPaused = false; }, 500); } else { stopScanner(); }
 } else if(numpadMode === 'edit') {
 currentCart[numpadTargetIndex].qty = finalQty;
 saveState(); renderCart();
 }
 }
 
-// === УМНЫЙ СКАНЕР ===
+// === СКАНЕР ===
 let isScannerPaused = false;
 
 function startScanner() {
-initAudio();
-isScannerPaused = false;
+initAudio(); isScannerPaused = false;
 document.getElementById('scannerModal').style.display = 'flex';
-
 let isIOS = (/iPad|iPhone|iPod/.test(navigator.userAgent)) || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
-
-if (isIOS) {
-document.getElementById('iosScanHint').style.display = 'block';
-} else {
-document.getElementById('iosScanHint').style.display = 'none';
-}
+if (isIOS) document.getElementById('iosScanHint').style.display = 'block'; else document.getElementById('iosScanHint').style.display = 'none';
 
 setTimeout(() => {
 if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-
-const config = {
-fps: 20,
-qrbox: { width: 260, height: 140 },
-formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.CODE_128]
-};
+const config = { fps: 20, qrbox: { width: 260, height: 260 }, formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.QR_CODE] };
 
 const startVideo = (cameraSettings) => {
 html5QrCode.start(cameraSettings, config, (text) => {
 if(isScannerPaused) return;
+let rawText = text.trim();
+
+if (rawText.includes("-") && /\d-\d/.test(rawText)) {
+isScannerPaused = true; playBeep();
+if (settings.vibro && navigator.vibrate) navigator.vibrate(100);
+let items = rawText.split(" ");
+let addedCount = 0;
+items.forEach(function(itemStr) {
+let parts = itemStr.split("-");
+if (parts.length === 2) {
+let barcode = normalizeBarcode(parts[0]);
+let qty = parseInt(parts[1]);
+if (barcode && barcode.length > 0 && !isNaN(qty) && qty > 0) {
+addOrUpdateItem(barcode, qty);
+addedCount++;
+}
+}
+});
+if (addedCount > 0) {
+stopScanner();
+setTimeout(() => alert("Успешно распаковано " + addedCount + " позиций из Excel!"), 200);
+} else { isScannerPaused = false; }
+return;
+}
+
 let cleanCode = normalizeBarcode(text);
 if(!cleanCode) return;
 
-isScannerPaused = true;
-playBeep();
+isScannerPaused = true; playBeep();
 if (settings.vibro && navigator.vibrate) navigator.vibrate(100);
-
 showNumpadForScan(cleanCode);
+
 }, () => {}).then(() => {
-if (isIOS) {
-setTimeout(() => {
-try { html5QrCode.applyVideoConstraints({ advanced: [{ zoom: 2.0 }] }); } catch(e) {}
-}, 400);
-}
+if (isIOS) setTimeout(() => { try { html5QrCode.applyVideoConstraints({ advanced: [{ zoom: 2.0 }] }); } catch(e) {} }, 400);
 }).catch(err => {
 document.getElementById('scannerModal').style.display = 'none';
 alert("Ошибка камеры! Проверьте разрешения в браузере.");
@@ -621,24 +645,13 @@ let selectedCameraId = null;
 if (devices && devices.length > 0) {
 let backCams = devices.filter(d => d.label.toLowerCase().includes("back") || d.label.toLowerCase().includes("задн"));
 if (backCams.length > 0) {
-let mainCam = backCams.find(d => {
-let l = d.label.toLowerCase();
-return !l.includes("ultra") && !l.includes("tele") && !l.includes("dual") && !l.includes("triple") && !l.includes("сверх") && !l.includes("теле") && !l.includes("двойн") && !l.includes("тройн");
-});
+let mainCam = backCams.find(d => { let l = d.label.toLowerCase(); return !l.includes("ultra") && !l.includes("tele") && !l.includes("dual") && !l.includes("triple") && !l.includes("сверх") && !l.includes("теле") && !l.includes("двойн") && !l.includes("тройн"); });
 selectedCameraId = mainCam ? mainCam.id : backCams[0].id;
-} else {
-selectedCameraId = devices[devices.length - 1].id;
-}
+} else { selectedCameraId = devices[devices.length - 1].id; }
 startVideo(selectedCameraId);
-} else {
-startVideo({ facingMode: "environment" });
-}
-}).catch(err => {
-startVideo({ facingMode: "environment" });
-});
-} else {
-startVideo({ facingMode: "environment" });
-}
+} else { startVideo({ facingMode: "environment" }); }
+}).catch(err => { startVideo({ facingMode: "environment" }); });
+} else { startVideo({ facingMode: "environment" }); }
 }, 150);
 }
 
@@ -659,27 +672,13 @@ localStorage.setItem('tsd_archive', JSON.stringify(history));
 window.openArchive = function() {
 let history = JSON.parse(localStorage.getItem('tsd_archive') || '[]');
 let listDiv = document.getElementById('archiveList');
-
 if (history.length) {
 listDiv.className = 'archive-list';
 listDiv.innerHTML = history.map((record, index) => {
-let totalItems = 0;
-record.cart.forEach(i => totalItems += i.qty);
-return `
-<div class="archive-item">
-<div class="archive-info">
-<span class="archive-date">${record.date}</span>
-<span class="archive-stats">Строк: ${record.cart.length} | Шт: ${totalItems}</span>
-</div>
-<button class="archive-btn" onclick="restoreFromArchive(${index})">🔄 Вернуть</button>
-</div>
-`;
+let totalItems = 0; record.cart.forEach(i => totalItems += i.qty);
+return `<div class="archive-item"><div class="archive-info"><span class="archive-date">${record.date}</span><span class="archive-stats">Строк: ${record.cart.length} | Шт: ${totalItems}</span></div><button class="archive-btn" onclick="restoreFromArchive(${index})">🔄 Вернуть</button></div>`;
 }).join('');
-} else {
-listDiv.className = '';
-listDiv.innerHTML = '<p class="no-data" style="margin: 20px 0;">Архив пуст</p>';
-}
-
+} else { listDiv.className = ''; listDiv.innerHTML = '<p class="no-data" style="margin: 20px 0;">Архив пуст</p>'; }
 document.getElementById('archiveModal').style.display = 'flex';
 }
 
@@ -696,7 +695,6 @@ saveToArchive();
 let payload = currentCart.map(item => `${item.code}-${item.qty}`).join(' ');
 let tempDiv = document.createElement("div");
 new QRCode(tempDiv, { text: payload, width: 300, height: 300, correctLevel : QRCode.CorrectLevel.L });
-
 setTimeout(() => {
 let qrCanvasRaw = tempDiv.querySelector("canvas");
 if(qrCanvasRaw) {
@@ -716,11 +714,8 @@ document.getElementById("qrModal").style.display = "flex";
 };
 
 window.downloadQR = function() {
-if(!generatedImageUrl) return;
-let link = document.createElement("a");
-link.download = `TSD_Export_${new Date().toLocaleString('ru-RU').replace(/[\/:\s,]/g, '_')}.png`;
-link.href = generatedImageUrl;
-link.click();
+if(!generatedImageUrl) return; let link = document.createElement("a");
+link.download = `TSD_Export_${new Date().toLocaleString('ru-RU').replace(/[\/:\s,]/g, '_')}.png`; link.href = generatedImageUrl; link.click();
 };
 
 window.shareToExcel = function() {
