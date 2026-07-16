@@ -100,6 +100,8 @@
             margin-bottom: 20px; 
             display: inline-block;
             animation: glowBrightness 2.5s infinite ease-in-out;
+            /* Отступ для Dynamic Island на iOS */
+            padding-top: max(20px, env(safe-area-inset-top)); 
         }
 
         /* === ШАПКА === */
@@ -150,8 +152,27 @@
         
         .qty-box { background: var(--input-bg); border: 2px solid var(--border-color); color: var(--text-main); font-weight: 800; font-size: 16px; border-radius: 12px; padding: 10px 0; width: 100%; cursor: pointer; display: block; transition: 0.2s;}
         .qty-box:active { background: var(--border-color); transform: scale(0.92); }
-        .btn-remove { background: rgba(255, 71, 87, 0.1); color: #ff4757; border: none; font-size: 18px; width: 36px; height: 36px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; margin: 0 auto;}
+        
+        /* Исправленный крестик для iOS */
+        .btn-remove { 
+            -webkit-appearance: none; appearance: none;
+            background: rgba(255, 71, 87, 0.1); 
+            color: #ff4757; 
+            -webkit-text-fill-color: #ff4757; /* Принудительный цвет для iPhone */
+            border: none; 
+            font-size: 18px; 
+            width: 36px; height: 36px; 
+            border-radius: 12px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            display: flex; align-items: center; justify-content: center; 
+            margin: 0 auto;
+            padding: 0;
+            opacity: 1 !important;
+        }
         .btn-remove:active { transform: scale(0.8) rotate(15deg); }
+        
         .no-data { padding: 40px 20px; color: var(--text-muted); font-weight: 700; text-align: center; background: var(--bg-card); border-radius: var(--radius-md); font-size: 16px; box-shadow: var(--shadow-soft);}
 
         /* === ПЛАВАЮЩАЯ ПАНЕЛЬ СНИЗУ === */
@@ -165,10 +186,18 @@
             border: none; border-radius: 20px; font-weight: 800; color: white; 
             display: flex; align-items: center; justify-content: center; gap: 8px; 
             transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); height: 60px; 
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 15px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px;
         }
         .btn-fab:active { transform: scale(0.95) translateY(2px); box-shadow: none !important; }
-        .btn-fab-scan { flex: 1; background: linear-gradient(135deg, #FF9800 0%, #d35400 100%); font-size: 17px; box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3); animation: pulseSoft 2s infinite; }
+        
+        /* Исправленная кнопка сканирования */
+        .btn-fab-scan { 
+            flex: 1; min-width: 0; /* Чтобы текст не съедал иконку */
+            background: linear-gradient(135deg, #FF9800 0%, #d35400 100%); 
+            font-size: clamp(13px, 4vw, 16px); 
+            box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3); 
+            animation: pulseSoft 2s infinite; 
+        }
         .btn-fab-qr { flex: 0 0 auto; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); font-size: 15px; padding: 0 20px; box-shadow: 0 8px 20px rgba(142, 68, 173, 0.3); }
 
         /* === МОДАЛЬНЫЕ ОКНА (BOTTOM SHEETS) С ПОДДЕРЖКОЙ СКРОЛЛА === */
@@ -181,10 +210,9 @@
             animation: slideInUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); 
             position: relative; 
             padding-bottom: calc(20px + env(safe-area-inset-bottom));
-            max-height: 85vh; /* Ограничение высоты окна */
+            max-height: 85vh; /* Ограничение высоты окна для скролла */
             overflow-y: auto; /* Включаем прокрутку внутри окна */
             overscroll-behavior: contain; /* Предотвращаем прокрутку фона */
-            /* Плавное поведение при скролле и свайпе */
             touch-action: pan-y;
         }
         
@@ -240,6 +268,11 @@
         .archive-stats { color: var(--text-muted); font-size: 14px; font-weight: 700;}
         .archive-btn { background: var(--btn-add); color: white; border: none; padding: 12px 20px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 14px; transition: 0.2s; box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2);}
         .archive-btn:active { transform: scale(0.9); }
+        
+        /* === ОКНО УВЕЛИЧЕНИЯ ШТРИХКОДА === */
+        #zoomModal { background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); justify-content: center; align-items: center;}
+        .zoom-container { background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); box-shadow: 0 15px 40px rgba(0,0,0,0.3); text-align: center; width: 90%; max-width: 450px;}
+        .zoom-container svg { width: 100%; height: auto; max-height: 200px; display: block; margin: 0 auto;}
     </style>
 </head>
 <body>
@@ -311,9 +344,9 @@
                 <div style="margin-top: 25px; padding-top: 20px; border-top: 2px dashed var(--border-color); text-align: left;">
                     <h4 style="margin: 0 0 10px 0; color: var(--text-main); font-weight: 800; font-size: 16px;">ℹ️ О приложении</h4>
                     <p style="margin: 0 0 12px 0; font-size: 14px; color: var(--text-muted); line-height: 1.5;">
-                        «Мой ТСД» — это автономный веб-терминал сбора данных, созданный для быстрого и удобного сбора штрихкодов с помощью камеры смартфона, ускорения инвентаризации, подсчёт браковоного товара и мгновенного переноса данных в Excel.
+                        «Мой ТСД» — это автономный веб-терминал сбора данных, созданный для быстрого и удобного сбора штрихкодов с помощью камеры смартфона, ускорения инвентаризации, сборки заказов и их мгновенного переноса в Excel.
                     </p>
-                    <p style="margin: 0; font-size: 14px; font-weight: 800; color: var(--text-main);">👨‍💻 Разработчик: Джугань Сергей Александрович</p>
+                    <p style="margin: 0; font-size: 14px; font-weight: 800; color: var(--text-main);">👨‍💻 Разработчик: Джугань Сергей</p>
                 </div>
             </div>
             <button class="btn-modal btn-close" onclick="document.getElementById('instructionModal').style.display='none'">Понятно</button>
@@ -398,6 +431,16 @@
         </div>
     </div>
 
+    <!-- ОКНО УВЕЛИЧЕННОГО ШТРИХКОДА ПО ТАПУ -->
+    <div class="modal-overlay" id="zoomModal" onclick="this.style.display='none'">
+        <div class="zoom-container">
+            <div style="background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                <svg id="zoomedBarcodeSvg"></svg>
+            </div>
+            <p style="color: var(--text-main); margin: 0; font-weight: 800; font-size: 15px;">Нажмите в любом месте, чтобы закрыть</p>
+        </div>
+    </div>
+
     <script>
         // === СВАЙП ВНИЗ ДЛЯ ЗАКРЫТИЯ (BOTTOM SHEET) ===
         document.addEventListener('DOMContentLoaded', () => {
@@ -407,7 +450,6 @@
                 let isSwiping = false;
 
                 content.addEventListener('touchstart', function(e) {
-                    // Разрешаем свайп только если доскроллили контент до самого верха
                     if (content.scrollTop > 0) return; 
                     touchStartY = e.touches[0].clientY;
                     touchCurrentY = touchStartY;
@@ -420,10 +462,9 @@
                     touchCurrentY = e.touches[0].clientY;
                     let deltaY = touchCurrentY - touchStartY;
                     
-                    // Тянем окно вниз за пальцем
                     if (deltaY > 0) {
                         content.style.transform = `translateY(${deltaY}px)`;
-                        if (e.cancelable) e.preventDefault(); // Блокируем скролл страницы на фоне
+                        if (e.cancelable) e.preventDefault(); 
                     }
                 }, {passive: false});
 
@@ -432,10 +473,9 @@
                     isSwiping = false;
                     let deltaY = touchCurrentY - touchStartY;
                     
-                    // Плавный возврат или закрытие
                     content.style.transition = 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1)';
                     
-                    if (deltaY > 80) { // Если потянули больше чем на 80px вниз
+                    if (deltaY > 80) { 
                         let modal = content.closest('.modal-overlay');
                         if (modal.id === 'scannerModal') stopScanner();
                         else if (modal.id === 'numpadModal') numCancel();
@@ -444,7 +484,6 @@
                         
                         setTimeout(() => { content.style.transform = ''; }, 200);
                     } else {
-                        // Возвращаем окно на место
                         content.style.transform = 'translateY(0)';
                         setTimeout(() => { content.style.transform = ''; }, 200);
                     }
@@ -504,11 +543,14 @@
             } catch(e) {}
         }
 
-        // === ДОЛГОЕ НАЖАТИЕ ДЛЯ КОПИРОВАНИЯ ===
+        // === ДОЛГОЕ НАЖАТИЕ (КОПИРОВАНИЕ) И КОРОТКОЕ (УВЕЛИЧЕНИЕ) ===
         let pressTimer;
+        let isLongPress = false;
         
         window.startPress = function(e, text) {
+            isLongPress = false;
             pressTimer = window.setTimeout(() => {
+                isLongPress = true;
                 copyToClipboard(text);
                 if (settings.vibro && navigator.vibrate) navigator.vibrate([50, 50, 50]);
             }, 500); 
@@ -516,6 +558,18 @@
         
         window.cancelPress = function() {
             if (pressTimer) clearTimeout(pressTimer);
+        };
+
+        window.handleBarcodeClick = function(code) {
+            if (!isLongPress) {
+                document.getElementById('zoomModal').style.display = 'flex';
+                try { 
+                    JsBarcode("#zoomedBarcodeSvg", code, { format: "EAN13", width: 2.5, height: 100, displayValue: true, fontSize: 20, margin: 10});
+                } catch (e) { 
+                    try { JsBarcode("#zoomedBarcodeSvg", code, { format: "CODE128", width: 2, height: 80, displayValue: true, fontSize: 20, margin: 10 });
+                    } catch (err) {}
+                }
+            }
         };
 
         window.copyToClipboard = function(text) {
@@ -592,6 +646,7 @@
                         <td class="inline-barcode-container"
                             onmousedown="startPress(event, '${item.code}')" onmouseup="cancelPress()" onmouseleave="cancelPress()" 
                             ontouchstart="startPress(event, '${item.code}')" ontouchend="cancelPress()" ontouchcancel="cancelPress()"
+                            onclick="handleBarcodeClick('${item.code}')"
                             oncontextmenu="return false;">
                             <svg id="barcode-${index}"></svg>
                         </td>
@@ -658,7 +713,7 @@
             }
         }
 
-        // === СКАНЕР ===
+        // === ИСПРАВЛЕННЫЙ СКАНЕР (ДЛЯ iOS, ВЕРТИКАЛЬНЫХ И QR/DATAMATRIX) ===
         let isScannerPaused = false;
 
         function startScanner() {
@@ -670,7 +725,21 @@
             
             setTimeout(() => {
                 if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-                const config = { fps: 20, qrbox: { width: 260, height: 260 }, formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.QR_CODE] };
+                
+                // ВАЖНО: Поддержка DataMatrix, QR и disableFlip для сканирования вертикальных кодов на iPhone
+                const config = { 
+                    fps: 15, 
+                    qrbox: { width: 280, height: 280 }, 
+                    disableFlip: false,
+                    formatsToSupport: [
+                        Html5QrcodeSupportedFormats.EAN_13, 
+                        Html5QrcodeSupportedFormats.EAN_8, 
+                        Html5QrcodeSupportedFormats.UPC_A, 
+                        Html5QrcodeSupportedFormats.DATA_MATRIX, 
+                        Html5QrcodeSupportedFormats.CODE_128, 
+                        Html5QrcodeSupportedFormats.QR_CODE
+                    ] 
+                };
                 
                 const startVideo = (cameraSettings) => {
                     html5QrCode.start(cameraSettings, config, (text) => { 
@@ -719,7 +788,7 @@
                         if (devices && devices.length > 0) {
                             let backCams = devices.filter(d => d.label.toLowerCase().includes("back") || d.label.toLowerCase().includes("задн"));
                             if (backCams.length > 0) {
-                                let mainCam = backCams.find(d => { let l = d.label.toLowerCase(); return !l.includes("ultra") && !l.includes("tele") && !l.includes("dual") && !l.includes("triple") && !l.includes("сверх") && !l.includes("теле") && !l.includes("двойн") && !l.includes("тройн"); });
+                                let mainCam = backCams.find(d => { let l = d.label.toLowerCase(); return !l.includes("ultra") && !l.includes("сверх"); });
                                 selectedCameraId = mainCam ? mainCam.id : backCams[0].id;
                             } else { selectedCameraId = devices[devices.length - 1].id; }
                             startVideo(selectedCameraId);
