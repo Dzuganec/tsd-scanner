@@ -1,93 +1,928 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#27ae60" id="meta-theme-color">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#27ae60" id="meta-theme-color">
 
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2327ae60'/><text y='68' x='15' font-size='65'>📦</text></svg>">
-<link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2327ae60'/><text y='68' x='15' font-size='65'>📦</text></svg>">
+    <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
 
-<!-- Подключаем дружелюбный шрифт Nunito -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-<title>Мой ТСД</title>
+    <title>Мой ТСД</title>
 
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
-<style>
-/* === ПЕРЕМЕННЫЕ ТЕМ И ДИЗАЙНА === */
-:root {
-/* Светлая тема */
---bg-body: #f2f4f7;
---bg-card: #ffffff;
---bg-card-rgb: 255, 255, 255;
---text-main: #1a1a1a;
---text-muted: #8e8e93;
-/* Зеленая шапка */
---header-bg: linear-gradient(135deg, #1e3c28 0%, #27ae60 100%);
---header-text: #ffffff;
---header-icon-bg: rgba(255, 255, 255, 0.15);
---header-icon-hover: rgba(255, 255, 255, 0.25);
+    <style>
+        /* === ПЕРЕМЕННЫЕ ТЕМ И ДИЗАЙНА === */
+        :root {
+            --bg-body: #f2f4f7;
+            --bg-card: #ffffff;
+            --bg-card-rgb: 255, 255, 255;
+            --text-main: #1a1a1a;
+            --text-muted: #8e8e93;
+            --header-bg: linear-gradient(135deg, #1e3c28 0%, #27ae60 100%);
+            --header-text: #ffffff;
+            --header-icon-bg: rgba(255, 255, 255, 0.15);
+            --header-icon-hover: rgba(255, 255, 255, 0.25);
+            --border-color: #e5e5ea;
+            --input-bg: #f2f4f7;
+            --input-border: #e5e5ea;
+            --btn-add: #27ae60;
+            --shadow-soft: 0 4px 20px rgba(0,0,0,0.04);
+            --shadow-hover: 0 8px 25px rgba(0,0,0,0.08);
+            --modal-bg: rgba(0,0,0,0.5);
+            --modal-backdrop: blur(8px);
+            --numpad-bg: #f2f4f7;
+            --numpad-btn: #ffffff;
+            --info-bg: #e8f8f5; --info-text: #117a65;
+            --warn-bg: #fff3cd; --warn-text: #856404;
+            --radius-sm: 12px; --radius-md: 20px; --radius-lg: 28px;
+        }
 
---border-color: #e5e5ea;
---input-bg: #f2f4f7;
---input-border: #e5e5ea;
---btn-add: #27ae60;
---shadow-soft: 0 4px 20px rgba(0,0,0,0.04);
---shadow-hover: 0 8px 25px rgba(0,0,0,0.08);
---modal-bg: rgba(0,0,0,0.5);
---modal-backdrop: blur(8px);
---numpad-bg: #f2f4f7;
---numpad-btn: #ffffff;
---info-bg: #e8f8f5; --info-text: #117a65;
---warn-bg: #fff3cd; --warn-text: #856404;
---radius-sm: 12px; --radius-md: 20px; --radius-lg: 28px;
-}
+        [data-theme="dark"] {
+            --bg-body: #151618;
+            --bg-card: #26282a;
+            --bg-card-rgb: 38, 40, 42;
+            --text-main: #f5f6f8;
+            --text-muted: #9ba0a6;
+            --header-bg: linear-gradient(135deg, #0b110e 0%, #15291d 100%);
+            --header-text: #e0e0e0;
+            --header-icon-bg: rgba(255, 255, 255, 0.08);
+            --header-icon-hover: rgba(255, 255, 255, 0.15);
+            --border-color: #3a3f45;
+            --input-bg: #151618;
+            --input-border: #3a3f45;
+            --btn-add: #2ecc71;
+            --shadow-soft: 0 8px 24px rgba(0,0,0,0.2);
+            --shadow-hover: 0 12px 32px rgba(46, 204, 113, 0.15);
+            --modal-bg: rgba(0,0,0,0.7);
+            --numpad-bg: #151618;
+            --numpad-btn: #26282a;
+            --info-bg: #153229; --info-text: #66cdaa;
+            --warn-bg: #3a2e12; --warn-text: #ffd54f;
+        }
 
-[data-theme="dark"] {
-/* Темная тема */
---bg-body: #151618;
---bg-card: #26282a;
---bg-card-rgb: 38, 40, 42;
---text-main: #f5f6f8;
---text-muted: #9ba0a6;
+        * { box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { margin: 0; padding: 0; background-color: var(--bg-body); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; transition: background-color 0.3s ease; }
 
---header-bg: linear-gradient(135deg, #0b110e 0%, #15291d 100%);
---header-text: #e0e0e0;
---header-icon-bg: rgba(255, 255, 255, 0.08);
---header-icon-hover: rgba(255, 255, 255, 0.15);
+        @keyframes slideInUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideInDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.9) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes pulseSoft { 0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(243, 156, 18, 0); } 100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); } }
+        @keyframes glowBrightness {
+            0% { color: #f39c12; text-shadow: 0 0 5px rgba(243, 156, 18, 0.3); transform: scale(1); }
+            50% { color: #ffffff; text-shadow: 0 0 15px #f1c40f, 0 0 25px #f1c40f, 0 0 35px #ffffff; transform: scale(1.05); }
+            100% { color: #f39c12; text-shadow: 0 0 5px rgba(243, 156, 18, 0.3); transform: scale(1); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
 
---border-color: #3a3f45;
---input-bg: #151618;
---input-border: #3a3f45;
---btn-add: #2ecc71;
---shadow-soft: 0 8px 24px rgba(0,0,0,0.2);
---shadow-hover: 0 12px 32px rgba(46, 204, 113, 0.15);
---modal-bg: rgba(0,0,0,0.7);
---numpad-bg: #151618;
---numpad-btn: #26282a;
---info-bg: #153229; --info-text: #66cdaa;
---warn-bg: #3a2e12; --warn-text: #ffd54f;
-}
+        .brightness-text {
+            font-weight: 800;
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: glowBrightness 2.5s infinite ease-in-out;
+            padding-top: max(20px, env(safe-area-inset-top));
+        }
 
-/* === БАЗОВЫЕ НАСТРОЙКИ === */
-* { box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; outline: none; }
-body { margin: 0; padding: 0; background-color: var(--bg-body); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; transition: background-color 0.3s ease; }
+        header { position: sticky; top: 0; background: var(--header-bg); color: var(--header-text); padding: calc(12px + env(safe-area-inset-top)) 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; margin-bottom: 15px;}
+        header h1 { margin: 0; font-size: 19px; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: 0.2px; white-space: nowrap;}
+        .header-controls { display: flex; gap: 6px; align-items: center; }
+        .btn-icon { background: var(--header-icon-bg); color: var(--header-text); border: none; width: 36px; height: 36px; border-radius: 12px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); transition: 0.2s; }
+        .btn-icon:active { transform: scale(0.9) rotate(5deg); background: var(--header-icon-hover); }
 
-/* === АНИМАЦИИ === */
-@keyframes slideInUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@keyframes slideInDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@keyframes popIn { 0% { opacity: 0; transform: scale(0.9) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
-@keyframes pulseSoft { 0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(243, 156, 18, 0); } 100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); } }
-@keyframes glowBrightness {
+        .main-container { padding: 5px 15px 120px 15px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 15px; flex: 1; }
+        .card { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); overflow: hidden; transition: 0.3s; }
+
+        .instruction-content { padding: 10px 0; font-size: 15px; color: var(--text-muted); font-weight: 600; text-align: left;}
+        .instruction-content ol { margin: 10px 0 0 0; padding-left: 20px; }
+        .instruction-content li { margin-bottom: 12px; line-height: 1.5; color: var(--text-main);}
+        .note-box { padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 15px; font-size: 13px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; text-align: left;}
+        .install-note { background: var(--info-bg); color: var(--info-text); }
+        .browser-note { background: var(--warn-bg); color: var(--warn-text); margin-top: 15px; margin-bottom: 0;}
+
+        .input-card { padding: 10px; display: flex; gap: 10px; align-items: center; background: var(--bg-card); }
+        .input-field { flex: 1; padding: 15px 20px; background: var(--input-bg); color: var(--text-main); border: 2px solid transparent; border-radius: var(--radius-md); font-size: 16px; font-weight: 700; transition: 0.2s;}
+        .input-field:focus { border-color: var(--btn-add); background: var(--bg-card); box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.1);}
+        .btn-manual-add { background: var(--btn-add); color: white; border: none; border-radius: var(--radius-md); padding: 0 20px; height: 52px; font-weight: 800; font-size: 18px; transition: 0.2s; cursor: pointer; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);}
+        .btn-manual-add:active { transform: scale(0.95); }
+
+        .cart-card { background: transparent; box-shadow: none; border-radius: 0; display: flex; flex-direction: column; }
+        .cart-header { padding: 5px 5px 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 16px; color: var(--text-main);}
+        .btn-clear { background: #ff4757; color: white; border: none; border-radius: var(--radius-sm); padding: 8px 15px; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);}
+        .btn-clear:active { transform: scale(0.9); box-shadow: none;}
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: -10px;}
+        th { display: none; }
+
+        tr { background: var(--bg-card); box-shadow: var(--shadow-soft); border-radius: var(--radius-md); transition: 0.2s; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        td { padding: 12px 10px; vertical-align: middle; text-align: center; border: none; }
+        td:first-child { border-top-left-radius: var(--radius-md); border-bottom-left-radius: var(--radius-md); width: 60%; }
+        td:nth-child(2) { width: 25%; }
+        td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-radius: var(--radius-md); width: 15%; }
+
+        .inline-barcode-container { padding: 5px; cursor: pointer; transition: opacity 0.2s; -webkit-user-select: none; user-select: none; }
+        .inline-barcode-container:active { opacity: 0.4; }
+        .inline-barcode-container svg { width: 100%; max-width: 150px; height: auto; max-height: 50px; display: block; margin: 0 auto; background-color: #ffffff; padding: 6px; border-radius: 8px; pointer-events: none;}
+        .code-cell { font-family: monospace; font-size: 14px; font-weight: bold; color: var(--text-main); display: block; pointer-events: none;}
+
+        .qty-box { background: var(--input-bg); border: 2px solid var(--border-color); color: var(--text-main); font-weight: 800; font-size: 16px; border-radius: 12px; padding: 10px 0; width: 100%; cursor: pointer; display: block; transition: 0.2s;}
+        .qty-box:active { background: var(--border-color); transform: scale(0.92); }
+
+        .btn-remove {
+            -webkit-appearance: none; appearance: none;
+            background: rgba(255, 71, 87, 0.1);
+            color: #ff4757;
+            -webkit-text-fill-color: #ff4757;
+            border: none;
+            font-size: 18px;
+            width: 36px; height: 36px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto;
+            padding: 0;
+            opacity: 1 !important;
+        }
+        .btn-remove:active { transform: scale(0.8) rotate(15deg); }
+
+        .no-data { padding: 40px 20px; color: var(--text-muted); font-weight: 700; text-align: center; background: var(--bg-card); border-radius: var(--radius-md); font-size: 16px; box-shadow: var(--shadow-soft);}
+
+        .bottom-action-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(var(--bg-card-rgb), 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 15px calc(15px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+            display: flex; gap: 12px; z-index: 50; border-top: 1px solid var(--border-color);
+        }
+        .btn-fab {
+            border: none; border-radius: 20px; font-weight: 800; color: white;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); height: 60px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px;
+        }
+        .btn-fab:active { transform: scale(0.95) translateY(2px); box-shadow: none !important; }
+
+        .btn-fab-scan {
+            flex: 1; min-width: 0;
+            background: linear-gradient(135deg, #FF9800 0%, #d35400 100%);
+            font-size: clamp(13px, 4vw, 16px);
+            box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3);
+            animation: pulseSoft 2s infinite;
+        }
+        .btn-fab-qr { flex: 0 0 auto; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); font-size: 15px; padding: 0 20px; box-shadow: 0 8px 20px rgba(142, 68, 173, 0.3); }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); backdrop-filter: var(--modal-backdrop); -webkit-backdrop-filter: var(--modal-backdrop); z-index: 9999; justify-content: center; align-items: flex-end; padding: 0; margin: 0;}
+        .modal-content {
+            background: var(--bg-card); color: var(--text-main);
+            padding: 30px 20px 20px; border-radius: 32px 32px 0 0;
+            width: 100%; max-width: 500px; text-align: center;
+            box-shadow: 0 -20px 40px rgba(0,0,0,0.2);
+            animation: slideInUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1);
+            position: relative;
+            padding-bottom: calc(20px + env(safe-area-inset-bottom));
+            max-height: 85vh;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            touch-action: pan-y;
+        }
+
+        .modal-content::-webkit-scrollbar { display: none; }
+        .modal-content { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .modal-content::before { content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 40px; height: 5px; background: var(--border-color); border-radius: 10px; }
+
+        .modal-centered {
+            align-items: center !important;
+            padding: 20px;
+        }
+        .modal-centered .modal-content {
+            border-radius: 24px;
+            animation: slideInDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 25px 20px;
+        }
+
+        #reader { width: 100%; min-height: 250px; border-radius: var(--radius-md); overflow: hidden; background: #000; margin-bottom: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);}
+        #reader video { object-fit: cover !important; width: 100%; height: 100%; }
+
+        .btn-modal { width: 100%; padding: 18px; border: none; border-radius: var(--radius-md); font-weight: 800; font-size: 16px; margin-top: 10px; cursor: pointer; transition: 0.2s;}
+        .btn-modal:active { transform: scale(0.96); }
+        .btn-torch { background: #34495e; color: white; }
+        .btn-close { background: var(--input-bg); color: var(--text-main); }
+
+        .btn-understand {
+            background: #f39c12;
+            color: white;
+            animation: pulseSoft 2s infinite;
+        }
+        .btn-understand:active {
+            transform: scale(0.95);
+            animation: none;
+        }
+
+        .numpad-content { background: var(--numpad-bg); }
+        .numpad-title { font-size: 15px; font-weight: 800; color: var(--text-muted); margin: 0 0 15px 0;}
+        .numpad-display { background: var(--input-bg); border: 2px solid var(--btn-add); border-radius: var(--radius-md); font-size: 40px; font-weight: 800; padding: 15px; margin-bottom: 20px; text-align: center; color: var(--text-main); box-shadow: 0 8px 15px rgba(39, 174, 96, 0.1); letter-spacing: 2px;}
+        .numpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .num-btn { background: var(--numpad-btn); color: var(--text-main); border: none; border-radius: 24px; font-size: 26px; font-weight: 800; padding: 18px 0; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.15s; font-family: 'Nunito', sans-serif;}
+        .num-btn:active { background: var(--border-color); transform: scale(0.9) translateY(4px); box-shadow: none;}
+        .num-btn.action-c { color: #ff4757; }
+        .num-btn.action-back { color: #f39c12; font-size: 24px; }
+
+        .numpad-actions { display: flex; gap: 12px; margin-top: 20px; }
+        .btn-numpad-cancel { flex: 1; background: var(--border-color); color: var(--text-main); border: none; border-radius: 20px; font-size: 16px; font-weight: 800; cursor: pointer; padding: 18px 0;}
+        .btn-numpad-ok { flex: 2; background: var(--btn-add); color: white; border: none; border-radius: 20px; font-size: 18px; font-weight: 800; padding: 18px 0; cursor: pointer; box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);}
+        .btn-numpad-cancel:active, .btn-numpad-ok:active { transform: scale(0.95); }
+
+        .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 2px dashed var(--border-color); font-size: 17px; font-weight: 700;}
+        .settings-row:last-child { border-bottom: none; }
+        .switch { position: relative; display: inline-block; width: 56px; height: 32px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--input-border); transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
+        input:checked + .slider { background-color: var(--btn-add); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        #qrModal { background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); justify-content: center; align-items: center;}
+        #qrModal .modal-content { background: transparent; box-shadow: none; display: flex; flex-direction: column; align-items: center; justify-content: center; max-height: none;}
+        #finalQrCanvas { display: none; margin: 0 auto; max-width: 100%; border-radius: var(--radius-lg); background: #fff; padding: 10px; box-shadow: 0 10px 40px rgba(255,255,255,0.2);}
+
+        .archive-list { display: flex; flex-direction: column; gap: 12px; padding: 5px; margin: 0 -5px;}
+        .archive-item { background: var(--input-bg); border-radius: var(--radius-md); padding: 18px; display: flex; justify-content: space-between; align-items: center; text-align: left; transition: 0.2s;}
+        .archive-info { display: flex; flex-direction: column; gap: 8px; }
+        .archive-date { color: var(--text-main); font-weight: 800; font-size: 16px; }
+        .archive-stats { color: var(--text-muted); font-size: 14px; font-weight: 700;}
+        .archive-btn { background: var(--btn-add); color: white; border: none; padding: 12px 20px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 14px; transition: 0.2s; box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2);}
+        .archive-btn:active { transform: scale(0.9); }
+
+        #zoomModal { background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); justify-content: center; align-items: center;}
+        .zoom-container { background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); box-shadow: 0 15px 40px rgba(0,0,0,0.3); text-align: center; width: 90%; max-width: 450px;}
+        .zoom-container svg { width: 100%; height: auto; max-height: 200px; display: block; margin: 0 auto;}
+
+        .offline-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+            animation: shake 0.5s ease-in-out;
+        }
+        .offline-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #ff4757;
+        }
+        .offline-message {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📦 Мой ТСД</h1>
+        <div class="header-controls">
+            <button class="btn-icon" id="themeToggle" onclick="toggleTheme()" title="Тема">☀️</button>
+            <button class="btn-icon" onclick="openArchive()" title="Архив">🗄️</button>
+            <button class="btn-icon" onclick="openSettings()" title="Настройки">⚙️</button>
+            <button class="btn-icon" onclick="openInstruction()" title="Инструкция">❓</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="card input-card">
+            <input type="text" id="codeInput" class="input-field" placeholder="Введите артикул...">
+            <button class="btn-manual-add" onclick="manualAdd()">✚</button>
+        </div>
+
+        <div class="cart-card">
+            <div class="cart-header">
+                <span id="cartStats">0 строк (0 шт.)</span>
+                <button class="btn-clear" onclick="clearCart()">Очистить 🗑️</button>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <tbody id="cartTableBody">
+                        <tr><td colspan="3" class="no-data">✨ Начните сканировать товары</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-action-bar">
+        <button class="btn-fab btn-fab-scan" onclick="startScanner()">📷 СКАНИРОВАТЬ</button>
+        <button class="btn-fab btn-fab-qr" onclick="showTransferQR()">📲 В EXCEL</button>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ОТКЛЮЧЕНИЯ -->
+    <div class="modal-overlay modal-centered" id="offlineModal">
+        <div class="modal-content">
+            <div class="offline-icon">🔧</div>
+            <div class="offline-title">Веб-приложение временно недоступно</div>
+            <div class="offline-message">
+                К сожалению, приложение находится на техническом обслуживании.<br>
+                Мы работаем над улучшением сервиса и скоро вернёмся!
+            </div>
+            <button class="btn-modal btn-understand" onclick="closeOfflineModal()">Понятно</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА ИНСТРУКЦИИ И О ПРИЛОЖЕНИИ -->
+    <div class="modal-overlay" id="instructionModal">
+        <div class="modal-content">
+            <h3 style="margin-top:0; font-weight: 800;">📖 Как это работает?</h3>
+            <div class="instruction-content">
+                <div class="note-box install-note">
+                    <span style="font-size: 18px; line-height: 1;">📲</span>
+                    <div style="flex: 1; line-height: 1.4;">В меню браузера нажми «На экран "Домой"» для быстрой установки.</div>
+                </div>
+                <ol>
+                    <li>Нажми крутую кнопку <b>📷 СКАНИРОВАТЬ</b> внизу или введи артикул вручную.</li>
+                    <li>Также сканер читает <b>DataMatrix (Честный ЗНАК ✅)</b>.</li>
+                    <li><b>Режим «🔄 Непрерывный скан»</b>: Камера не закрывается! Сканируй потоком, количество вбивай в окне.</li>
+                    <li>Собери карточку из товаров (<b>не более 50 строк</b>).</li>
+                    <li>Нажми <b>📲 В EXCEL</b>, яркость выкрутится на максимум.</li>
+                    <li>В Excel нажми «Получить данные из QR-кода» и отсканируй экран.</li>
+                    <li><b>Долгое нажатие:</b> Удерживай палец на штрихкоде в таблице, чтобы скопировать его в буфер обмена.</li>
+                </ol>
+                <div class="note-box browser-note">
+                    <span style="font-size: 18px; line-height: 1;">💡</span>
+                    <div style="flex: 1; line-height: 1.4;"><b>Важно:</b> Для быстрой работы камеры используйте браузер <b>Google Chrome</b> или <b>Safari</b>!</div>
+                </div>
+
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 2px dashed var(--border-color); text-align: left;">
+                    <h4 style="margin: 0 0 10px 0; color: var(--text-main); font-weight: 800; font-size: 16px;">ℹ️ О приложении</h4>
+                    <p style="margin: 0 0 12px 0; font-size: 14px; color: var(--text-muted); line-height: 1.5;">
+                        «Мой ТСД» — это автономный веб-терминал сбора данных, созданный для быстрого и удобного сбора штрихкодов с помощью камеры смартфона, ускорения инвентаризации, сборки заказов и их мгновенного переноса в Excel.
+                    </p>
+                    <p style="margin: 0; font-size: 14px; font-weight: 800; color: var(--text-main);">👨‍💻 Разработчик: Джугань Сергей</p>
+                </div>
+            </div>
+            <button class="btn-modal btn-close" onclick="document.getElementById('instructionModal').style.display='none'">Понятно</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА НАСТРОЕК -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content">
+            <h3 style="margin-top:0; font-weight: 800;">Настройки</h3>
+            <div class="settings-row">
+                <span>🔄 Непрерывный скан</span>
+                <label class="switch"><input type="checkbox" id="setContinuous" onchange="saveSettings()"><span class="slider"></span></label>
+            </div>
+            <div class="settings-row">
+                <span>🔊 Звук (Пик)</span>
+                <label class="switch"><input type="checkbox" id="setSound" onchange="saveSettings()"><span class="slider"></span></label>
+            </div>
+            <div class="settings-row">
+                <span>📳 Вибрация</span>
+                <label class="switch"><input type="checkbox" id="setVibro" onchange="saveSettings()"><span class="slider"></span></label>
+            </div>
+            <button class="btn-modal btn-close" onclick="document.getElementById('settingsModal').style.display='none'">Готово</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА СКАНЕРА -->
+    <div class="modal-overlay" id="scannerModal">
+        <div class="modal-content">
+            <h3 style="margin-top: 0; margin-bottom: 5px; font-weight: 800;">Наведите камеру</h3>
+            <p id="iosScanHint" style="display:none; font-size: 14px; color: #f39c12; margin-top: 0; margin-bottom: 15px; font-weight: 700;">Отодвиньте телефон на 15-20 см</p>
+            <div id="reader"></div>
+            <button class="btn-modal btn-torch" id="torchBtn" onclick="toggleTorch()">🔦 Включить фонарик</button>
+            <button class="btn-modal btn-close" onclick="stopScanner()">Завершить</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА NUMPAD -->
+    <div class="modal-overlay" id="numpadModal">
+        <div class="modal-content numpad-content">
+            <div class="numpad-title" id="numpadTitle">Количество товара</div>
+            <div class="numpad-display" id="numpadDisplay">1</div>
+            <div class="numpad-grid">
+                <button class="num-btn" onclick="numPress(1)">1</button>
+                <button class="num-btn" onclick="numPress(2)">2</button>
+                <button class="num-btn" onclick="numPress(3)">3</button>
+                <button class="num-btn" onclick="numPress(4)">4</button>
+                <button class="num-btn" onclick="numPress(5)">5</button>
+                <button class="num-btn" onclick="numPress(6)">6</button>
+                <button class="num-btn" onclick="numPress(7)">7</button>
+                <button class="num-btn" onclick="numPress(8)">8</button>
+                <button class="num-btn" onclick="numPress(9)">9</button>
+                <button class="num-btn action-c" onclick="numClear()">C</button>
+                <button class="num-btn" onclick="numPress(0)">0</button>
+                <button class="num-btn action-back" onclick="numBackspace()">⌫</button>
+            </div>
+            <div class="numpad-actions">
+                <button class="btn-numpad-cancel" onclick="numCancel()">Отмена</button>
+                <button class="btn-numpad-ok" onclick="numConfirm()">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА QR И СКАЧИВАНИЯ -->
+    <div class="modal-overlay" id="qrModal" style="align-items: center;">
+        <div class="modal-content" style="background: transparent; box-shadow: none;">
+            <div class="brightness-text">Выкрути яркость на максимум!</div>
+            <canvas id="finalQrCanvas" width="340" height="420"></canvas>
+            <button class="btn-modal" style="background:#27ae60; color:white; margin-top:25px;" onclick="downloadQR()">💾 Сохранить в галерею</button>
+            <button class="btn-modal" style="background:#3498db; color:white;" onclick="shareToExcel()">Поделиться текстом</button>
+            <button class="btn-modal btn-close" style="background:rgba(255,255,255,0.2); color:white; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);" onclick="closeQRModal()">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА АРХИВА -->
+    <div class="modal-overlay" id="archiveModal">
+        <div class="modal-content">
+            <h3 style="margin-top: 0; font-weight: 800;">История выгрузок</h3>
+            <p style="font-size: 14px; color: var(--text-muted); margin-top: -10px; margin-bottom: 20px; font-weight: 600;">Последние 15 сохранений</p>
+            <div id="archiveList" class="archive-list"></div>
+            <button class="btn-modal btn-close" onclick="document.getElementById('archiveModal').style.display='none'" style="margin-top: 20px;">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- ОКНО УВЕЛИЧЕННОГО ШТРИХКОДА ПО ТАПУ -->
+    <div class="modal-overlay" id="zoomModal" onclick="this.style.display='none'">
+        <div class="zoom-container">
+            <div style="background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                <svg id="zoomedBarcodeSvg"></svg>
+            </div>
+            <p style="color: var(--text-main); margin: 0; font-weight: 800; font-size: 15px;">Нажмите в любом месте, чтобы закрыть</p>
+        </div>
+    </div>
+
+    <script>
+        // === СВАЙП ВНИЗ ДЛЯ ЗАКРЫТИЯ (BOTTOM SHEET) ===
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.modal-content').forEach(content => {
+                let touchStartY = 0;
+                let touchCurrentY = 0;
+                let isSwiping = false;
+
+                content.addEventListener('touchstart', function(e) {
+                    if (content.scrollTop > 0) return;
+                    touchStartY = e.touches[0].clientY;
+                    touchCurrentY = touchStartY;
+                    isSwiping = true;
+                    content.style.transition = 'none';
+                }, {passive: true});
+
+                content.addEventListener('touchmove', function(e) {
+                    if (!isSwiping) return;
+                    touchCurrentY = e.touches[0].clientY;
+                    let deltaY = touchCurrentY - touchStartY;
+
+                    if (deltaY > 0) {
+                        content.style.transform = `translateY(${deltaY}px)`;
+                        if (e.cancelable) e.preventDefault();
+                    }
+                }, {passive: false});
+
+                content.addEventListener('touchend', function(e) {
+                    if (!isSwiping) return;
+                    isSwiping = false;
+                    let deltaY = touchCurrentY - touchStartY;
+
+                    content.style.transition = 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1)';
+
+                    if (deltaY > 80) {
+                        let modal = content.closest('.modal-overlay');
+                        if (modal.id === 'scannerModal') stopScanner();
+                        else if (modal.id === 'numpadModal') numCancel();
+                        else if (modal.id === 'qrModal') closeQRModal();
+                        else if (modal.id === 'offlineModal') closeOfflineModal();
+                        else modal.style.display = 'none';
+
+                        setTimeout(() => { content.style.transform = ''; }, 200);
+                    } else {
+                        content.style.transform = 'translateY(0)';
+                        setTimeout(() => { content.style.transform = ''; }, 200);
+                    }
+                });
+            });
+        });
+
+        // === ЗАЩИТА ОТ ПОТЕРИ ДАННЫХ ===
+        window.addEventListener("beforeunload", function (e) {
+            if (currentCart.length > 0) {
+                var confirmationMessage = "В корзине остались товары. Вы точно хотите выйти?";
+                (e || window.event).returnValue = confirmationMessage;
+                return confirmationMessage;
+            }
+        });
+
+        // === НАСТРОЙКИ И ТЕМА ===
+        let settings = JSON.parse(localStorage.getItem('tsd_settings')) || { theme: 'light', continuous: true, sound: true, vibro: true };
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            document.getElementById('themeToggle').innerText = theme === 'dark' ? '☀️' : '🌙';
+            document.getElementById('meta-theme-color').setAttribute('content', theme === 'dark' ? '#15291d' : '#27ae60');
+        }
+        function toggleTheme() { settings.theme = settings.theme === 'dark' ? 'light' : 'dark'; saveSettings(); applyTheme(settings.theme); }
+        applyTheme(settings.theme);
+
+        function openInstruction() {
+            document.getElementById('instructionModal').style.display = 'flex';
+        }
+
+        function openSettings() {
+            document.getElementById('setContinuous').checked = settings.continuous;
+            document.getElementById('setSound').checked = settings.sound;
+            document.getElementById('setVibro').checked = settings.vibro;
+            document.getElementById('settingsModal').style.display = 'flex';
+        }
+        function saveSettings() {
+            settings.continuous = document.getElementById('setContinuous').checked;
+            settings.sound = document.getElementById('setSound').checked;
+            settings.vibro = document.getElementById('setVibro').checked;
+            localStorage.setItem('tsd_settings', JSON.stringify(settings));
+        }
+
+        // === ЗВУКОВОЙ СИГНАЛ ===
+        let audioCtx = null;
+        function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        function playBeep() {
+            if (!settings.sound) return;
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            try {
+                let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            } catch(e) {}
+        }
+
+        // === ДОЛГОЕ НАЖАТИЕ (КОПИРОВАНИЕ) И КОРОТКОЕ (УВЕЛИЧЕНИЕ) ===
+        let pressTimer;
+        let isLongPress = false;
+
+        window.startPress = function(e, text) {
+            isLongPress = false;
+            pressTimer = window.setTimeout(() => {
+                isLongPress = true;
+                copyToClipboard(text);
+                if (settings.vibro && navigator.vibrate) navigator.vibrate([50, 50, 50]);
+            }, 500);
+        };
+
+        window.cancelPress = function() {
+            if (pressTimer) clearTimeout(pressTimer);
+        };
+
+        window.handleBarcodeClick = function(code) {
+            if (!isLongPress) {
+                document.getElementById('zoomModal').style.display = 'flex';
+                try {
+                    JsBarcode("#zoomedBarcodeSvg", code, { format: "EAN13", width: 2.5, height: 100, displayValue: true, fontSize: 20, margin: 10});
+                } catch (e) {
+                    try { JsBarcode("#zoomedBarcodeSvg", code, { format: "CODE128", width: 2, height: 80, displayValue: true, fontSize: 20, margin: 10 });
+                    } catch (err) {}
+                }
+            }
+        };
+
+        window.copyToClipboard = function(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert("Скопировано: " + text);
+                }).catch(err => fallbackCopyTextToClipboard(text));
+            } else {
+                fallbackCopyTextToClipboard(text);
+            }
+        };
+
+        function fallbackCopyTextToClipboard(text) {
+            var textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try { document.execCommand('copy'); alert("Скопировано: " + text); } catch (err) {}
+            document.body.removeChild(textArea);
+        }
+
+        // === ОСНОВНАЯ ЛОГИКА ===
+        const MASTER_CODES = { "14630557641291": { code: "4601501761856", qtyInBox: 50 } };
+        let currentCart = [];
+        let html5QrCode = null;
+        let generatedImageUrl = "";
+        let torchEnabled = false;
+
+        window.onload = function() {
+            const savedCart = localStorage.getItem('tsd_lite_cart');
+            if (savedCart) { try { currentCart = JSON.parse(savedCart); renderCart(); } catch(e) {} }
+            // Показываем модальное окно о недоступности при запуске
+            document.getElementById('offlineModal').style.display = 'flex';
+        };
+
+        // Функция закрытия окна о недоступности
+        window.closeOfflineModal = function() {
+            document.getElementById('offlineModal').style.display = 'none';
+        };
+
+        function saveState() { localStorage.setItem('tsd_lite_cart', JSON.stringify(currentCart)); }
+
+        // ОБНОВЛЕННАЯ ФУНКЦИЯ ОЧИСТКИ DataMatrix
+        function normalizeBarcode(text) {
+            let cleanText = text.replace(/[\x00-\x1F\x7F ]/g, '');
+
+            if (cleanText.startsWith("]d2") || cleanText.startsWith("]e0") || cleanText.startsWith("]C1")) {
+                cleanText = cleanText.substring(3);
+            }
+
+            if (cleanText.startsWith("01") && cleanText.length >= 16) {
+                let gtin = cleanText.substring(2, 16);
+                cleanText = gtin.startsWith("0") ? gtin.substring(1) : gtin;
+            }
+
+            if (cleanText.length === 14 && cleanText.startsWith("0")) {
+                cleanText = cleanText.substring(1);
+            }
+
+            if (MASTER_CODES[cleanText]) cleanText = MASTER_CODES[cleanText].code;
+            return cleanText;
+        }
+
+        function manualAdd() {
+            const code = document.getElementById('codeInput').value;
+            if (!code) return;
+            let cleanCode = normalizeBarcode(code);
+            addOrUpdateItem(cleanCode, 1);
+            document.getElementById('codeInput').value = '';
+        }
+
+        function addOrUpdateItem(code, qty) {
+            const existingIndex = currentCart.findIndex(item => item.code === code);
+            if (existingIndex !== -1) { currentCart[existingIndex].qty += qty; }
+            else { currentCart.unshift({ code: code, qty: qty }); }
+            saveState(); renderCart();
+        }
+
+        // === РЕНДЕР ТАБЛИЦЫ (КАРТОЧЕК) ===
+        function renderCart() {
+            const tbody = document.getElementById('cartTableBody');
+            tbody.innerHTML = '';
+            if (currentCart.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="no-data">✨ Начните сканировать товары</td></tr>';
+            } else {
+                const fragment = document.createDocumentFragment();
+                currentCart.forEach((item, index) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="inline-barcode-container"
+                            onmousedown="startPress(event, '${item.code}')" onmouseup="cancelPress()" onmouseleave="cancelPress()"
+                            ontouchstart="startPress(event, '${item.code}')" ontouchend="cancelPress()" ontouchcancel="cancelPress()"
+                            onclick="handleBarcodeClick('${item.code}')"
+                            oncontextmenu="return false;">
+                            <svg id="barcode-${index}"></svg>
+                        </td>
+                        <td><div class="qty-box" onclick="showNumpadForEdit(${index})">${item.qty} шт.</div></td>
+                        <td><button class="btn-remove" onclick="removeItem(${index})">✖</button></td>`;
+                    fragment.appendChild(tr);
+                });
+                tbody.appendChild(fragment);
+
+                currentCart.forEach((item, index) => {
+                    try { JsBarcode("#barcode-" + index, item.code, { format: "EAN13", lineColor: "#000", background: "transparent", width: 1.8, height: 45, displayValue: true, fontSize: 13, margin: 2});
+                    } catch (e) {
+                        try { JsBarcode("#barcode-" + index, item.code, { format: "CODE128", lineColor: "#000", background: "transparent", width: 1.5, height: 40, displayValue: true, fontSize: 13, margin: 2 });
+                        } catch (err) { document.getElementById("barcode-" + index).outerHTML = `<span class="code-cell" style="pointer-events:none;">${item.code}</span>`; }
+                    }
+                });
+            }
+            let total = 0; currentCart.forEach(i => total += i.qty);
+            document.getElementById('cartStats').innerText = `${currentCart.length} строк (${total} шт.)`;
+        }
+
+        window.removeItem = function(index) { currentCart.splice(index, 1); saveState(); renderCart(); }
+        window.clearCart = function() { if(confirm("Очистить корзину?")) { currentCart = []; saveState(); renderCart(); } }
+
+        // === NUMPAD ===
+        let numpadValue = "1"; let isNewNumpadEntry = true; let numpadMode = ""; let numpadTargetCode = ""; let numpadTargetIndex = -1; let numpadTargetBoxQty = 1;
+
+        function updateNumpadDisplay() { document.getElementById('numpadDisplay').innerText = numpadValue === "" ? "0" : numpadValue; }
+
+        function showNumpadForScan(code) {
+            numpadMode = 'scan'; numpadTargetCode = code; isNewNumpadEntry = true; numpadTargetBoxQty = 1;
+            for(let key in MASTER_CODES) { if(MASTER_CODES[key].code === code && MASTER_CODES[key].qtyInBox) { numpadTargetBoxQty = MASTER_CODES[key].qtyInBox; break; } }
+            numpadValue = numpadTargetBoxQty.toString();
+            document.getElementById('numpadTitle').innerText = "ШК: " + code;
+            updateNumpadDisplay(); document.getElementById('numpadModal').style.display = 'flex';
+        }
+
+        function showNumpadForEdit(index) {
+            numpadMode = 'edit'; numpadTargetIndex = index; numpadValue = currentCart[index].qty.toString(); isNewNumpadEntry = true;
+            document.getElementById('numpadTitle').innerText = "Изменить: " + currentCart[index].code;
+            updateNumpadDisplay(); document.getElementById('numpadModal').style.display = 'flex';
+        }
+
+        function numPress(n) { if(isNewNumpadEntry || numpadValue === "0") { numpadValue = n.toString(); isNewNumpadEntry = false; } else { if(numpadValue.length < 4) numpadValue += n.toString(); } updateNumpadDisplay(); }
+        function numClear() { numpadValue = "0"; isNewNumpadEntry = true; updateNumpadDisplay(); }
+        function numBackspace() { if (isNewNumpadEntry) return; numpadValue = numpadValue.slice(0, -1); if (numpadValue === "") { numpadValue = "0"; isNewNumpadEntry = true; } updateNumpadDisplay(); }
+
+        function numCancel() {
+            document.getElementById('numpadModal').style.display = 'none';
+            if (numpadMode === 'scan') { if (settings.continuous) { setTimeout(() => { isScannerPaused = false; }, 500); } else { stopScanner(); } }
+        }
+
+        function numConfirm() {
+            let finalQty = parseInt(numpadValue) || 1; if(finalQty < 1) finalQty = 1;
+            document.getElementById('numpadModal').style.display = 'none';
+
+            if(numpadMode === 'scan') {
+                if(numpadTargetBoxQty > 1 && finalQty === numpadTargetBoxQty) addOrUpdateItem(numpadTargetCode, finalQty);
+                else addOrUpdateItem(numpadTargetCode, finalQty);
+                if (settings.continuous) { setTimeout(() => { isScannerPaused = false; }, 500); } else { stopScanner(); }
+            } else if(numpadMode === 'edit') {
+                currentCart[numpadTargetIndex].qty = finalQty;
+                saveState(); renderCart();
+            }
+        }
+
+        // === ИСПРАВЛЕННЫЙ СКАНЕР (ДЛЯ iOS, ВЕРТИКАЛЬНЫХ И QR/DATAMATRIX) ===
+        let isScannerPaused = false;
+
+        function startScanner() {
+            initAudio(); isScannerPaused = false;
+            document.getElementById('scannerModal').style.display = 'flex';
+
+            let isIOS = (/iPad|iPhone|iPod/.test(navigator.userAgent)) || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+            if (isIOS) { document.getElementById('iosScanHint').style.display = 'block'; } else { document.getElementById('iosScanHint').style.display = 'none'; }
+
+            setTimeout(() => {
+                if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
+
+                const config = {
+                    fps: 15,
+                    qrbox: { width: 280, height: 280 },
+                    disableFlip: false,
+                    formatsToSupport: [
+                        Html5QrcodeSupportedFormats.EAN_13,
+                        Html5QrcodeSupportedFormats.EAN_8,
+                        Html5QrcodeSupportedFormats.UPC_A,
+                        Html5QrcodeSupportedFormats.DATA_MATRIX,
+                        Html5QrcodeSupportedFormats.CODE_128,
+                        Html5QrcodeSupportedFormats.QR_CODE
+                    ]
+                };
+
+                const startVideo = (cameraSettings) => {
+                    html5QrCode.start(cameraSettings, config, (text) => {
+                        if(isScannerPaused) return;
+                        let rawText = text.trim();
+
+                        if (rawText.includes("-") && /\d-\d/.test(rawText)) {
+                            isScannerPaused = true; playBeep();
+                            if (settings.vibro && navigator.vibrate) navigator.vibrate(100);
+                            let items = rawText.split(" ");
+                            let addedCount = 0;
+                            items.forEach(function(itemStr) {
+                                let parts = itemStr.split("-");
+                                if (parts.length === 2) {
+                                    let barcode = normalizeBarcode(parts[0]);
+                                    let qty = parseInt(parts[1]);
+                                    if (barcode && barcode.length > 0 && !isNaN(qty) && qty > 0) {
+                                        const existingIndex = currentCart.findIndex(item => item.code === barcode);
+                                        if (existingIndex !== -1) { currentCart[existingIndex].qty += qty; } else { currentCart.unshift({ code: barcode, qty: qty }); }
+                                        addedCount++;
+                                    }
+                                }
+                            });
+
+                            if (addedCount > 0) { saveState(); renderCart(); stopScanner(); setTimeout(() => alert("Успешно распаковано " + addedCount + " позиций из Excel!"), 200); } else { isScannerPaused = false; }
+                            return;
+                        }
+
+                        let cleanCode = normalizeBarcode(text);
+                        if(!cleanCode) return;
+
+                        isScannerPaused = true; playBeep();
+                        if (settings.vibro && navigator.vibrate) navigator.vibrate(100);
+                        showNumpadForScan(cleanCode);
+                    }, () => {}).then(() => {
+                        if (isIOS) { setTimeout(() => { try { html5QrCode.applyVideoConstraints({ advanced: [{ zoom: 2.0 }] }); } catch(e) {} }, 400); }
+                    }).catch(err => {
+                        document.getElementById('scannerModal').style.display = 'none';
+                        alert("Ошибка камеры! Проверьте разрешения в браузере.");
+                    });
+                };
+
+                if (isIOS) {
+                    Html5Qrcode.getCameras().then(devices => {
+                        let selectedCameraId = null;
+                        if (devices && devices.length > 0) {
+                            let backCams = devices.filter(d => d.label.toLowerCase().includes("back") || d.label.toLowerCase().includes("задн"));
+                            if (backCams.length > 0) {
+                                let mainCam = backCams.find(d => { let l = d.label.toLowerCase(); return !l.includes("ultra") && !l.includes("сверх"); });
+                                selectedCameraId = mainCam ? mainCam.id : backCams[0].id;
+                            } else { selectedCameraId = devices[devices.length - 1].id; }
+                            startVideo(selectedCameraId);
+                        } else { startVideo({ facingMode: "environment" }); }
+                    }).catch(err => { startVideo({ facingMode: "environment" }); });
+                } else { startVideo({ facingMode: "environment" }); }
+            }, 150);
+        }
+
+        function stopScanner() { document.getElementById('scannerModal').style.display = 'none'; if (html5QrCode && html5QrCode.getState() === 2) html5QrCode.stop(); }
+        window.toggleTorch = async function() { if (!html5QrCode || html5QrCode.getState() !== 2) return; torchEnabled = !torchEnabled; try { await html5QrCode.applyVideoConstraints({ advanced: [{ torch: torchEnabled }] }); } catch (e) { torchEnabled = !torchEnabled; } }
+
+        // === АРХИВ ===
+        function saveToArchive() {
+            if (currentCart.length === 0) return;
+            let history = JSON.parse(localStorage.getItem('tsd_archive') || '[]');
+            let dateStr = new Date().toLocaleString('ru-RU');
+            if(history.length > 0 && JSON.stringify(history[0].cart) === JSON.stringify(currentCart)) return;
+            history.unshift({ date: dateStr, cart: JSON.parse(JSON.stringify(currentCart)) });
+            if(history.length > 15) history.pop();
+            localStorage.setItem('tsd_archive', JSON.stringify(history));
+        }
+
+        window.openArchive = function() {
+            let history = JSON.parse(localStorage.getItem('tsd_archive') || '[]');
+            let listDiv = document.getElementById('archiveList');
+            if (history.length) {
+                listDiv.className = 'archive-list';
+                listDiv.innerHTML = history.map((record, index) => {
+                    let totalItems = 0; record.cart.forEach(i => totalItems += i.qty);
+                    return `
+                        <div class="archive-item">
+                            <div class="archive-info">
+                                <span class="archive-date">${record.date}</span>
+                                <span class="archive-stats">Строк: ${record.cart.length} | Шт: ${totalItems}</span>
+                            </div>
+                            <button class="archive-btn" onclick="restoreFromArchive(${index})">Вернуть</button>
+                        </div>
+                    `;
+                }).join('');
+            } else { listDiv.className = ''; listDiv.innerHTML = '<p class="no-data">Архив пуст</p>'; }
+            document.getElementById('archiveModal').style.display = 'flex';
+        }
+
+        window.restoreFromArchive = function(index) {
+            let history = JSON.parse(localStorage.getItem('tsd_archive') || '[]');
+            currentCart = JSON.parse(JSON.stringify(history[index].cart));
+            saveState(); renderCart(); document.getElementById('archiveModal').style.display = 'none';
+        }
+
+        // === ВЫГРУЗКА QR ===
+        window.showTransferQR = function() {
+            if (currentCart.length === 0) { alert("Сначала добавьте товары!"); return; }
+            saveToArchive();
+            let payload = currentCart.map(item => `${item.code}-${item.qty}`).join(' ');
+            let tempDiv = document.createElement("div");
+            new QRCode(tempDiv, { text: payload, width: 300, height: 300, correctLevel : QRCode.CorrectLevel.L });
+
+            setTimeout(() => {
+                let qrCanvasRaw = tempDiv.querySelector("canvas");
+                if(qrCanvasRaw) {
+                    let canvas = document.getElementById("finalQrCanvas");
+                    let ctx = canvas.getContext("2d");
+                    ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = "#1a1a1a"; ctx.textAlign = "center"; ctx.font = "800 20px 'Nunito'";
+                    ctx.fillText("📦 Выгрузка ТСД", canvas.width / 2, 35);
+                    ctx.fillStyle = "#555555"; ctx.font = "600 13px 'Nunito'";
+                    ctx.fillText("Создано: " + new Date().toLocaleString('ru-RU') + " | Строк: " + currentCart.length, canvas.width / 2, 60);
+                    ctx.drawImage(qrCanvasRaw, 20, 80, 300, 300);
+                    generatedImageUrl = canvas.toDataURL("image/png");
+                    canvas.style.display = "block";
+                }
+            }, 300);
+            document.getElementById("qrModal").style.display = "flex";
+        };
+
+        window.downloadQR = function() {
+            if(!generatedImageUrl) return; let link = document.createElement("a");
+            link.download = `TSD_Export_${new Date().toLocaleString('ru-RU').replace(/[\/:\s,]/g, '_')}.png`; link.href = generatedImageUrl; link.click();
+        };
+
+        window.shareToExcel = function() {
+            let textToShare = currentCart.map(item => `${item.code}-${item.qty}`).join(' ');
+            if (navigator.share) { navigator.share({ title: 'Выгрузка', text: textToShare }).catch(()=>{}); }
+            else { navigator.clipboard.writeText(textToShare).then(() => { alert("Скопировано!"); }); }
+        };
+
+        window.closeQRModal = function() { document.getElementById("qrModal").style.display = "none"; document.getElementById("finalQrCanvas").style.display = "none"; };
+    </script>
+</body>
+</html>
+```@keyframes glowBrightness {
 0% { color: #f39c12; text-shadow: 0 0 5px rgba(243, 156, 18, 0.3); transform: scale(1); }
 50% { color: #ffffff; text-shadow: 0 0 15px #f1c40f, 0 0 25px #f1c40f, 0 0 35px #ffffff; transform: scale(1.05); }
 100% { color: #f39c12; text-shadow: 0 0 5px rgba(243, 156, 18, 0.3); transform: scale(1); }
