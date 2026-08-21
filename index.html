@@ -111,13 +111,13 @@ header h1 { margin: 0; font-size: 19px; font-weight: 800; display: flex; align-i
 .btn-icon { background: var(--header-icon-bg); color: var(--header-text); border: none; width: 36px; height: 36px; border-radius: 12px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); transition: 0.2s; }
 .btn-icon:active { transform: scale(0.9) rotate(5deg); background: var(--header-icon-hover); }
 
-/* === ВЫПАДАЮЩЕЕ МЕНЮ (КАК В БАНКЕ) === */
+/* === ВЫПАДАЮЩЕЕ МЕНЮ === */
 .dropdown-menu {
     position: absolute; top: 45px; right: 0px;
     background: var(--bg-card); border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     display: none; flex-direction: column; overflow: hidden;
-    z-index: 200; min-width: 200px;
+    z-index: 200; min-width: 210px;
     border: 1px solid var(--border-color);
     animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -129,17 +129,11 @@ header h1 { margin: 0; font-size: 19px; font-weight: 800; display: flex; align-i
 }
 .dropdown-item:last-child { border-bottom: none; }
 .dropdown-item:active { background: var(--input-bg); }
+.menu-icon { font-size: 18px; width: 24px; text-align: center; }
 
 /* === ОСНОВНОЙ КОНТЕЙНЕР === */
 .main-container { padding: 5px 15px 120px 15px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 15px; flex: 1; }
 .card { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); overflow: hidden; transition: 0.3s; }
-
-/* === ВНУТРИ ИНСТРУКЦИИ === */
-.instruction-content { padding: 10px 0; font-size: 15px; color: var(--text-muted); font-weight: 600; text-align: left;}
-.instruction-content ol { margin: 10px 0 0 0; padding-left: 20px; }
-.instruction-content li { margin-bottom: 12px; line-height: 1.5; color: var(--text-main);}
-.note-box { padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 15px; font-size: 13px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; text-align: left;}
-.browser-note { background: var(--warn-bg); color: var(--warn-text); margin-top: 15px; margin-bottom: 0;}
 
 /* === РУЧНОЙ ВВОД === */
 .input-card { padding: 10px; display: flex; gap: 10px; align-items: center; background: var(--bg-card); }
@@ -196,6 +190,12 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .btn-torch { background: #34495e; color: white; }
 .btn-close { background: var(--input-bg); color: var(--text-main); }
 
+/* === ВНУТРИ ИНСТРУКЦИИ === */
+.instruction-content { padding: 10px 0; font-size: 15px; color: var(--text-muted); font-weight: 600; text-align: left;}
+.instruction-content ol { margin: 10px 0 0 0; padding-left: 20px; }
+.instruction-content li { margin-bottom: 12px; line-height: 1.5; color: var(--text-main);}
+.browser-note { padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 0; font-size: 13px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; text-align: left; background: var(--warn-bg); color: var(--warn-text); margin-top: 15px;}
+
 /* === NUMPAD === */
 .numpad-content { background: var(--numpad-bg); }
 .numpad-title { font-size: 15px; font-weight: 800; color: var(--text-muted); margin: 0 0 15px 0;}
@@ -245,20 +245,30 @@ input:checked + .slider:before { transform: translateX(24px); }
 <header>
     <h1>📦 Мой ТСД</h1>
     <div class="header-controls">
-        <button class="btn-icon" id="themeToggle" onclick="toggleTheme()" title="Тема">☀️</button>
-        <button class="btn-icon" onclick="openArchive()" title="Архив">🗄️</button>
-        <button class="btn-icon" onclick="openSettings()" title="Настройки">⚙️</button>
-        <!-- НОВАЯ КНОПКА МЕНЮ -->
+        <button class="btn-icon" id="themeToggle" onclick="toggleTheme()" title="Сменить тему">☀️</button>
+        <!-- КНОПКА МЕНЮ (ТРИ ТОЧКИ) -->
         <button class="btn-icon" id="menuToggleBtn" onclick="toggleMenu()" style="font-weight: 900; font-size: 20px;">⋮</button>
         
-        <!-- ВЫПАДАЮЩЕЕ МЕНЮ (КАК НА СКРИНШОТЕ) -->
+        <!-- ВЫПАДАЮЩЕЕ МЕНЮ -->
         <div id="dropdownMenu" class="dropdown-menu">
-            <div class="dropdown-item" onclick="location.reload()">
-                <span style="font-size: 18px;">🔄</span> Обновить
+            <div class="dropdown-item" onclick="openInstruction()">
+                <span class="menu-icon">📖</span> Инструкция
             </div>
-            <!-- Скрытая кнопка установки -->
-            <div class="dropdown-item" id="menuInstallBtn" style="display: none;">
-                <span style="font-size: 18px;">📥</span> На экран Домой
+            <div class="dropdown-item" onclick="openArchive()">
+                <span class="menu-icon">🗄️</span> Архив
+            </div>
+            <div class="dropdown-item" onclick="openSettings()">
+                <span class="menu-icon">⚙️</span> Настройки
+            </div>
+            <div class="dropdown-item" onclick="openAbout()">
+                <span class="menu-icon">ℹ️</span> О приложении
+            </div>
+            <div class="dropdown-item" onclick="location.reload()">
+                <span class="menu-icon">🔄</span> Обновить
+            </div>
+            <!-- Кнопка установки на экран -->
+            <div class="dropdown-item" id="menuInstallBtn">
+                <span class="menu-icon">📥</span> На экран Домой
             </div>
         </div>
     </div>
@@ -306,19 +316,33 @@ input:checked + .slider:before { transform: translateX(24px); }
                 <li>Нажми <b>📲 В EXCEL</b>, яркость выкрутится на максимум.</li>
                 <li>В Excel нажми «Получить данные из QR-кода» и отсканируй экран.</li>
             </ol>
-            
             <div class="note-box browser-note">
                 <span style="font-size: 18px; line-height: 1;">💡</span>
                 <div style="flex: 1; line-height: 1.4;"><b>Важно:</b> Для быстрой работы камеры используйте браузер <b>Chrome</b> или <b>Safari</b>!</div>
             </div>
-
-            <div style="margin-top: 25px; padding-top: 20px; border-top: 2px dashed var(--border-color); text-align: left;">
-                <h4 style="margin: 0 0 10px 0; color: var(--text-main); font-weight: 800; font-size: 16px;">ℹ️ О приложении</h4>
-                <p style="margin: 0 0 12px 0; font-size: 14px; color: var(--text-muted); line-height: 1.5;">«Мой ТСД» — это автономный веб-терминал для сбора штрихкодов камерой смартфона.</p>
-                <p style="margin: 0; font-size: 14px; font-weight: 800; color: var(--text-main);">👨‍💻 Разработчик: Джугань Сергей</p>
-            </div>
         </div>
         <button class="btn-modal btn-close" onclick="document.getElementById('instructionModal').style.display='none'">Понятно</button>
+    </div>
+</div>
+
+<!-- МОДАЛКА "О ПРИЛОЖЕНИИ" -->
+<div class="modal-overlay" id="aboutModal">
+    <div class="modal-content">
+        <h3 style="margin-top:0; font-weight: 800;">ℹ️ О приложении</h3>
+        <div style="text-align: left; margin-top: 15px;">
+            <p style="margin: 0 0 15px 0; font-size: 15px; color: var(--text-muted); line-height: 1.5;">
+                «Мой ТСД» — это автономный веб-терминал сбора данных. Создан для быстрого сканирования товаров камерой смартфона, ускорения инвентаризации и мгновенного переноса данных в Excel.
+            </p>
+            <div style="background: var(--input-bg); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                <p style="margin: 0 0 8px 0; font-size: 16px; font-weight: 800; color: var(--text-main);">
+                    👨‍💻 Джугань Сергей
+                </p>
+                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
+                    Версия: 2.5 (PWA)
+                </p>
+            </div>
+        </div>
+        <button class="btn-modal btn-close" onclick="document.getElementById('aboutModal').style.display='none'">Закрыть</button>
     </div>
 </div>
 
@@ -417,43 +441,46 @@ function toggleMenu() {
     menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
 }
 
-// Закрываем меню, если кликнули мимо него
+// Закрываем меню при клике мимо или при клике на любой пункт внутри него
 document.addEventListener('click', function(event) {
     const menu = document.getElementById('dropdownMenu');
     const btn = document.getElementById('menuToggleBtn');
-    if (menu.style.display === 'flex' && !menu.contains(event.target) && event.target !== btn) {
-        menu.style.display = 'none';
+    if (menu.style.display === 'flex') {
+        if (!menu.contains(event.target) && event.target !== btn) {
+            menu.style.display = 'none';
+        } else if (event.target.closest('.dropdown-item')) {
+            menu.style.display = 'none';
+        }
     }
 });
 
 // === ЛОГИКА УСТАНОВКИ PWA (ADD TO HOME SCREEN) ===
-let deferredPrompt;
 const menuInstallBtn = document.getElementById('menuInstallBtn');
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
+// Если приложение УЖЕ установлено - скрываем пункт из меню навсегда
+if (isStandalone && menuInstallBtn) {
+    menuInstallBtn.style.display = 'none';
+}
+
+let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
-    // Предотвращаем автоматический показ мини-полоски браузера
     e.preventDefault();
     deferredPrompt = e;
-    
-    // Показываем кнопку в нашем выпадающем меню
-    if (menuInstallBtn) {
-        menuInstallBtn.style.display = 'flex';
-    }
 });
 
 if (menuInstallBtn) {
     menuInstallBtn.addEventListener('click', async () => {
-        // Скрываем меню после клика
-        document.getElementById('dropdownMenu').style.display = 'none';
-        
         if (deferredPrompt) {
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
             if (outcome === 'accepted') {
-                console.log('Установлено успешно');
-                menuInstallBtn.style.display = 'none'; // Прячем кнопку навсегда
+                menuInstallBtn.style.display = 'none';
             }
             deferredPrompt = null;
+        } else {
+            // Умная заглушка для iPhone и браузеров без поддержки
+            alert("Чтобы установить приложение на iPhone:\n\n1. Нажмите кнопку «Поделиться» (квадрат со стрелочкой) внизу экрана.\n2. Выберите «На экран \"Домой\"».");
         }
     });
 }
@@ -530,6 +557,7 @@ function toggleTheme() {
 applyTheme(settings.theme);
 
 function openInstruction() { document.getElementById('instructionModal').style.display = 'flex'; }
+function openAbout() { document.getElementById('aboutModal').style.display = 'flex'; }
 
 function openSettings() {
     document.getElementById('setContinuous').checked = settings.continuous;
@@ -662,7 +690,6 @@ function renderCart() {
         const fragment = document.createDocumentFragment();
         currentCart.forEach((item, index) => {
             const tr = document.createElement('tr');
-            // ВАЖНО: Удалил текстовый дубль штрихкода <span class="code-cell">...
             tr.innerHTML = `<td class="inline-barcode-container" onmousedown="startPress(event, '${item.code}')" onmouseup="cancelPress()" onmouseleave="cancelPress()" ontouchstart="startPress(event, '${item.code}')" oncontextmenu="return false;" onclick="handleBarcodeClick('${item.code}')">
                 <svg id="barcode-${index}"></svg>
             </td>
@@ -673,14 +700,14 @@ function renderCart() {
         tbody.appendChild(fragment);
 
         currentCart.forEach((item, index) => {
-            // ВАЖНО: Изменил displayValue: false для компактности!
+            // ВЕРНУЛИ displayValue: true ДЛЯ ЦИФР
             try { 
-                JsBarcode("#barcode-" + index, item.code, { format: "EAN13", lineColor: "#000", background: "transparent", width: 2, height: 45, displayValue: false, margin: 2});
+                JsBarcode("#barcode-" + index, item.code, { format: "EAN13", lineColor: "#000", background: "transparent", width: 1.8, height: 45, displayValue: true, fontSize: 14, margin: 2});
             } catch (e) {
                 try { 
-                    JsBarcode("#barcode-" + index, item.code, { format: "CODE128", lineColor: "#000", background: "transparent", width: 1.5, height: 40, displayValue: false, margin: 2 });
+                    JsBarcode("#barcode-" + index, item.code, { format: "CODE128", lineColor: "#000", background: "transparent", width: 1.5, height: 40, displayValue: true, fontSize: 14, margin: 2 });
                 } catch (err) { 
-                    document.getElementById("barcode-" + index).outerHTML = `<span style="font-family: monospace; font-weight: bold;">${item.code}</span>`; 
+                    document.getElementById("barcode-" + index).outerHTML = `<span style="font-family: monospace; font-weight: bold; font-size: 14px;">${item.code}</span>`; 
                 } 
             } 
         }); 
