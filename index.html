@@ -117,7 +117,7 @@ header h1 { margin: 0; font-size: 19px; font-weight: 800; display: flex; align-i
     background: var(--bg-card); border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     display: none; flex-direction: column; overflow: hidden;
-    z-index: 200; min-width: 210px;
+    z-index: 200; min-width: 220px;
     border: 1px solid var(--border-color);
     animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -156,9 +156,10 @@ td:first-child { border-top-left-radius: var(--radius-md); border-bottom-left-ra
 td:nth-child(2) { width: 25%; }
 td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-radius: var(--radius-md); width: 15%; }
 
-.inline-barcode-container { padding: 5px; cursor: pointer; transition: opacity 0.2s; -webkit-user-select: none; user-select: none; display: flex; justify-content: center; align-items: center; height: 60px;}
+.inline-barcode-container { padding: 5px; cursor: pointer; transition: opacity 0.2s; -webkit-user-select: none; user-select: none; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60px;}
 .inline-barcode-container:active { opacity: 0.4; }
-.inline-barcode-container svg { width: 100%; max-width: 150px; height: 100%; display: block; margin: 0 auto; background-color: #ffffff; padding: 4px; border-radius: 8px; pointer-events: none;}
+.inline-barcode-container svg { width: 100%; max-width: 150px; height: auto; display: block; margin: 0 auto; background-color: #ffffff; padding: 4px 4px 0 4px; border-radius: 8px 8px 0 0; pointer-events: none;}
+.code-cell { font-family: monospace; font-size: 13px; font-weight: bold; color: #000; background: #fff; width: 100%; max-width: 150px; display: block; text-align: center; padding-bottom: 4px; border-radius: 0 0 8px 8px; pointer-events: none;}
 
 .qty-box { background: var(--input-bg); border: 2px solid var(--border-color); color: var(--text-main); font-weight: 800; font-size: 16px; border-radius: 12px; padding: 10px 0; width: 100%; cursor: pointer; display: block; transition: 0.2s;}
 .qty-box:active { background: var(--border-color); transform: scale(0.92); }
@@ -227,12 +228,14 @@ input:checked + .slider:before { transform: translateX(24px); }
 
 /* === АРХИВ === */
 .archive-list { display: flex; flex-direction: column; gap: 12px; padding: 5px; margin: 0 -5px;}
-.archive-item { background: var(--input-bg); border-radius: var(--radius-md); padding: 18px; display: flex; justify-content: space-between; align-items: center; text-align: left; transition: 0.2s;}
-.archive-info { display: flex; flex-direction: column; gap: 8px; }
-.archive-date { color: var(--text-main); font-weight: 800; font-size: 16px; }
-.archive-stats { color: var(--text-muted); font-size: 14px; font-weight: 700;}
-.archive-btn { background: var(--btn-add); color: white; border: none; padding: 12px 20px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 14px; transition: 0.2s; box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2);}
-.archive-btn:active { transform: scale(0.9); }
+.archive-item { background: var(--input-bg); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; gap: 12px; text-align: left; transition: 0.2s;}
+.archive-info-row { display: flex; justify-content: space-between; align-items: center; }
+.archive-date { color: var(--text-main); font-weight: 800; font-size: 15px; }
+.archive-stats { color: var(--text-muted); font-size: 13px; font-weight: 700;}
+.archive-actions { display: flex; gap: 10px; width: 100%; }
+.archive-btn { flex: 1; background: var(--btn-add); color: white; border: none; padding: 12px 5px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 13px; transition: 0.2s; box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2); white-space: nowrap;}
+.archive-btn-secondary { flex: 1; background: var(--border-color); color: var(--text-main); border: none; padding: 12px 5px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 13px; transition: 0.2s; white-space: nowrap;}
+.archive-btn:active, .archive-btn-secondary:active { transform: scale(0.95); }
 
 /* === ОКНО УВЕЛИЧЕНИЯ ШТРИХКОДА === */
 #zoomModal { background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); justify-content: center; align-items: center;}
@@ -249,24 +252,21 @@ input:checked + .slider:before { transform: translateX(24px); }
         <!-- КНОПКА МЕНЮ (ТРИ ТОЧКИ) -->
         <button class="btn-icon" id="menuToggleBtn" onclick="toggleMenu()" style="font-weight: 900; font-size: 20px;">⋮</button>
         
-        <!-- ВЫПАДАЮЩЕЕ МЕНЮ -->
+        <!-- ЛОГИЧНОЕ ВЫПАДАЮЩЕЕ МЕНЮ -->
         <div id="dropdownMenu" class="dropdown-menu">
-            <div class="dropdown-item" onclick="openInstruction()">
-                <span class="menu-icon">📖</span> Инструкция
-            </div>
             <div class="dropdown-item" onclick="openArchive()">
                 <span class="menu-icon">🗄️</span> Архив
             </div>
             <div class="dropdown-item" onclick="openSettings()">
                 <span class="menu-icon">⚙️</span> Настройки
             </div>
+            <div class="dropdown-item" onclick="openInstruction()">
+                <span class="menu-icon">📖</span> Инструкция
+            </div>
             <div class="dropdown-item" onclick="openAbout()">
                 <span class="menu-icon">ℹ️</span> О приложении
             </div>
-            <div class="dropdown-item" onclick="location.reload()">
-                <span class="menu-icon">🔄</span> Обновить
-            </div>
-            <!-- Кнопка установки на экран -->
+            <!-- Кнопка установки на экран (скрывается, если уже установлено) -->
             <div class="dropdown-item" id="menuInstallBtn">
                 <span class="menu-icon">📥</span> На экран Домой
             </div>
@@ -338,7 +338,7 @@ input:checked + .slider:before { transform: translateX(24px); }
                     👨‍💻 Джугань Сергей
                 </p>
                 <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
-                    Версия: 2.5 (PWA)
+                    Версия: 3.0 (PWA)
                 </p>
             </div>
         </div>
@@ -441,7 +441,7 @@ function toggleMenu() {
     menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
 }
 
-// Закрываем меню при клике мимо или при клике на любой пункт внутри него
+// Закрываем меню при клике мимо или при выборе пункта
 document.addEventListener('click', function(event) {
     const menu = document.getElementById('dropdownMenu');
     const btn = document.getElementById('menuToggleBtn');
@@ -458,7 +458,6 @@ document.addEventListener('click', function(event) {
 const menuInstallBtn = document.getElementById('menuInstallBtn');
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
-// Если приложение УЖЕ установлено - скрываем пункт из меню навсегда
 if (isStandalone && menuInstallBtn) {
     menuInstallBtn.style.display = 'none';
 }
@@ -479,8 +478,7 @@ if (menuInstallBtn) {
             }
             deferredPrompt = null;
         } else {
-            // Умная заглушка для iPhone и браузеров без поддержки
-            alert("Чтобы установить приложение на iPhone:\n\n1. Нажмите кнопку «Поделиться» (квадрат со стрелочкой) внизу экрана.\n2. Выберите «На экран \"Домой\"».");
+            alert("Для установки приложения на iPhone:\n\n1. Нажмите кнопку «Поделиться» (квадрат со стрелочкой) внизу Safari.\n2. Выберите пункт «На экран Домой».");
         }
     });
 }
@@ -692,6 +690,7 @@ function renderCart() {
             const tr = document.createElement('tr');
             tr.innerHTML = `<td class="inline-barcode-container" onmousedown="startPress(event, '${item.code}')" onmouseup="cancelPress()" onmouseleave="cancelPress()" ontouchstart="startPress(event, '${item.code}')" oncontextmenu="return false;" onclick="handleBarcodeClick('${item.code}')">
                 <svg id="barcode-${index}"></svg>
+                <span class="code-cell">${item.code}</span>
             </td>
             <td><button class="qty-box" onclick="showNumpadForEdit(${index})">${item.qty}</button></td>
             <td><button class="btn-remove" onclick="removeItem(${index})">✖</button></td>`;
@@ -700,14 +699,14 @@ function renderCart() {
         tbody.appendChild(fragment);
 
         currentCart.forEach((item, index) => {
-            // ВЕРНУЛИ displayValue: true ДЛЯ ЦИФР
+            // ВЕРНУЛИ displayValue: false для картинки, так как цифры выводятся отдельно под ней
             try { 
-                JsBarcode("#barcode-" + index, item.code, { format: "EAN13", lineColor: "#000", background: "transparent", width: 1.8, height: 45, displayValue: true, fontSize: 14, margin: 2});
+                JsBarcode("#barcode-" + index, item.code, { format: "EAN13", lineColor: "#000", background: "transparent", width: 1.8, height: 45, displayValue: false, margin: 2});
             } catch (e) {
                 try { 
-                    JsBarcode("#barcode-" + index, item.code, { format: "CODE128", lineColor: "#000", background: "transparent", width: 1.5, height: 40, displayValue: true, fontSize: 14, margin: 2 });
+                    JsBarcode("#barcode-" + index, item.code, { format: "CODE128", lineColor: "#000", background: "transparent", width: 1.5, height: 40, displayValue: false, margin: 2 });
                 } catch (err) { 
-                    document.getElementById("barcode-" + index).outerHTML = `<span style="font-family: monospace; font-weight: bold; font-size: 14px;">${item.code}</span>`; 
+                    document.getElementById("barcode-" + index).style.display = 'none'; 
                 } 
             } 
         }); 
@@ -909,6 +908,7 @@ function shareToExcel() {
     copyToClipboard(payload);
 }
 
+// === АРХИВ И ВОССТАНОВЛЕНИЕ ДАННЫХ ===
 function addToArchive(lines, totalQty, payload) {
     let archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
     let now = new Date();
@@ -936,16 +936,20 @@ function renderArchive() {
         let div = document.createElement('div');
         div.className = 'archive-item';
         div.innerHTML = `
-            <div class="archive-info">
+            <div class="archive-info-row">
                 <div class="archive-date">${item.date}</div>
                 <div class="archive-stats">Строк: ${item.lines} | Шт: ${item.totalQty}</div>
             </div>
-            <button class="archive-btn" onclick="restoreArchive(${index})">Открыть</button>
+            <div class="archive-actions">
+                <button class="archive-btn-secondary" onclick="restoreArchiveToTable(${index})">В таблицу</button>
+                <button class="archive-btn" onclick="restoreArchive(${index})">Открыть QR</button>
+            </div>
         `;
         container.appendChild(div);
     });
 }
 
+// Показать QR-код из архива
 window.restoreArchive = function(index) {
     let archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
     if (!archive[index]) return;
@@ -957,6 +961,33 @@ window.restoreArchive = function(index) {
     let canvas = document.getElementById('finalQrCanvas');
     canvas.style.display = 'block';
     QRCode.toCanvas(canvas, payload, { width: 300, margin: 2, color: { dark: '#000000', light: '#ffffff' } });
+};
+
+// Восстановить данные из архива в корзину
+window.restoreArchiveToTable = function(index) {
+    let archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
+    if (!archive[index]) return;
+    
+    if (currentCart.length > 0) {
+        if (!confirm("Текущая корзина будет очищена. Загрузить данные из архива?")) return;
+    }
+    
+    let payload = archive[index].payload;
+    currentCart = [];
+    
+    if (payload) {
+        let items = payload.split(" ");
+        items.forEach(itemStr => {
+            let parts = itemStr.split("-");
+            if (parts.length === 2) {
+                currentCart.push({ code: parts[0], qty: parseInt(parts[1]) });
+            }
+        });
+    }
+    
+    saveState();
+    renderCart();
+    document.getElementById('archiveModal').style.display = 'none';
 };
 
 </script>
