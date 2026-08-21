@@ -84,10 +84,363 @@ body { margin: 0; padding: 0; background-color: var(--bg-body); color: var(--tex
 
 /* === АНИМАЦИИ === */
 @keyframes slideInUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes slideInDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes popIn { 0% { opacity: 0; transform: scale(0.9) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 @keyframes pulseSoft { 0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(243, 156, 18, 0); } 100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); } }
+@keyframes glowBrightness {
+0% { color: #f39c12; text-shadow: 0 0 5px rgba(243, 156, 18, 0.3); transform: scale(1); }
+50% { color: #ffffff; text-shadow: 0 0 15px #f1c40f, 0 0 25px #f1c40f, 0 0 35px #ffffff; transform: scale(1.05); }
+100% { color: #f39c12; text-shadow: 0 0 5px rgba(243, 156, 18, 0.3); transform: scale(1); }
+}
+@keyframes shake {
+0%, 100% { transform: translateX(0); }
+10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
 
-/* Анимация увеличения яркости */
+.brightness-text {
+font-weight: 800;
+font-size: 18px;
+margin-bottom: 20px;
+display: inline-block;
+animation: glowBrightness 2.5s infinite ease-in-out;
+/* Отступ для Dynamic Island на iOS */
+padding-top: max(20px, env(safe-area-inset-top));
+}
+
+/* === ШАПКА === */
+header { position: sticky; top: 0; background: var(--header-bg); color: var(--header-text); padding: calc(12px + env(safe-area-inset-top)) 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; margin-bottom: 15px;}
+header h1 { margin: 0; font-size: 19px; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: 0.2px; white-space: nowrap;}
+.header-controls { display: flex; gap: 6px; align-items: center; }
+.btn-icon { background: var(--header-icon-bg); color: var(--header-text); border: none; width: 36px; height: 36px; border-radius: 12px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); transition: 0.2s; }
+.btn-icon:active { transform: scale(0.9) rotate(5deg); background: var(--header-icon-hover); }
+
+/* === ОСНОВНОЙ КОНТЕЙНЕР === */
+.main-container { padding: 5px 15px 120px 15px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 15px; flex: 1; }
+.card { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); overflow: hidden; transition: 0.3s; }
+
+/* === ВНУТРИ ИНСТРУКЦИИ === */
+.instruction-content { padding: 10px 0; font-size: 15px; color: var(--text-muted); font-weight: 600; text-align: left;}
+.instruction-content ol { margin: 10px 0 0 0; padding-left: 20px; }
+.instruction-content li { margin-bottom: 12px; line-height: 1.5; color: var(--text-main);}
+.note-box { padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 15px; font-size: 13px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; text-align: left;}
+.install-note { background: var(--info-bg); color: var(--info-text); }
+.browser-note { background: var(--warn-bg); color: var(--warn-text); margin-top: 15px; margin-bottom: 0;}
+
+/* === РУЧНОЙ ВВОД === */
+.input-card { padding: 10px; display: flex; gap: 10px; align-items: center; background: var(--bg-card); }
+.input-field { flex: 1; padding: 15px 20px; background: var(--input-bg); color: var(--text-main); border: 2px solid transparent; border-radius: var(--radius-md); font-size: 16px; font-weight: 700; transition: 0.2s;}
+.input-field:focus { border-color: var(--btn-add); background: var(--bg-card); box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.1);}
+.btn-manual-add { background: var(--btn-add); color: white; border: none; border-radius: var(--radius-md); padding: 0 20px; height: 52px; font-weight: 800; font-size: 18px; transition: 0.2s; cursor: pointer; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);}
+.btn-manual-add:active { transform: scale(0.95); }
+
+/* === КОРЗИНА И ТАБЛИЦА (КАРТОЧКИ) === */
+.cart-card { background: transparent; box-shadow: none; border-radius: 0; display: flex; flex-direction: column; }
+.cart-header { padding: 5px 5px 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 16px; color: var(--text-main);}
+.btn-clear { background: #ff4757; color: white; border: none; border-radius: var(--radius-sm); padding: 8px 15px; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);}
+.btn-clear:active { transform: scale(0.9); box-shadow: none;}
+
+table { width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: -10px;}
+th { display: none; }
+
+tr { background: var(--bg-card); box-shadow: var(--shadow-soft); border-radius: var(--radius-md); transition: 0.2s; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+td { padding: 12px 10px; vertical-align: middle; text-align: center; border: none; }
+td:first-child { border-top-left-radius: var(--radius-md); border-bottom-left-radius: var(--radius-md); width: 60%; }
+td:nth-child(2) { width: 25%; }
+td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-radius: var(--radius-md); width: 15%; }
+
+.inline-barcode-container { padding: 5px; cursor: pointer; transition: opacity 0.2s; -webkit-user-select: none; user-select: none; }
+.inline-barcode-container:active { opacity: 0.4; }
+.inline-barcode-container svg { width: 100%; max-width: 150px; height: auto; max-height: 50px; display: block; margin: 0 auto; background-color: #ffffff; padding: 6px; border-radius: 8px; pointer-events: none;}
+.code-cell { font-family: monospace; font-size: 14px; font-weight: bold; color: var(--text-main); display: block; pointer-events: none;}
+
+.qty-box { background: var(--input-bg); border: 2px solid var(--border-color); color: var(--text-main); font-weight: 800; font-size: 16px; border-radius: 12px; padding: 10px 0; width: 100%; cursor: pointer; display: block; transition: 0.2s;}
+.qty-box:active { background: var(--border-color); transform: scale(0.92); }
+
+/* Исправленный крестик для iOS */
+.btn-remove {
+-webkit-appearance: none; appearance: none;
+background: rgba(255, 71, 87, 0.1);
+color: #ff4757;
+-webkit-text-fill-color: #ff4757;
+border: none;
+font-size: 18px;
+width: 36px; height: 36px;
+border-radius: 12px;
+font-weight: bold;
+cursor: pointer;
+transition: 0.2s;
+display: flex; align-items: center; justify-content: center;
+margin: 0 auto;
+padding: 0;
+opacity: 1 !important;
+}
+.btn-remove:active { transform: scale(0.8) rotate(15deg); }
+
+.no-data { padding: 40px 20px; color: var(--text-muted); font-weight: 700; text-align: center; background: var(--bg-card); border-radius: var(--radius-md); font-size: 16px; box-shadow: var(--shadow-soft);}
+
+/* === ПЛАВАЮЩАЯ ПАНЕЛЬ СНИЗУ === */
+.bottom-action-bar {
+position: fixed; bottom: 0; left: 0; width: 100%;
+background: rgba(var(--bg-card-rgb), 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+padding: 15px calc(15px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+display: flex; gap: 12px; z-index: 50; border-top: 1px solid var(--border-color);
+}
+.btn-fab {
+border: none; border-radius: 20px; font-weight: 800; color: white;
+display: flex; align-items: center; justify-content: center; gap: 8px;
+transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); height: 60px;
+white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px;
+}
+.btn-fab:active { transform: scale(0.95) translateY(2px); box-shadow: none !important; }
+
+.btn-fab-scan {
+flex: 1; min-width: 0;
+background: linear-gradient(135deg, #FF9800 0%, #d35400 100%);
+font-size: clamp(13px, 4vw, 16px);
+box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3);
+animation: pulseSoft 2s infinite;
+}
+.btn-fab-qr { flex: 0 0 auto; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); font-size: 15px; padding: 0 20px; box-shadow: 0 8px 20px rgba(142, 68, 173, 0.3); }
+
+/* === МОДАЛЬНЫЕ ОКНА (BOTTOM SHEETS) С ПОДДЕРЖКОЙ СКРОЛЛА === */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); backdrop-filter: var(--modal-backdrop); -webkit-backdrop-filter: var(--modal-backdrop); z-index: 9999; justify-content: center; align-items: flex-end; padding: 0; margin: 0;}
+.modal-content {
+background: var(--bg-card); color: var(--text-main);
+padding: 30px 20px 20px; border-radius: 32px 32px 0 0;
+width: 100%; max-width: 500px; text-align: center;
+box-shadow: 0 -20px 40px rgba(0,0,0,0.2);
+animation: slideInUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1);
+position: relative;
+padding-bottom: calc(20px + env(safe-area-inset-bottom));
+max-height: 85vh;
+overflow-y: auto;
+overscroll-behavior: contain;
+touch-action: pan-y;
+}
+
+.modal-content::-webkit-scrollbar { display: none; }
+.modal-content { -ms-overflow-style: none; scrollbar-width: none; }
+
+.modal-content::before { content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 40px; height: 5px; background: var(--border-color); border-radius: 10px; }
+
+/* Стили для центрированного модального окна */
+.modal-centered {
+align-items: center !important;
+padding: 20px;
+}
+.modal-centered .modal-content {
+border-radius: 24px;
+animation: slideInDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+padding: 25px 20px;
+}
+
+#reader { width: 100%; min-height: 250px; border-radius: var(--radius-md); overflow: hidden; background: #000; margin-bottom: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);}
+#reader video { object-fit: cover !important; width: 100%; height: 100%; }
+
+.btn-modal { width: 100%; padding: 18px; border: none; border-radius: var(--radius-md); font-weight: 800; font-size: 16px; margin-top: 10px; cursor: pointer; transition: 0.2s;}
+.btn-modal:active { transform: scale(0.96); }
+.btn-torch { background: #34495e; color: white; }
+.btn-close { background: var(--input-bg); color: var(--text-main); }
+
+/* Стили для кнопки "Понятно" в модальном окне */
+.btn-understand {
+background: #f39c12;
+color: white;
+animation: pulseSoft 2s infinite;
+}
+.btn-understand:active {
+transform: scale(0.95);
+animation: none;
+}
+
+/* === NUMPAD === */
+.numpad-content { background: var(--numpad-bg); }
+.numpad-title { font-size: 15px; font-weight: 800; color: var(--text-muted); margin: 0 0 15px 0;}
+.numpad-display { background: var(--input-bg); border: 2px solid var(--btn-add); border-radius: var(--radius-md); font-size: 40px; font-weight: 800; padding: 15px; margin-bottom: 20px; text-align: center; color: var(--text-main); box-shadow: 0 8px 15px rgba(39, 174, 96, 0.1); letter-spacing: 2px;}
+.numpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.num-btn { background: var(--numpad-btn); color: var(--text-main); border: none; border-radius: 24px; font-size: 26px; font-weight: 800; padding: 18px 0; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.15s; font-family: 'Nunito', sans-serif;}
+.num-btn:active { background: var(--border-color); transform: scale(0.9) translateY(4px); box-shadow: none;}
+.num-btn.action-c { color: #ff4757; }
+.num-btn.action-back { color: #f39c12; font-size: 24px; }
+
+.numpad-actions { display: flex; gap: 12px; margin-top: 20px; }
+.btn-numpad-cancel { flex: 1; background: var(--border-color); color: var(--text-main); border: none; border-radius: 20px; font-size: 16px; font-weight: 800; cursor: pointer; padding: 18px 0;}
+.btn-numpad-ok { flex: 2; background: var(--btn-add); color: white; border: none; border-radius: 20px; font-size: 18px; font-weight: 800; padding: 18px 0; cursor: pointer; box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);}
+.btn-numpad-cancel:active, .btn-numpad-ok:active { transform: scale(0.95); }
+
+/* === НАСТРОЙКИ === */
+.settings-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 2px dashed var(--border-color); font-size: 17px; font-weight: 700;}
+.settings-row:last-child { border-bottom: none; }
+.switch { position: relative; display: inline-block; width: 56px; height: 32px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--input-border); transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
+input:checked + .slider { background-color: var(--btn-add); }
+input:checked + .slider:before { transform: translateX(24px); }
+
+/* === QR ОКНО === */
+#qrModal { background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); justify-content: center; align-items: center;}
+#qrModal .modal-content { background: transparent; box-shadow: none; display: flex; flex-direction: column; align-items: center; justify-content: center; max-height: none;}
+#finalQrCanvas { display: none; margin: 0 auto; max-width: 100%; border-radius: var(--radius-lg); background: #fff; padding: 10px; box-shadow: 0 10px 40px rgba(255,255,255,0.2);}
+
+/* === АРХИВ === */
+.archive-list { display: flex; flex-direction: column; gap: 12px; padding: 5px; margin: 0 -5px;}
+.archive-item { background: var(--input-bg); border-radius: var(--radius-md); padding: 18px; display: flex; justify-content: space-between; align-items: center; text-align: left; transition: 0.2s;}
+.archive-info { display: flex; flex-direction: column; gap: 8px; }
+.archive-date { color: var(--text-main); font-weight: 800; font-size: 16px; }
+.archive-stats { color: var(--text-muted); font-size: 14px; font-weight: 700;}
+.archive-btn { background: var(--btn-add); color: white; border: none; padding: 12px 20px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 14px; transition: 0.2s; box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2);}
+.archive-btn:active { transform: scale(0.9); }
+
+/* === ОКНО УВЕЛИЧЕНИЯ ШТРИХКОДА === */
+#zoomModal { background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); justify-content: center; align-items: center;}
+.zoom-container { background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); box-shadow: 0 15px 40px rgba(0,0,0,0.3); text-align: center; width: 90%; max-width: 450px;}
+.zoom-container svg { width: 100%; height: auto; max-height: 200px; display: block; margin: 0 auto;}
+
+/* === МОДАЛЬНОЕ ОКНО ОТКЛЮЧЕНИЯ === */
+.offline-icon {
+font-size: 64px;
+margin-bottom: 15px;
+animation: shake 0.5s ease-in-out;
+}
+.offline-title {
+font-size: 22px;
+font-weight: 800;
+margin-bottom: 10px;
+color: #ff4757;
+}
+.offline-message {
+font-size: 15px;
+color: var(--text-muted);
+line-height: 1.6;
+margin-bottom: 20px;
+}
+</style>
+</head>
+<body>
+<header>
+<h1>📦 Мой ТСД</h1>
+<!-- Логичный порядок кнопок: Тема, Архив, Настройки, Инструкция -->
+<div class="header-controls">
+<button class="btn-icon" id="themeToggle" onclick="toggleTheme()" title="Тема">☀️</button>
+<button class="btn-icon" onclick="openArchive()" title="Архив">🗄️</button>
+<button class="btn-icon" onclick="openSettings()" title="Настройки">⚙️</button>
+<button class="btn-icon" onclick="openInstruction()" title="Инструкция">❓</button>
+</div>
+</header>
+
+<div class="main-container">
+
+<!-- РУЧНОЙ ВВОД -->
+<div class="card input-card">
+<input type="text" id="codeInput" class="input-field" placeholder="Введите артикул...">
+<button class="btn-manual-add" onclick="manualAdd()">✚</button>
+</div>
+
+<!-- КОРЗИНА -->
+<div class="cart-card">
+<div class="cart-header">
+<span id="cartStats">0 строк (0 шт.)</span>
+<button class="btn-clear" onclick="clearCart()">Очистить 🗑️</button>
+</div>
+<div class="table-wrapper">
+<table>
+<tbody id="cartTableBody">
+<tr><td colspan="3" class="no-data">✨ Начните сканировать товары</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- ПЛАВАЮЩАЯ ПАНЕЛЬ ТСД -->
+<div class="bottom-action-bar">
+<button class="btn-fab btn-fab-scan" onclick="startScanner()">📷 СКАНИРОВАТЬ</button>
+<button class="btn-fab btn-fab-qr" onclick="showTransferQR()">📲 В EXCEL</button>
+</div>
+
+<!-- НОВОЕ МОДАЛЬНОЕ ОКНО ОТКЛЮЧЕНИЯ -->
+<div class="modal-overlay modal-centered" id="offlineModal">
+<div class="modal-content">
+<div class="offline-icon">🔧</div>
+<div class="offline-title">Веб-приложение временно недоступно</div>
+<div class="offline-message">
+К сожалению, приложение находится на техническом обслуживании.<br>
+Мы работаем над улучшением сервиса и скоро вернёмся!
+</div>
+<button class="btn-modal btn-understand" onclick="closeOfflineModal()">Понятно</button>
+</div>
+</div>
+
+<!-- МОДАЛКА ИНСТРУКЦИИ И О ПРИЛОЖЕНИИ -->
+<div class="modal-overlay" id="instructionModal">
+<div class="modal-content">
+<h3 style="margin-top:0; font-weight: 800;">📖 Как это работает?</h3>
+<div class="instruction-content">
+<div class="note-box install-note">
+<span style="font-size: 18px; line-height: 1;">📲</span>
+<div style="flex: 1; line-height: 1.4;">В меню браузера нажми «На экран "Домой"» для быстрой установки.</div>
+</div>
+<ol>
+<li>Нажми крутую кнопку <b>📷 СКАНИРОВАТЬ</b> внизу или введи артикул вручную.</li>
+<li>Также сканер читает <b>DataMatrix (Честный ЗНАК ✅)</b>.</li>
+<li><b>Режим «🔄 Непрерывный скан»</b>: Камера не закрывается! Сканируй потоком, количество вбивай в окне.</li>
+<li>Собери карточку из товаров (<b>не более 50 строк</b>).</li>
+<li>Нажми <b>📲 В EXCEL</b>, яркость выкрутится на максимум.</li>
+<li>В Excel нажми «Получить данные из QR-кода» и отсканируй экран.</li>
+<li><b>Долгое нажатие:</b> Удерживай палец на штрихкоде в таблице, чтобы скопировать его в буфер обмена.</li>
+</ol>
+<div class="note-box browser-note">
+<span style="font-size: 18px; line-height: 1;">💡</span>
+<div style="flex: 1; line-height: 1.4;"><b>Важно:</b> Для быстрой работы камеры используйте браузер <b>Google Chrome</b> или <b>Safari</b>!</div>
+</div>
+
+<!-- Блок "О приложении" -->
+<div style="margin-top: 25px; padding-top: 20px; border-top: 2px dashed var(--border-color); text-align: left;">
+<h4 style="margin: 0 0 10px 0; color: var(--text-main); font-weight: 800; font-size: 16px;">ℹ️ О приложении</h4>
+<p style="margin: 0 0 12px 0; font-size: 14px; color: var(--text-muted); line-height: 1.5;">
+«Мой ТСД» — это автономный веб-терминал сбора данных, созданный для быстрого и удобного сбора штрихкодов с помощью камеры смартфона, ускорения инвентаризации, сборки заказов и их мгновенного переноса в Excel.
+</p>
+<p style="margin: 0; font-size: 14px; font-weight: 800; color: var(--text-main);">👨‍💻 Разработчик: Джугань Сергей</p>
+</div>
+</div>
+<button class="btn-modal btn-close" onclick="document.getElementById('instructionModal').style.display='none'">Понятно</button>
+</div>
+</div>
+
+<!-- МОДАЛКА НАСТРОЕК -->
+<div class="modal-overlay" id="settingsModal">
+<div class="modal-content">
+<h3 style="margin-top:0; font-weight: 800;">Настройки</h3>
+<div class="settings-row">
+<span>🔄 Непрерывный скан</span>
+<label class="switch"><input type="checkbox" id="setContinuous" onchange="saveSettings()"><span class="slider"></span></label>
+</div>
+<div class="settings-row">
+<span>🔊 Звук (Пик)</span>
+<label class="switch"><input type="checkbox" id="setSound" onchange="saveSettings()"><span class="slider"></span></label>
+</div>
+<div class="settings-row">
+<span>📳 Вибрация</span>
+<label class="switch"><input type="checkbox" id="setVibro" onchange="saveSettings()"><span class="slider"></span></label>
+</div>
+<button class="btn-modal btn-close" onclick="document.getElementById('settingsModal').style.display='none'">Готово</button>
+</div>
+</div>
+
+<!-- МОДАЛКА СКАНЕРА -->
+<div class="modal-overlay" id="scannerModal">
+<div class="modal-content">
+<h3 style="margin-top: 0; margin-bottom: 5px; font-weight: 800;">Наведите камеру</h3>
+<p id="iosScanHint" style="display:none; font-size: 14px; color: #f39c12; margin-top: 0; margin-bottom: 15px; font-weight: 700;">Отодвиньте телефон на 15-20 см</p>
+<div id="reader"></div>
+<button class="btn-modal btn-torch" id="torchBtn" onclick="toggleTorch()">🔦 Включить фонарик</button>
+<button class="btn-modal btn-close" onclick="stopScanner()">Завершить</button>
+</div>
+</div>
+
+<!-- МОДАЛКА NUMP/* Анимация увеличения яркости */
 @keyframes glowBrightness {
 0% { color: #f39c12; text-shadow: 0 0 5px rgba(243, 156, 18, 0.3); transform: scale(1); }
 50% { color: #ffffff; text-shadow: 0 0 15px #f1c40f, 0 0 25px #f1c40f, 0 0 35px #ffffff; transform: scale(1.05); }
