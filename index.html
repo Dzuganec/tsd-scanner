@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#27ae60" id="meta-theme-color">
 
-    <!-- ВАЖНО: Ссылка на манифест для кнопки установки -->
+    <!-- ВАЖНО: Ссылка на манифест для PWA-установки -->
     <link rel="manifest" href="manifest.json">
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2327ae60'/><text y='68' x='15' font-size='65'>📦</text></svg>">
@@ -90,7 +90,6 @@ body { margin: 0; padding: 0; background-color: var(--bg-body); color: var(--tex
 @keyframes popIn { 0% { opacity: 0; transform: scale(0.9) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 @keyframes pulseSoft { 0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(243, 156, 18, 0); } 100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); } }
 
-/* Анимация увеличения яркости */
 @keyframes glowBrightness {
     0% { color: #f39c12; text-shadow: 0 0 5px rgba(243, 156, 18, 0.3); transform: scale(1); }
     50% { color: #ffffff; text-shadow: 0 0 15px #f1c40f, 0 0 25px #f1c40f, 0 0 35px #ffffff; transform: scale(1.05); }
@@ -276,9 +275,10 @@ input:checked + .slider:before { transform: translateX(24px); }
             <div id="installContainer">
                 <div class="note-box install-note" id="iosInstallHint">
                     <span style="font-size: 18px; line-height: 1;">📲</span>
-                    <div style="flex: 1; line-height: 1.4;">На <b>iPhone</b>: нажми «Поделиться» внизу Safari, затем выбери «На экран "Домой"».</div>
+                    <div style="flex: 1; line-height: 1.4;">Для ручной установки нажми «Поделиться» (или меню ⋮) в браузере, затем выбери «На экран "Домой"».</div>
                 </div>
-                <button id="btnInstall" class="btn-modal" style="display: none; background: #27ae60; color: white; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);">
+                <!-- Кнопка теперь видима по умолчанию -->
+                <button id="btnInstall" class="btn-modal" style="background: #27ae60; color: white; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);">
                     ⬇️ Установить на телефон
                 </button>
             </div>
@@ -886,7 +886,6 @@ if (isStandalone && installContainer) {
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    if (btnInstall) btnInstall.style.display = 'block';
     if (iosInstallHint) iosInstallHint.style.display = 'none';
 });
 
@@ -896,10 +895,12 @@ if (btnInstall) {
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
             if (outcome === 'accepted') {
-                console.log('Пользователь установил приложение');
                 installContainer.style.display = 'none';
             }
             deferredPrompt = null;
+        } else {
+            // Если браузер не поддерживает автоустановку (например iOS)
+            alert("Автоматическая установка недоступна.\n\nПожалуйста, откройте меню браузера (кнопка ⋮ или 'Поделиться') и выберите пункт «На экран 'Домой'» или «Установить приложение».");
         }
     });
 }
