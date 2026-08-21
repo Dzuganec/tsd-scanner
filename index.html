@@ -29,169 +29,241 @@
 /* === ПЕРЕМЕННЫЕ ТЕМ И ДИЗАЙНА === */
 :root {
     /* Светлая тема */
-    --bg-body: #f2f4f7;
+    --bg-body: #f4f6f8;
     --bg-card: #ffffff;
     --bg-card-rgb: 255, 255, 255;
-    --text-main: #1a1a1a;
-    --text-muted: #8e8e93;
-    /* Зеленая шапка */
-    --header-bg: linear-gradient(135deg, #1e3c28 0%, #27ae60 100%);
+    --text-main: #111827;
+    --text-muted: #6b7280;
+    
+    /* Зеленая шапка - премиум градиент */
+    --header-bg: linear-gradient(135deg, #14532d 0%, #059669 100%);
     --header-text: #ffffff;
     --header-icon-bg: rgba(255, 255, 255, 0.15);
     --header-icon-hover: rgba(255, 255, 255, 0.25);
 
-    --border-color: #e5e5ea;
-    --input-bg: #f2f4f7;
-    --input-border: #e5e5ea;
-    --btn-add: #27ae60;
-    --shadow-soft: 0 4px 20px rgba(0,0,0,0.04);
-    --shadow-hover: 0 8px 25px rgba(0,0,0,0.08);
-    --modal-bg: rgba(0,0,0,0.5);
-    --modal-backdrop: blur(8px);
-    --numpad-bg: #f2f4f7;
+    --border-color: #e5e7eb;
+    --input-bg: #f9fafb;
+    --btn-add: #059669;
+    --btn-remove-bg: #fee2e2;
+    --btn-remove-text: #dc2626;
+    
+    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --modal-bg: rgba(17, 24, 39, 0.6);
+    --modal-backdrop: blur(12px);
+    
+    --numpad-bg: #f3f4f6;
     --numpad-btn: #ffffff;
-    --info-bg: #e8f8f5; --info-text: #117a65;
-    --warn-bg: #fff3cd; --warn-text: #856404;
-    --radius-sm: 12px; --radius-md: 20px; --radius-lg: 28px;
+    
+    --info-bg: #ecfdf5; --info-text: #047857;
+    --warn-bg: #fffbeb; --warn-text: #b45309;
+    
+    --radius-sm: 12px; --radius-md: 16px; --radius-lg: 24px;
 }
 
 [data-theme="dark"] {
     /* Темная тема */
-    --bg-body: #151618;
-    --bg-card: #26282a;
-    --bg-card-rgb: 38, 40, 42;
-    --text-main: #f5f6f8;
-    --text-muted: #9ba0a6;
+    --bg-body: #111827;
+    --bg-card: #1f2937;
+    --bg-card-rgb: 31, 41, 55;
+    --text-main: #f9fafb;
+    --text-muted: #9ca3af;
 
-    --header-bg: linear-gradient(135deg, #0b110e 0%, #15291d 100%);
-    --header-text: #e0e0e0;
-    --header-icon-bg: rgba(255, 255, 255, 0.08);
-    --header-icon-hover: rgba(255, 255, 255, 0.15);
+    --header-bg: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    --header-text: #ffffff;
+    --header-icon-bg: rgba(255, 255, 255, 0.1);
+    --header-icon-hover: rgba(255, 255, 255, 0.2);
 
-    --border-color: #3a3f45;
-    --input-bg: #151618;
-    --input-border: #3a3f45;
-    --btn-add: #2ecc71;
-    --shadow-soft: 0 8px 24px rgba(0,0,0,0.2);
-    --shadow-hover: 0 12px 32px rgba(46, 204, 113, 0.15);
-    --modal-bg: rgba(0,0,0,0.7);
-    --numpad-bg: #151618;
-    --numpad-btn: #26282a;
-    --info-bg: #153229; --info-text: #66cdaa;
-    --warn-bg: #3a2e12; --warn-text: #ffd54f;
+    --border-color: #374151;
+    --input-bg: #111827;
+    --btn-add: #10b981;
+    --btn-remove-bg: #7f1d1d;
+    --btn-remove-text: #fca5a5;
+
+    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    --modal-bg: rgba(0, 0, 0, 0.75);
+    
+    --numpad-bg: #111827;
+    --numpad-btn: #1f2937;
+    
+    --info-bg: #064e3b; --info-text: #34d399;
+    --warn-bg: #451a03; --warn-text: #fbbf24;
 }
 
 /* === БАЗОВЫЕ НАСТРОЙКИ === */
-* { box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; outline: none; }
-body { margin: 0; padding: 0; background-color: var(--bg-body); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; transition: background-color 0.3s ease; }
+* { box-sizing: border-box; font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; outline: none; margin: 0; padding: 0; }
+body { background-color: var(--bg-body); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; transition: background-color 0.3s ease; }
 
 /* === АНИМАЦИИ === */
 @keyframes slideInUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@keyframes popIn { 0% { opacity: 0; transform: scale(0.9) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
-@keyframes pulseSoft { 0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(243, 156, 18, 0); } 100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); } }
+@keyframes popIn { 0% { opacity: 0; transform: scale(0.95) translateY(5px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 @keyframes glowBrightness {
-    0% { color: #f39c12; text-shadow: 0 0 5px rgba(243, 156, 18, 0.3); transform: scale(1); }
-    50% { color: #ffffff; text-shadow: 0 0 15px #f1c40f, 0 0 25px #f1c40f, 0 0 35px #ffffff; transform: scale(1.05); }
-    100% { color: #f39c12; text-shadow: 0 0 5px rgba(243, 156, 18, 0.3); transform: scale(1); }
+    0% { color: #f59e0b; text-shadow: 0 0 5px rgba(245, 158, 11, 0.3); transform: scale(1); }
+    50% { color: #ffffff; text-shadow: 0 0 15px #fbbf24, 0 0 25px #fbbf24, 0 0 35px #ffffff; transform: scale(1.05); }
+    100% { color: #f59e0b; text-shadow: 0 0 5px rgba(245, 158, 11, 0.3); transform: scale(1); }
 }
 
 .brightness-text {
-    font-weight: 800;
-    font-size: 18px;
-    margin-bottom: 20px;
-    display: inline-block;
-    animation: glowBrightness 2.5s infinite ease-in-out;
-    padding-top: max(20px, env(safe-area-inset-top));
+    font-weight: 800; font-size: 18px; margin-bottom: 20px; display: inline-block;
+    animation: glowBrightness 2.5s infinite ease-in-out; padding-top: max(20px, env(safe-area-inset-top));
 }
 
 /* === ШАПКА === */
-header { position: sticky; top: 0; background: var(--header-bg); color: var(--header-text); padding: calc(12px + env(safe-area-inset-top)) 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; margin-bottom: 15px;}
-header h1 { margin: 0; font-size: 19px; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: 0.2px; white-space: nowrap;}
-.header-controls { display: flex; gap: 6px; align-items: center; position: relative; }
-.btn-icon { background: var(--header-icon-bg); color: var(--header-text); border: none; width: 36px; height: 36px; border-radius: 12px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); transition: 0.2s; }
-.btn-icon:active { transform: scale(0.9) rotate(5deg); background: var(--header-icon-hover); }
+header { 
+    position: sticky; top: 0; background: var(--header-bg); color: var(--header-text); 
+    padding: calc(12px + env(safe-area-inset-top)) 15px 15px; 
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: flex; justify-content: space-between; 
+    align-items: center; z-index: 100; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; 
+    margin-bottom: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+header h1 { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: 0.3px; }
+.header-controls { display: flex; gap: 8px; align-items: center; position: relative; }
+.btn-icon { 
+    background: var(--header-icon-bg); color: var(--header-text); border: none; 
+    width: 38px; height: 38px; border-radius: 12px; font-size: 16px; cursor: pointer; 
+    display: flex; align-items: center; justify-content: center; transition: 0.2s; 
+}
+.btn-icon:active { transform: scale(0.9); background: var(--header-icon-hover); }
 
 /* === ВЫПАДАЮЩЕЕ МЕНЮ === */
 .dropdown-menu {
-    position: absolute; top: 45px; right: 0px;
-    background: var(--bg-card); border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    display: none; flex-direction: column; overflow: hidden;
-    z-index: 200; min-width: 220px;
-    border: 1px solid var(--border-color);
+    position: absolute; top: 50px; right: 0px; background: var(--bg-card); 
+    border-radius: var(--radius-md); box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    display: none; flex-direction: column; overflow: hidden; z-index: 200; min-width: 220px;
+    border: 1px solid var(--border-color); transform-origin: top right;
     animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .dropdown-item {
-    padding: 16px 20px; font-weight: 700; font-size: 15px;
-    color: var(--text-main); display: flex; align-items: center; gap: 12px;
-    border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.2s;
-    text-align: left;
+    padding: 14px 20px; font-weight: 700; font-size: 15px; color: var(--text-main); 
+    display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); 
+    cursor: pointer; transition: 0.2s;
 }
 .dropdown-item:last-child { border-bottom: none; }
 .dropdown-item:active { background: var(--input-bg); }
 .menu-icon { font-size: 18px; width: 24px; text-align: center; }
 
 /* === ОСНОВНОЙ КОНТЕЙНЕР === */
-.main-container { padding: 5px 15px 120px 15px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 15px; flex: 1; }
-.card { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); overflow: hidden; transition: 0.3s; }
+.main-container { padding: 0 15px 120px 15px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; flex: 1; }
+.card { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); border: 1px solid var(--border-color); overflow: hidden; transition: 0.3s; }
 
-/* === РУЧНОЙ ВВОД === */
-.input-card { padding: 10px; display: flex; gap: 10px; align-items: center; background: var(--bg-card); }
-.input-field { flex: 1; padding: 15px 20px; background: var(--input-bg); color: var(--text-main); border: 2px solid transparent; border-radius: var(--radius-md); font-size: 16px; font-weight: 700; transition: 0.2s;}
-.input-field:focus { border-color: var(--btn-add); background: var(--bg-card); box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.1);}
-.btn-manual-add { background: var(--btn-add); color: white; border: none; border-radius: var(--radius-md); padding: 0 20px; height: 52px; font-weight: 800; font-size: 18px; transition: 0.2s; cursor: pointer; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);}
-.btn-manual-add:active { transform: scale(0.95); }
+/* === ЕДИНАЯ СТРОКА РУЧНОГО ВВОДА === */
+.input-card { 
+    padding: 6px; display: flex; gap: 6px; align-items: center; 
+    border-radius: var(--radius-lg);
+}
+.input-field { 
+    flex: 1; padding: 15px 15px; background: transparent; color: var(--text-main); 
+    border: none; font-size: 16px; font-weight: 700; transition: 0.2s;
+}
+.input-field::placeholder { color: var(--text-muted); font-weight: 600; }
+.btn-manual-add { 
+    background: var(--btn-add); color: white; border: none; border-radius: var(--radius-md); 
+    width: 50px; height: 50px; font-weight: 800; font-size: 24px; display: flex; 
+    justify-content: center; align-items: center; cursor: pointer; 
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3); transition: 0.2s;
+}
+.btn-manual-add:active { transform: scale(0.92); }
 
 /* === КОРЗИНА И ТАБЛИЦА === */
-.cart-card { background: transparent; box-shadow: none; border-radius: 0; display: flex; flex-direction: column; }
-.cart-header { padding: 5px 5px 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 16px; color: var(--text-main);}
-.btn-clear { background: #ff4757; color: white; border: none; border-radius: var(--radius-sm); padding: 8px 15px; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);}
-.btn-clear:active { transform: scale(0.9); box-shadow: none;}
+.cart-card { background: transparent; box-shadow: none; border: none; border-radius: 0; display: flex; flex-direction: column; }
+.cart-header { padding: 0 5px 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 16px; color: var(--text-main);}
+.btn-clear { 
+    background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); 
+    border-radius: var(--radius-sm); padding: 6px 12px; font-size: 13px; font-weight: 700; 
+    cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px;
+}
+.btn-clear:active { background: var(--btn-remove-bg); color: var(--btn-remove-text); border-color: var(--btn-remove-text); }
 
 table { width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: -10px;}
 th { display: none; }
-tr { background: var(--bg-card); box-shadow: var(--shadow-soft); border-radius: var(--radius-md); transition: 0.2s; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+tr { 
+    background: var(--bg-card); box-shadow: var(--shadow-soft); border-radius: var(--radius-md); 
+    border: 1px solid var(--border-color); transition: 0.2s; 
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+}
 td { padding: 12px 10px; vertical-align: middle; text-align: center; border: none; }
 td:first-child { border-top-left-radius: var(--radius-md); border-bottom-left-radius: var(--radius-md); width: 60%; }
 td:nth-child(2) { width: 25%; }
 td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-radius: var(--radius-md); width: 15%; }
 
 .inline-barcode-container { padding: 5px; cursor: pointer; transition: opacity 0.2s; -webkit-user-select: none; user-select: none; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60px;}
-.inline-barcode-container:active { opacity: 0.4; }
-.inline-barcode-container svg { width: 100%; max-width: 150px; height: auto; display: block; margin: 0 auto; background-color: #ffffff; padding: 4px 4px 0 4px; border-radius: 8px 8px 0 0; pointer-events: none;}
-/* Восстановили цифры штрихкода внизу */
-.code-cell { font-family: monospace; font-size: 13px; font-weight: bold; color: #000; background: #fff; width: 100%; max-width: 150px; display: block; text-align: center; padding-bottom: 4px; border-radius: 0 0 8px 8px; pointer-events: none; margin: 0 auto;}
+.inline-barcode-container:active { opacity: 0.5; }
+.inline-barcode-container svg { width: 100%; max-width: 140px; height: auto; display: block; margin: 0 auto; background-color: #ffffff; padding: 6px 6px 0 6px; border-radius: 8px 8px 0 0; pointer-events: none;}
+.code-cell { font-family: monospace; font-size: 13px; font-weight: 800; letter-spacing: 0.5px; color: #000; background: #fff; width: 100%; max-width: 140px; display: block; text-align: center; padding-bottom: 6px; border-radius: 0 0 8px 8px; pointer-events: none; margin: 0 auto;}
 
-.qty-box { background: var(--input-bg); border: 2px solid var(--border-color); color: var(--text-main); font-weight: 800; font-size: 16px; border-radius: 12px; padding: 10px 0; width: 100%; cursor: pointer; display: block; transition: 0.2s;}
+.qty-box { 
+    background: var(--input-bg); border: 2px solid var(--border-color); color: var(--text-main); 
+    font-weight: 800; font-size: 17px; border-radius: 12px; padding: 12px 0; width: 100%; 
+    cursor: pointer; display: block; transition: 0.2s;
+}
 .qty-box:active { background: var(--border-color); transform: scale(0.92); }
 
-.btn-remove { -webkit-appearance: none; appearance: none; background: rgba(255, 71, 87, 0.1); color: #ff4757; -webkit-text-fill-color: #ff4757; border: none; font-size: 18px; width: 36px; height: 36px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; margin: 0 auto; padding: 0; opacity: 1 !important; }
-.btn-remove:active { transform: scale(0.8) rotate(15deg); }
+.btn-remove { 
+    -webkit-appearance: none; appearance: none; background: var(--btn-remove-bg); 
+    color: var(--btn-remove-text); border: none; font-size: 18px; width: 38px; height: 38px; 
+    border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; 
+    display: flex; align-items: center; justify-content: center; margin: 0 auto; padding: 0;
+}
+.btn-remove:active { transform: scale(0.8) rotate(10deg); }
 
-.no-data { padding: 40px 20px; color: var(--text-muted); font-weight: 700; text-align: center; background: var(--bg-card); border-radius: var(--radius-md); font-size: 16px; box-shadow: var(--shadow-soft);}
+.no-data { padding: 40px 20px; color: var(--text-muted); font-weight: 700; text-align: center; background: var(--bg-card); border-radius: var(--radius-md); font-size: 15px; border: 2px dashed var(--border-color); box-shadow: none;}
 
 /* === ПЛАВАЮЩАЯ ПАНЕЛЬ СНИЗУ === */
-.bottom-action-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(var(--bg-card-rgb), 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 15px calc(15px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 30px rgba(0,0,0,0.05); display: flex; gap: 12px; z-index: 50; border-top: 1px solid var(--border-color); }
-.btn-fab { border: none; border-radius: 20px; font-weight: 800; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); height: 60px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px; }
-.btn-fab:active { transform: scale(0.95) translateY(2px); box-shadow: none !important; }
-.btn-fab-scan { flex: 1; min-width: 0; background: linear-gradient(135deg, #FF9800 0%, #d35400 100%); font-size: clamp(13px, 4vw, 16px); box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3); animation: pulseSoft 2s infinite; }
-.btn-fab-qr { flex: 0 0 auto; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); font-size: 15px; padding: 0 20px; box-shadow: 0 8px 20px rgba(142, 68, 173, 0.3); }
+.bottom-action-bar { 
+    position: fixed; bottom: 0; left: 0; width: 100%; 
+    background: rgba(var(--bg-card-rgb), 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
+    padding: 15px calc(15px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 30px rgba(0,0,0,0.05); 
+    display: flex; gap: 12px; z-index: 50; border-top: 1px solid var(--border-color); 
+}
+.btn-fab { 
+    border: none; border-radius: var(--radius-lg); font-weight: 800; color: white; 
+    display: flex; align-items: center; justify-content: center; gap: 8px; 
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); height: 60px; 
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px; 
+}
+.btn-fab:active { transform: scale(0.96); box-shadow: none !important; }
+
+/* Сочные нативные цвета для кнопок */
+.btn-fab-scan { 
+    flex: 1; min-width: 0; background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+    font-size: clamp(14px, 4vw, 16px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); 
+}
+.btn-fab-qr { 
+    flex: 0 0 auto; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+    font-size: 15px; padding: 0 20px; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); 
+}
 
 /* === АВТО-БАННЕР УСТАНОВКИ === */
-.install-banner { position: fixed; bottom: 95px; left: 15px; right: 15px; background: var(--bg-card); border-radius: var(--radius-md); box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 15px; display: none; flex-direction: column; gap: 12px; z-index: 90; border: 2px solid var(--btn-add); animation: slideInUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.install-banner-header { display: flex; align-items: center; gap: 12px; }
-.install-banner-icon { font-size: 32px; background: var(--input-bg); width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
+.install-banner { 
+    position: fixed; bottom: 100px; left: 15px; right: 15px; background: var(--bg-card); 
+    border-radius: var(--radius-md); box-shadow: 0 15px 40px rgba(0,0,0,0.15); padding: 16px; 
+    display: none; flex-direction: column; gap: 12px; z-index: 90; border: 1px solid var(--border-color); 
+    animation: slideInUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); 
+}
+.install-banner-header { display: flex; align-items: center; gap: 14px; }
+.install-banner-icon { font-size: 30px; background: var(--info-bg); width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
 .install-banner-text h4 { margin: 0 0 4px 0; color: var(--text-main); font-weight: 800; font-size: 16px; }
 .install-banner-text p { margin: 0; color: var(--text-muted); font-size: 13px; font-weight: 600; line-height: 1.3; }
 .install-banner-actions { display: flex; gap: 10px; }
 .install-banner-actions button { flex: 1; padding: 12px; border: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; }
-.btn-install-yes { background: var(--btn-add); color: white; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3); }
+.btn-install-yes { background: var(--btn-add); color: white; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2); }
 .btn-install-yes:active { transform: scale(0.95); }
-.btn-install-no { background: var(--input-bg); color: var(--text-main); }
+.btn-install-no { background: var(--input-bg); color: var(--text-muted); border: 1px solid var(--border-color); }
 
 /* === МОДАЛЬНЫЕ ОКНА === */
-.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); backdrop-filter: var(--modal-backdrop); -webkit-backdrop-filter: var(--modal-backdrop); z-index: 9999; justify-content: center; align-items: flex-end; padding: 0; margin: 0;}
-.modal-content { background: var(--bg-card); color: var(--text-main); padding: 30px 20px 20px; border-radius: 32px 32px 0 0; width: 100%; max-width: 500px; text-align: center; box-shadow: 0 -20px 40px rgba(0,0,0,0.2); animation: slideInUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); position: relative; padding-bottom: calc(20px + env(safe-area-inset-bottom)); max-height: 85vh; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
+.modal-overlay { 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: var(--modal-bg); backdrop-filter: var(--modal-backdrop); -webkit-backdrop-filter: var(--modal-backdrop); 
+    z-index: 9999; justify-content: center; align-items: flex-end; padding: 0; margin: 0;
+}
+.modal-content { 
+    background: var(--bg-card); color: var(--text-main); padding: 30px 20px 20px; 
+    border-radius: 32px 32px 0 0; width: 100%; max-width: 500px; text-align: center; 
+    box-shadow: 0 -20px 40px rgba(0,0,0,0.2); animation: slideInUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); 
+    position: relative; padding-bottom: calc(20px + env(safe-area-inset-bottom)); 
+    max-height: 85vh; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; 
+}
 .modal-content::-webkit-scrollbar { display: none; }
 .modal-content { -ms-overflow-style: none; scrollbar-width: none; }
 .modal-content::before { content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 40px; height: 5px; background: var(--border-color); border-radius: 10px; }
@@ -199,10 +271,10 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 #reader { width: 100%; min-height: 250px; border-radius: var(--radius-md); overflow: hidden; background: #000; margin-bottom: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);}
 #reader video { object-fit: cover !important; width: 100%; height: 100%; }
 
-.btn-modal { width: 100%; padding: 18px; border: none; border-radius: var(--radius-md); font-weight: 800; font-size: 16px; margin-top: 10px; cursor: pointer; transition: 0.2s;}
+.btn-modal { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-weight: 800; font-size: 16px; margin-top: 10px; cursor: pointer; transition: 0.2s;}
 .btn-modal:active { transform: scale(0.96); }
-.btn-torch { background: #34495e; color: white; }
-.btn-close { background: var(--input-bg); color: var(--text-main); }
+.btn-torch { background: #374151; color: white; }
+.btn-close { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); }
 
 /* === ВНУТРИ ИНСТРУКЦИИ === */
 .instruction-content { padding: 10px 0; font-size: 15px; color: var(--text-muted); font-weight: 600; text-align: left;}
@@ -210,44 +282,52 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .instruction-content li { margin-bottom: 12px; line-height: 1.5; color: var(--text-main);}
 .browser-note { padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 0; font-size: 13px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; text-align: left; background: var(--warn-bg); color: var(--warn-text); margin-top: 15px;}
 
-/* === NUMPAD === */
-.numpad-content { background: var(--numpad-bg); }
-.numpad-title { font-size: 15px; font-weight: 800; color: var(--text-muted); margin: 0 0 15px 0;}
-.numpad-display { background: var(--input-bg); border: 2px solid var(--btn-add); border-radius: var(--radius-md); font-size: 40px; font-weight: 800; padding: 15px; margin-bottom: 20px; text-align: center; color: var(--text-main); box-shadow: 0 8px 15px rgba(39, 174, 96, 0.1); letter-spacing: 2px;}
-.numpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.num-btn { background: var(--numpad-btn); color: var(--text-main); border: none; border-radius: 24px; font-size: 26px; font-weight: 800; padding: 18px 0; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.15s; font-family: 'Nunito', sans-serif;}
-.num-btn:active { background: var(--border-color); transform: scale(0.9) translateY(4px); box-shadow: none;}
-.num-btn.action-c { color: #ff4757; }
-.num-btn.action-back { color: #f39c12; font-size: 24px; }
-.numpad-actions { display: flex; gap: 12px; margin-top: 20px; }
-.btn-numpad-cancel { flex: 1; background: var(--border-color); color: var(--text-main); border: none; border-radius: 20px; font-size: 16px; font-weight: 800; cursor: pointer; padding: 18px 0;}
-.btn-numpad-ok { flex: 2; background: var(--btn-add); color: white; border: none; border-radius: 20px; font-size: 18px; font-weight: 800; padding: 18px 0; cursor: pointer; box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);}
+/* === IOS STYLE NUMPAD === */
+.numpad-content { background: var(--numpad-bg); padding-top: 20px; }
+.numpad-title { font-size: 15px; font-weight: 800; color: var(--text-muted); margin: 0 0 10px 0;}
+.numpad-display { 
+    background: transparent; font-size: 48px; font-weight: 800; padding: 10px; 
+    margin-bottom: 15px; text-align: center; color: var(--text-main); letter-spacing: 2px;
+}
+.numpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 320px; margin: 0 auto; }
+.num-btn { 
+    background: var(--numpad-btn); color: var(--text-main); border: none; 
+    border-radius: 50%; font-size: 28px; font-weight: 600; aspect-ratio: 1; 
+    cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.1s; 
+    display: flex; align-items: center; justify-content: center;
+}
+.num-btn:active { background: var(--border-color); transform: scale(0.9); box-shadow: none;}
+.num-btn.action-c { color: #dc2626; font-weight: 800; font-size: 24px; }
+.num-btn.action-back { color: #d97706; font-size: 24px; }
+.numpad-actions { display: flex; gap: 12px; margin-top: 25px; }
+.btn-numpad-cancel { flex: 1; background: var(--border-color); color: var(--text-main); border: none; border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; padding: 16px 0;}
+.btn-numpad-ok { flex: 2; background: var(--btn-add); color: white; border: none; border-radius: 16px; font-size: 18px; font-weight: 800; padding: 16px 0; cursor: pointer; box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);}
 .btn-numpad-cancel:active, .btn-numpad-ok:active { transform: scale(0.95); }
 
 /* === НАСТРОЙКИ === */
-.settings-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 2px dashed var(--border-color); font-size: 17px; font-weight: 700;}
+.settings-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--border-color); font-size: 16px; font-weight: 700;}
 .settings-row:last-child { border-bottom: none; }
-.switch { position: relative; display: inline-block; width: 56px; height: 32px; }
+.switch { position: relative; display: inline-block; width: 52px; height: 30px; }
 .switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--input-border); transition: .4s; border-radius: 34px; }
-.slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--input-border); transition: .3s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
 input:checked + .slider { background-color: var(--btn-add); }
-input:checked + .slider:before { transform: translateX(24px); }
+input:checked + .slider:before { transform: translateX(22px); }
 
 /* === QR ОКНО === */
 #qrModal { background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); justify-content: center; align-items: center;}
 #qrModal .modal-content { background: transparent; box-shadow: none; display: flex; flex-direction: column; align-items: center; justify-content: center; max-height: none;}
-#finalQrCanvas { display: none; margin: 0 auto; max-width: 100%; border-radius: var(--radius-lg); background: #fff; padding: 10px; box-shadow: 0 10px 40px rgba(255,255,255,0.2);}
+#finalQrCanvas { display: none; margin: 0 auto; max-width: 100%; border-radius: var(--radius-lg); background: #fff; padding: 12px; box-shadow: 0 10px 40px rgba(255,255,255,0.2);}
 
 /* === АРХИВ === */
 .archive-list { display: flex; flex-direction: column; gap: 12px; padding: 5px; margin: 0 -5px;}
-.archive-item { background: var(--input-bg); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; gap: 12px; text-align: left; transition: 0.2s;}
+.archive-item { background: var(--input-bg); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; gap: 12px; text-align: left; transition: 0.2s; border: 1px solid var(--border-color);}
 .archive-info-row { display: flex; justify-content: space-between; align-items: center; }
 .archive-date { color: var(--text-main); font-weight: 800; font-size: 15px; }
 .archive-stats { color: var(--text-muted); font-size: 13px; font-weight: 700;}
 .archive-actions { display: flex; gap: 10px; width: 100%; }
-.archive-btn { flex: 1; background: var(--btn-add); color: white; border: none; padding: 12px 5px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 13px; transition: 0.2s; box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2); white-space: nowrap;}
-.archive-btn-secondary { flex: 1; background: var(--border-color); color: var(--text-main); border: none; padding: 12px 5px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 13px; transition: 0.2s; white-space: nowrap;}
+.archive-btn { flex: 1; background: var(--btn-add); color: white; border: none; padding: 10px 5px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 13px; transition: 0.2s; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2); white-space: nowrap;}
+.archive-btn-secondary { flex: 1; background: var(--border-color); color: var(--text-main); border: none; padding: 10px 5px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 13px; transition: 0.2s; white-space: nowrap;}
 .archive-btn:active, .archive-btn-secondary:active { transform: scale(0.95); }
 
 /* === ОКНО УВЕЛИЧЕНИЯ ШТРИХКОДА === */
@@ -262,10 +342,8 @@ input:checked + .slider:before { transform: translateX(24px); }
     <h1>📦 Мой ТСД</h1>
     <div class="header-controls">
         <button class="btn-icon" id="themeToggle" onclick="toggleTheme()" title="Сменить тему">☀️</button>
-        <!-- КНОПКА МЕНЮ (ТРИ ТОЧКИ) -->
         <button class="btn-icon" id="menuToggleBtn" onclick="toggleMenu()" style="font-weight: 900; font-size: 20px;">⋮</button>
         
-        <!-- ЛОГИЧНОЕ ВЫПАДАЮЩЕЕ МЕНЮ -->
         <div id="dropdownMenu" class="dropdown-menu">
             <div class="dropdown-item" onclick="openArchive()">
                 <span class="menu-icon">🗄️</span> Архив
@@ -279,7 +357,6 @@ input:checked + .slider:before { transform: translateX(24px); }
             <div class="dropdown-item" onclick="openAbout()">
                 <span class="menu-icon">ℹ️</span> О приложении
             </div>
-            <!-- Кнопка установки на экран -->
             <div class="dropdown-item" id="menuInstallBtn" onclick="triggerInstall()">
                 <span class="menu-icon">📥</span> На экран Домой
             </div>
@@ -322,12 +399,12 @@ input:checked + .slider:before { transform: translateX(24px); }
         <div class="install-banner-icon">📲</div>
         <div class="install-banner-text">
             <h4>Установить Мой ТСД</h4>
-            <p>Добавьте на экран «Домой» для быстрого запуска и полноэкранного режима</p>
+            <p>Добавьте на экран «Домой» для быстрого запуска и работы оффлайн</p>
         </div>
     </div>
     <div class="install-banner-actions">
-        <button class="install-btn-close" onclick="dismissInstallBanner()">Закрыть</button>
-        <button class="install-btn-ok" onclick="triggerInstall()">Установить</button>
+        <button class="btn-install-no" onclick="dismissInstallBanner()">Позже</button>
+        <button class="btn-install-yes" onclick="triggerInstall()">Установить</button>
     </div>
 </div>
 
@@ -361,12 +438,12 @@ input:checked + .slider:before { transform: translateX(24px); }
             <p style="margin: 0 0 15px 0; font-size: 15px; color: var(--text-muted); line-height: 1.5;">
                 «Мой ТСД» — это автономный веб-терминал сбора данных. Создан для быстрого сканирования товаров камерой смартфона, ускорения инвентаризации и мгновенного переноса данных в Excel.
             </p>
-            <div style="background: var(--input-bg); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+            <div style="background: var(--input-bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color);">
                 <p style="margin: 0 0 8px 0; font-size: 16px; font-weight: 800; color: var(--text-main);">
                     👨‍💻 Джугань Сергей
                 </p>
                 <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
-                    Версия: 3.2 (Smart PWA)
+                    Версия: 4.0 (Premium UI)
                 </p>
             </div>
         </div>
@@ -398,7 +475,7 @@ input:checked + .slider:before { transform: translateX(24px); }
 <div class="modal-overlay" id="scannerModal">
     <div class="modal-content">
         <h3 style="margin-top: 0; margin-bottom: 5px; font-weight: 800;">Наведите камеру</h3>
-        <p id="iosScanHint" style="display:none; font-size: 14px; color: #f39c12; margin-top: 0; margin-bottom: 15px; font-weight: 700;">Отодвиньте телефон на 15-20 см</p>
+        <p id="iosScanHint" style="display:none; font-size: 14px; color: #f59e0b; margin-top: 0; margin-bottom: 15px; font-weight: 700;">Отодвиньте телефон на 15-20 см</p>
         <div id="reader"></div>
         <button class="btn-modal btn-torch" id="torchBtn" onclick="toggleTorch()">🔦 Включить фонарик</button>
         <button class="btn-modal btn-close" onclick="stopScanner()">Завершить</button>
@@ -436,8 +513,8 @@ input:checked + .slider:before { transform: translateX(24px); }
     <div class="modal-content" style="background: transparent; box-shadow: none;">
         <div class="brightness-text">Выкрути яркость на максимум!</div>
         <canvas id="finalQrCanvas" width="340" height="420"></canvas>
-        <button class="btn-modal" style="background:#27ae60; color:white; margin-top:25px;" onclick="downloadQR()">💾 Сохранить в галерею</button>
-        <button class="btn-modal" style="background:#3498db; color:white;" onclick="shareToExcel()">Поделиться текстом</button>
+        <button class="btn-modal" style="background:var(--btn-add); color:white; margin-top:25px;" onclick="downloadQR()">💾 Сохранить в галерею</button>
+        <button class="btn-modal" style="background:#2563eb; color:white;" onclick="shareToExcel()">Поделиться текстом</button>
         <button class="btn-modal btn-close" style="background:rgba(255,255,255,0.2); color:white; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);" onclick="closeQRModal()">Закрыть</button>
     </div>
 </div>
@@ -487,38 +564,30 @@ const menuInstallBtn = document.getElementById('menuInstallBtn');
 const installBanner = document.getElementById('installBanner');
 let deferredPrompt;
 
-// Проверка ОС
 const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 const isIOS = (/iPad|iPhone|iPod/.test(userAgent)) || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
 
-// Скрываем элементы, если приложение УЖЕ установлено
 if (isStandalone) {
     if (menuInstallBtn) menuInstallBtn.style.display = 'none';
     if (installBanner) installBanner.style.display = 'none';
 } else {
-    // Если еще не установлено и не скрыто пользователем - показываем баннер с задержкой (только для iOS, Android ждет события)
     if (localStorage.getItem('hideInstallBanner') !== 'true' && isIOS) {
         setTimeout(() => { installBanner.style.display = 'flex'; }, 2000);
     }
 }
 
-// Слушаем событие от Android/Chrome
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    
-    // Показываем баннер на Android
     if (localStorage.getItem('hideInstallBanner') !== 'true') {
         installBanner.style.display = 'flex';
     }
 });
 
-// Единая функция вызова установки (и из меню, и из баннера)
 function triggerInstall() {
-    if (installBanner) installBanner.style.display = 'none'; // Убираем баннер, чтобы не мешал
+    if (installBanner) installBanner.style.display = 'none';
     
     if (deferredPrompt) {
-        // Вызываем окно Android
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then((choiceResult) => {
             if (choiceResult.outcome === 'accepted') {
@@ -528,7 +597,6 @@ function triggerInstall() {
             deferredPrompt = null;
         });
     } else {
-        // Умная заглушка-инструкция для остальных
         if (isIOS) {
             alert("Установка на iPhone:\n\n1. Нажмите кнопку «Поделиться» (квадрат со стрелочкой) внизу Safari.\n2. Выберите «На экран \"Домой\"».");
         } else {
@@ -603,7 +671,7 @@ let settings = JSON.parse(localStorage.getItem('tsd_settings')) || { theme: 'lig
 function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     document.getElementById('themeToggle').innerText = theme === 'dark' ? '☀️' : '🌙';
-    document.getElementById('meta-theme-color').setAttribute('content', theme === 'dark' ? '#15291d' : '#27ae60');
+    document.getElementById('meta-theme-color').setAttribute('content', theme === 'dark' ? '#064e3b' : '#059669');
 }
 
 function toggleTheme() { 
@@ -758,7 +826,6 @@ function renderCart() {
         tbody.appendChild(fragment);
 
         currentCart.forEach((item, index) => {
-            // displayValue: false для картинки (цифры теперь в блоке code-cell)
             try { 
                 JsBarcode("#barcode-" + index, item.code, { format: "EAN13", lineColor: "#000", background: "transparent", width: 1.8, height: 45, displayValue: false, margin: 2});
             } catch (e) {
