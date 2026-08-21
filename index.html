@@ -1,92 +1,246 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#27ae60" id="meta-theme-color">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#27ae60" id="meta-theme-color">
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2327ae60'/><text y='68' x='15' font-size='65'>📦</text></svg>">
-    <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2327ae60'/><text y='68' x='15' font-size='65'>📦</text></svg>">
+<link rel="apple-touch-icon" sizes="180x180" href="icon.png">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<!-- Подключаем дружелюбный шрифт Nunito -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-    <title>Мой ТСД - Недоступно</title>
+<title>Мой ТСД</title>
 
-    <style>
-        :root {
-            --bg-body: #f2f4f7;
-            --bg-card: #ffffff;
-            --bg-card-rgb: 255, 255, 255;
-            --text-main: #1a1a1a;
-            --text-muted: #8e8e93;
-            --header-bg: linear-gradient(135deg, #1e3c28 0%, #27ae60 100%);
-            --header-text: #ffffff;
-            --header-icon-bg: rgba(255, 255, 255, 0.15);
-            --header-icon-hover: rgba(255, 255, 255, 0.25);
-            --border-color: #e5e5ea;
-            --input-bg: #f2f4f7;
-            --input-border: #e5e5ea;
-            --btn-add: #27ae60;
-            --shadow-soft: 0 4px 20px rgba(0,0,0,0.04);
-            --shadow-hover: 0 8px 25px rgba(0,0,0,0.08);
-            --modal-bg: rgba(0,0,0,0.85);
-            --modal-backdrop: blur(15px);
-            --radius-sm: 12px; --radius-md: 20px; --radius-lg: 28px;
-            --danger-color: #ff4757;
-            --warning-color: #f39c12;
-        }
+<style>
+/* === ПЕРЕМЕННЫЕ ТЕМ И ДИЗАЙНА === */
+:root {
+/* Светлая тема */
+--bg-body: #f2f4f7;
+--bg-card: #ffffff;
+--bg-card-rgb: 255, 255, 255;
+--text-main: #1a1a1a;
+--text-muted: #8e8e93;
+/* Зеленая шапка */
+--header-bg: linear-gradient(135deg, #1e3c28 0%, #27ae60 100%);
+--header-text: #ffffff;
+--header-icon-bg: rgba(255, 255, 255, 0.15);
+--header-icon-hover: rgba(255, 255, 255, 0.25);
 
-        * { box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { 
-            margin: 0; 
-            padding: 0; 
-            background-color: var(--bg-body); 
-            color: var(--text-main); 
-            min-height: 100dvh; 
-            display: flex; 
-            flex-direction: column; 
-            overflow-x: hidden; 
-            transition: background-color 0.3s ease; 
-            -webkit-user-select: none; 
-            user-select: none;
-        }
+--border-color: #e5e5ea;
+--input-bg: #f2f4f7;
+--input-border: #e5e5ea;
+--btn-add: #27ae60;
+--shadow-soft: 0 4px 20px rgba(0,0,0,0.04);
+--radius-sm: 12px; --radius-md: 20px; --radius-lg: 28px;
+}
 
-        /* Анимации */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideInUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes pulseWarning {
-            0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.6); }
-            50% { box-shadow: 0 0 0 20px rgba(255, 71, 87, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
-            20%, 40%, 60%, 80% { transform: translateX(3px); }
-        }
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+[data-theme="dark"] {
+/* Темная тема */
+--bg-body: #151618;
+--bg-card: #26282a;
+--bg-card-rgb: 38, 40, 42;
+--text-main: #f5f6f8;
+--text-muted: #9ba0a6;
 
-        /* Шапка */
-        header {
-            position: sticky;
-            top: 0;
-            background: var(--header-bg);
-            color: var(--header-text);
+--header-bg: linear-gradient(135deg, #0b110e 0%, #15291d 100%);
+--header-text: #e0e0e0;
+--header-icon-bg: rgba(255, 255, 255, 0.08);
+
+--border-color: #3a3f45;
+--input-bg: #151618;
+--input-border: #3a3f45;
+--btn-add: #2ecc71;
+--shadow-soft: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+/* === БАЗОВЫЕ НАСТРОЙКИ === */
+* { box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; outline: none; }
+body { margin: 0; padding: 0; background-color: var(--bg-body); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+
+/* === АНИМАЦИИ === */
+@keyframes popIn { 0% { opacity: 0; transform: scale(0.9) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+
+/* === ШАПКА === */
+header { position: sticky; top: 0; background: var(--header-bg); color: var(--header-text); padding: calc(12px + env(safe-area-inset-top)) 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; margin-bottom: 15px;}
+header h1 { margin: 0; font-size: 19px; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: 0.2px; white-space: nowrap;}
+.header-controls { display: flex; gap: 6px; align-items: center; }
+.btn-icon { background: var(--header-icon-bg); color: var(--header-text); border: none; width: 36px; height: 36px; border-radius: 12px; font-size: 16px; cursor: default; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+
+/* === ОСНОВНОЙ КОНТЕЙНЕР (ФОН) === */
+.main-container { padding: 5px 15px 120px 15px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 15px; flex: 1; filter: grayscale(30%); pointer-events: none; }
+.card { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); overflow: hidden; }
+
+.input-card { padding: 10px; display: flex; gap: 10px; align-items: center; background: var(--bg-card); }
+.input-field { flex: 1; padding: 15px 20px; background: var(--input-bg); color: var(--text-main); border: 2px solid transparent; border-radius: var(--radius-md); font-size: 16px; font-weight: 700; }
+.btn-manual-add { background: var(--btn-add); color: white; border: none; border-radius: var(--radius-md); padding: 0 20px; height: 52px; font-weight: 800; font-size: 18px; }
+
+.cart-card { background: transparent; box-shadow: none; border-radius: 0; display: flex; flex-direction: column; }
+.cart-header { padding: 5px 5px 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 16px; color: var(--text-main);}
+.btn-clear { background: #ff4757; color: white; border: none; border-radius: var(--radius-sm); padding: 8px 15px; font-size: 13px; font-weight: 800; opacity: 0.7;}
+
+table { width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: -10px;}
+.no-data { padding: 40px 20px; color: var(--text-muted); font-weight: 700; text-align: center; background: var(--bg-card); border-radius: var(--radius-md); font-size: 16px; box-shadow: var(--shadow-soft);}
+
+/* === ПЛАВАЮЩАЯ ПАНЕЛЬ СНИЗУ === */
+.bottom-action-bar {
+position: fixed; bottom: 0; left: 0; width: 100%;
+background: rgba(var(--bg-card-rgb), 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+padding: 15px calc(15px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+display: flex; gap: 12px; z-index: 50; border-top: 1px solid var(--border-color); filter: grayscale(30%); pointer-events: none;
+}
+.btn-fab {
+border: none; border-radius: 20px; font-weight: 800; color: white;
+display: flex; align-items: center; justify-content: center; gap: 8px; height: 60px;
+}
+.btn-fab-scan { flex: 1; background: linear-gradient(135deg, #FF9800 0%, #d35400 100%); font-size: 16px; }
+.btn-fab-qr { flex: 0 0 auto; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); font-size: 15px; padding: 0 20px; }
+
+/* === БЛОКИРУЮЩЕЕ ОФИЦИАЛЬНОЕ ОКНО === */
+.blocker-overlay {
+position: fixed;
+top: 0; left: 0;
+width: 100%; height: 100%;
+background: rgba(0, 0, 0, 0.75);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+z-index: 99999;
+display: flex;
+justify-content: center;
+align-items: center;
+padding: 20px;
+}
+
+.blocker-content {
+background: var(--bg-card);
+padding: 40px 30px;
+border-radius: 32px;
+max-width: 420px;
+width: 100%;
+text-align: center;
+box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;
+border: 1px solid var(--border-color);
+}
+
+.blocker-icon {
+font-size: 55px;
+margin-bottom: 20px;
+display: inline-block;
+filter: drop-shadow(0 4px 10px rgba(0,0,0,0.1));
+}
+
+.blocker-title {
+font-size: 22px;
+font-weight: 800;
+color: var(--text-main);
+margin-top: 0;
+margin-bottom: 15px;
+letter-spacing: -0.3px;
+}
+
+.blocker-text {
+font-size: 15px;
+line-height: 1.6;
+color: var(--text-muted);
+font-weight: 600;
+margin-bottom: 25px;
+text-align: left;
+}
+
+.blocker-text:last-child {
+margin-bottom: 0;
+}
+
+.divider {
+height: 2px;
+background: var(--border-color);
+margin: 20px 0;
+border-radius: 2px;
+opacity: 0.5;
+}
+</style>
+</head>
+<body>
+
+<!-- БЛОКИРУЮЩИЙ ЭКРАН (ОФИЦИАЛЬНОЕ СООБЩЕНИЕ) -->
+<div class="blocker-overlay" id="blockerOverlay">
+<div class="blocker-content">
+<div class="blocker-icon">⛔️</div>
+<h2 class="blocker-title">Доступ приостановлен</h2>
+<p class="blocker-text">
+Уважаемый пользователь, работа данного приложения была принудительно остановлена.
+</p>
+<div class="divider"></div>
+<p class="blocker-text">
+По личным соображениям разработчика, а также в связи с текущей политикой компании, поддержка и функционирование сервиса прекращены.
+</p>
+<p class="blocker-text" style="color: #f39c12; margin-top: 20px;">
+Возможно, в будущем проект будет восстановлен, однако его архитектура, функционал и принципы работы будут полностью пересмотрены.
+</p>
+</div>
+</div>
+
+<!-- МЕРТВЫЙ ИНТЕРФЕЙС НА ФОНЕ -->
+<header>
+<h1>📦 Мой ТСД</h1>
+<div class="header-controls">
+<button class="btn-icon" title="Тема">☀️</button>
+<button class="btn-icon" title="Архив">🗄️</button>
+<button class="btn-icon" title="Настройки">⚙️</button>
+<button class="btn-icon" title="Инструкция">❓</button>
+</div>
+</header>
+
+<div class="main-container">
+<!-- РУЧНОЙ ВВОД -->
+<div class="card input-card">
+<input type="text" class="input-field" placeholder="Введите артикул..." disabled>
+<button class="btn-manual-add" disabled>✚</button>
+</div>
+
+<!-- КОРЗИНА -->
+<div class="cart-card">
+<div class="cart-header">
+<span>0 строк (0 шт.)</span>
+<button class="btn-clear" disabled>Очистить 🗑️</button>
+</div>
+<div class="table-wrapper">
+<table>
+<tbody>
+<tr><td colspan="3" class="no-data">✨ Начните сканировать товары</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- ПЛАВАЮЩАЯ ПАНЕЛЬ ТСД -->
+<div class="bottom-action-bar">
+<button class="btn-fab btn-fab-scan" disabled>📷 СКАНИРОВАТЬ</button>
+<button class="btn-fab btn-fab-qr" disabled>📲 В EXCEL</button>
+</div>
+
+<script>
+// Оставлен только базовый скрипт для применения темы, если она была сохранена ранее.
+// Весь рабочий функционал терминала удален.
+let settings = JSON.parse(localStorage.getItem('tsd_settings')) || { theme: 'light' };
+document.documentElement.setAttribute('data-theme', settings.theme);
+document.getElementById('meta-theme-color').setAttribute('content', settings.theme === 'dark' ? '#15291d' : '#27ae60');
+
+// Запрет прокрутки фона
+document.body.addEventListener('touchmove', function(e) {
+e.preventDefault();
+}, { passive: false });
+</script>
+</body>
+</html>
             padding: calc(12px + env(safe-area-inset-top)) 15px 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             display: flex;
