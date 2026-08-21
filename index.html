@@ -52,7 +52,7 @@
     --modal-bg: rgba(17, 24, 39, 0.6);
     --modal-backdrop: blur(12px);
     
-    --numpad-bg: #f3f4f6;
+    --numpad-bg: #f2f4f7;
     --numpad-btn: #ffffff;
     
     --info-bg: #ecfdf5; --info-text: #047857;
@@ -84,8 +84,8 @@
     --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
     --modal-bg: rgba(0, 0, 0, 0.75);
     
-    --numpad-bg: #111827;
-    --numpad-btn: #1f2937;
+    --numpad-bg: #151618;
+    --numpad-btn: #26282a;
     
     --info-bg: #064e3b; --info-text: #34d399;
     --warn-bg: #451a03; --warn-text: #fbbf24;
@@ -187,10 +187,10 @@ td:first-child { border-top-left-radius: var(--radius-md); border-bottom-left-ra
 td:nth-child(2) { width: 25%; }
 td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-radius: var(--radius-md); width: 15%; }
 
-.inline-barcode-container { padding: 5px; cursor: pointer; transition: opacity 0.2s; -webkit-user-select: none; user-select: none; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60px;}
+.inline-barcode-container { padding: 8px 5px 5px 5px; cursor: pointer; transition: opacity 0.2s; -webkit-user-select: none; user-select: none; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60px;}
 .inline-barcode-container:active { opacity: 0.5; }
-.inline-barcode-container svg { width: 100%; max-width: 140px; height: auto; display: block; margin: 0 auto; background-color: #ffffff; padding: 6px 6px 0 6px; border-radius: 8px 8px 0 0; pointer-events: none;}
-.code-cell { font-family: monospace; font-size: 13px; font-weight: 800; letter-spacing: 0.5px; color: #000; background: #fff; width: 100%; max-width: 140px; display: block; text-align: center; padding-bottom: 6px; border-radius: 0 0 8px 8px; pointer-events: none; margin: 0 auto;}
+.inline-barcode-container svg { width: 100%; max-width: 160px; height: auto; display: block; margin: 0 auto; background-color: transparent; pointer-events: none;}
+.code-cell { font-family: monospace; font-size: 14px; font-weight: 800; letter-spacing: 1px; color: var(--text-main); display: block; text-align: center; margin-top: -2px; pointer-events: none;}
 
 .qty-box { 
     background: var(--input-bg); border: 2px solid var(--border-color); color: var(--text-main); 
@@ -282,26 +282,25 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .instruction-content li { margin-bottom: 12px; line-height: 1.5; color: var(--text-main);}
 .browser-note { padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 0; font-size: 13px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; text-align: left; background: var(--warn-bg); color: var(--warn-text); margin-top: 15px;}
 
-/* === IOS STYLE NUMPAD === */
+/* === КЛАССИЧЕСКИЙ NUMPAD (ПИЛЮЛИ) === */
 .numpad-content { background: var(--numpad-bg); padding-top: 20px; }
 .numpad-title { font-size: 15px; font-weight: 800; color: var(--text-muted); margin: 0 0 10px 0;}
 .numpad-display { 
     background: transparent; font-size: 48px; font-weight: 800; padding: 10px; 
     margin-bottom: 15px; text-align: center; color: var(--text-main); letter-spacing: 2px;
 }
-.numpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 320px; margin: 0 auto; }
+.numpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .num-btn { 
     background: var(--numpad-btn); color: var(--text-main); border: none; 
-    border-radius: 50%; font-size: 28px; font-weight: 600; aspect-ratio: 1; 
-    cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.1s; 
-    display: flex; align-items: center; justify-content: center;
+    border-radius: 24px; font-size: 26px; font-weight: 800; padding: 18px 0; 
+    cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.15s;
 }
-.num-btn:active { background: var(--border-color); transform: scale(0.9); box-shadow: none;}
-.num-btn.action-c { color: #dc2626; font-weight: 800; font-size: 24px; }
+.num-btn:active { background: var(--border-color); transform: scale(0.9) translateY(4px); box-shadow: none;}
+.num-btn.action-c { color: #dc2626; }
 .num-btn.action-back { color: #d97706; font-size: 24px; }
-.numpad-actions { display: flex; gap: 12px; margin-top: 25px; }
-.btn-numpad-cancel { flex: 1; background: var(--border-color); color: var(--text-main); border: none; border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; padding: 16px 0;}
-.btn-numpad-ok { flex: 2; background: var(--btn-add); color: white; border: none; border-radius: 16px; font-size: 18px; font-weight: 800; padding: 16px 0; cursor: pointer; box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);}
+.numpad-actions { display: flex; gap: 12px; margin-top: 20px; }
+.btn-numpad-cancel { flex: 1; background: var(--border-color); color: var(--text-main); border: none; border-radius: 20px; font-size: 16px; font-weight: 800; cursor: pointer; padding: 18px 0;}
+.btn-numpad-ok { flex: 2; background: var(--btn-add); color: white; border: none; border-radius: 20px; font-size: 18px; font-weight: 800; padding: 18px 0; cursor: pointer; box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);}
 .btn-numpad-cancel:active, .btn-numpad-ok:active { transform: scale(0.95); }
 
 /* === НАСТРОЙКИ === */
@@ -342,8 +341,10 @@ input:checked + .slider:before { transform: translateX(22px); }
     <h1>📦 Мой ТСД</h1>
     <div class="header-controls">
         <button class="btn-icon" id="themeToggle" onclick="toggleTheme()" title="Сменить тему">☀️</button>
+        <!-- КНОПКА МЕНЮ (ТРИ ТОЧКИ) -->
         <button class="btn-icon" id="menuToggleBtn" onclick="toggleMenu()" style="font-weight: 900; font-size: 20px;">⋮</button>
         
+        <!-- ЛОГИЧНОЕ ВЫПАДАЮЩЕЕ МЕНЮ -->
         <div id="dropdownMenu" class="dropdown-menu">
             <div class="dropdown-item" onclick="openArchive()">
                 <span class="menu-icon">🗄️</span> Архив
@@ -443,7 +444,7 @@ input:checked + .slider:before { transform: translateX(22px); }
                     👨‍💻 Джугань Сергей
                 </p>
                 <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
-                    Версия: 4.0 (Premium UI)
+                    Версия: 4.1 (Premium UI)
                 </p>
             </div>
         </div>
@@ -826,11 +827,12 @@ function renderCart() {
         tbody.appendChild(fragment);
 
         currentCart.forEach((item, index) => {
+            // ВЕРНУЛИ displayValue: false для картинки, так как цифры выводятся отдельно под ней
             try { 
-                JsBarcode("#barcode-" + index, item.code, { format: "EAN13", lineColor: "#000", background: "transparent", width: 1.8, height: 45, displayValue: false, margin: 2});
+                JsBarcode("#barcode-" + index, item.code, { format: "EAN13", lineColor: "#000", background: "transparent", width: 2, height: 45, displayValue: false, margin: 0});
             } catch (e) {
                 try { 
-                    JsBarcode("#barcode-" + index, item.code, { format: "CODE128", lineColor: "#000", background: "transparent", width: 1.5, height: 40, displayValue: false, margin: 2 });
+                    JsBarcode("#barcode-" + index, item.code, { format: "CODE128", lineColor: "#000", background: "transparent", width: 1.5, height: 40, displayValue: false, margin: 0 });
                 } catch (err) { 
                     document.getElementById("barcode-" + index).style.display = 'none'; 
                 } 
@@ -845,7 +847,7 @@ function renderCart() {
 window.removeItem = function(index) { currentCart.splice(index, 1); saveState(); renderCart(); }
 window.clearCart = function() { if(confirm("Очистить корзину?")) { currentCart = []; saveState(); renderCart(); } }
 
-// === NUMPAD ===
+// === КЛАССИЧЕСКИЙ NUMPAD ===
 let numpadValue = "1"; let isNewNumpadEntry = true; let numpadMode = ""; let numpadTargetCode = ""; let numpadTargetIndex = -1; let numpadTargetBoxQty = 1;
 
 function updateNumpadDisplay() { document.getElementById('numpadDisplay').innerText = numpadValue === "" ? "0" : numpadValue; }
