@@ -22,8 +22,10 @@
     <title>Мой ТСД</title>
 
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    
+    <!-- ИСПРАВЛЕНО: Подключена ПРАВИЛЬНАЯ библиотека для генерации QR-кодов -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
 <style>
 /* === ПЕРЕМЕННЫЕ ТЕМ И ДИЗАЙНА === */
@@ -282,7 +284,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .instruction-content li { margin-bottom: 12px; line-height: 1.5; color: var(--text-main);}
 .browser-note { padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 0; font-size: 13px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; text-align: left; background: var(--warn-bg); color: var(--warn-text); margin-top: 15px;}
 
-/* === NUMPAD (КЛАССИЧЕСКИЕ ШИРОКИЕ КНОПКИ) === */
+/* === NUMPAD === */
 .numpad-content { background: var(--numpad-bg); padding-top: 20px; }
 .numpad-title { font-size: 15px; font-weight: 800; color: var(--text-muted); margin: 0 0 10px 0;}
 .numpad-display { 
@@ -444,7 +446,7 @@ input:checked + .slider:before { transform: translateX(22px); }
                     👨‍💻 Джугань Сергей
                 </p>
                 <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
-                    Версия: 4.2 (Premium UI)
+                    Версия: 4.3 (Premium UI & Stable QR)
                 </p>
             </div>
         </div>
@@ -513,7 +515,8 @@ input:checked + .slider:before { transform: translateX(22px); }
 <div class="modal-overlay" id="qrModal" style="align-items: center;">
     <div class="modal-content" style="background: transparent; box-shadow: none;">
         <div class="brightness-text">Выкрути яркость на максимум!</div>
-        <canvas id="finalQrCanvas" width="340" height="420"></canvas>
+        <!-- Замененный Canvas для правильной библиотеки -->
+        <canvas id="finalQrCanvas" width="340" height="340"></canvas>
         <button class="btn-modal" style="background:var(--btn-add); color:white; margin-top:25px;" onclick="downloadQR()">💾 Сохранить в галерею</button>
         <button class="btn-modal" style="background:#2563eb; color:white;" onclick="shareToExcel()">Поделиться текстом</button>
         <button class="btn-modal btn-close" style="background:rgba(255,255,255,0.2); color:white; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);" onclick="closeQRModal()">Закрыть</button>
@@ -531,7 +534,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 </div>
 
 <!-- ОКНО УВЕЛИЧЕННОГО ШТРИХКОДА -->
-<div class="modal-overlay" id="zoomModal" onclick="this.style.display='none'">
+<div class="modal-overlay" id="zoomModal">
     <div class="zoom-container">
         <div style="background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
             <svg id="zoomedBarcodeSvg"></svg>
@@ -541,6 +544,18 @@ input:checked + .slider:before { transform: translateX(22px); }
 </div>
 
 <script>
+// === ЗАКРЫТИЕ ОКОН ПО КЛИКУ НА ТЕМНЫЙ ФОН ===
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+        if (e.target === this) {
+            if (this.id === 'scannerModal') stopScanner();
+            else if (this.id === 'numpadModal') numCancel();
+            else if (this.id === 'qrModal') closeQRModal();
+            else this.style.display = 'none';
+        }
+    });
+});
+
 // === ЛОГИКА ВЫПАДАЮЩЕГО МЕНЮ (⋮) ===
 function toggleMenu() {
     const menu = document.getElementById('dropdownMenu');
@@ -792,12 +807,27 @@ function normalizeBarcode(text) {
     return cleanText;
 }
 
+// === ИСПРАВЛЕНО: Ручной ввод с поддержкой клавиши Enter ===
+document.getElementById('codeInput').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        manualAdd();
+    }
+});
+
 function manualAdd() {
-    const code = document.getElementById('codeInput').value;
+    const input = document.getElementById('codeInput');
+    const code = input.value;
     if (!code) return;
+    
     let cleanCode = normalizeBarcode(code);
     addOrUpdateItem(cleanCode, 1);
-    document.getElementById('codeInput').value = '';
+    
+    playBeep();
+    if (settings.vibro && navigator.vibrate) navigator.vibrate(50);
+    
+    input.value = '';
+    input.focus();
 }
 
 function addOrUpdateItem(code, qty) {
@@ -828,7 +858,6 @@ function renderCart() {
         tbody.appendChild(fragment);
 
         currentCart.forEach((item, index) => {
-            // Идеальные настройки штрихкода с цифрами внутри
             try { 
                 JsBarcode("#barcode-" + index, item.code, { format: "EAN13", lineColor: "#000", background: "transparent", width: 2, height: 45, displayValue: true, fontSize: 15, margin: 2 });
             } catch (e) {
@@ -846,7 +875,16 @@ function renderCart() {
 }
 
 window.removeItem = function(index) { currentCart.splice(index, 1); saveState(); renderCart(); }
-window.clearCart = function() { if(confirm("Очистить корзину?")) { currentCart = []; saveState(); renderCart(); } }
+
+// ИСПРАВЛЕНО: Умная кнопка очистки
+window.clearCart = function() { 
+    if (currentCart.length === 0) return;
+    if (confirm("Очистить корзину?")) { 
+        currentCart = []; 
+        saveState(); 
+        renderCart(); 
+    } 
+}
 
 // === КЛАССИЧЕСКИЙ NUMPAD ===
 let numpadValue = "1"; let isNewNumpadEntry = true; let numpadMode = ""; let numpadTargetCode = ""; let numpadTargetIndex = -1; let numpadTargetBoxQty = 1;
@@ -1002,7 +1040,7 @@ function toggleTorch() {
     });
 }
 
-// === ГЕНЕРАЦИЯ QR И АРХИВ ===
+// === ИСПРАВЛЕНО: ГЕНЕРАЦИЯ QR И АРХИВ С ИСПОЛЬЗОВАНИЕМ НОВОЙ БИБЛИОТЕКИ ===
 function showTransferQR() {
     if (currentCart.length === 0) {
         alert("Корзина пуста!"); return;
@@ -1013,7 +1051,9 @@ function showTransferQR() {
     
     let canvas = document.getElementById('finalQrCanvas');
     canvas.style.display = 'block';
-    QRCode.toCanvas(canvas, payload, { width: 300, margin: 2, color: { dark: '#000000', light: '#ffffff' } }, function (error) {
+    
+    // Новая библиотека сама отлично рисует на Canvas без ошибок
+    QRCode.toCanvas(canvas, payload, { width: 340, margin: 2, color: { dark: '#000000', light: '#ffffff' } }, function (error) {
         if (error) console.error(error);
     });
     
@@ -1077,7 +1117,7 @@ function renderArchive() {
     });
 }
 
-// Показать QR-код из архива
+// Показать QR-код из архива (ИСПРАВЛЕНО ДЛЯ НОВОЙ БИБЛИОТЕКИ)
 window.restoreArchive = function(index) {
     let archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
     if (!archive[index]) return;
@@ -1088,7 +1128,10 @@ window.restoreArchive = function(index) {
     
     let canvas = document.getElementById('finalQrCanvas');
     canvas.style.display = 'block';
-    QRCode.toCanvas(canvas, payload, { width: 300, margin: 2, color: { dark: '#000000', light: '#ffffff' } });
+    
+    QRCode.toCanvas(canvas, payload, { width: 340, margin: 2, color: { dark: '#000000', light: '#ffffff' } }, function (error) {
+        if (error) console.error(error);
+    });
 };
 
 // Восстановить данные из архива в корзину
