@@ -159,7 +159,8 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .inline-barcode-container { padding: 5px; cursor: pointer; transition: opacity 0.2s; -webkit-user-select: none; user-select: none; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60px;}
 .inline-barcode-container:active { opacity: 0.4; }
 .inline-barcode-container svg { width: 100%; max-width: 150px; height: auto; display: block; margin: 0 auto; background-color: #ffffff; padding: 4px 4px 0 4px; border-radius: 8px 8px 0 0; pointer-events: none;}
-.code-cell { font-family: monospace; font-size: 13px; font-weight: bold; color: #000; background: #fff; width: 100%; max-width: 150px; display: block; text-align: center; padding-bottom: 4px; border-radius: 0 0 8px 8px; pointer-events: none;}
+/* Восстановили цифры штрихкода внизу */
+.code-cell { font-family: monospace; font-size: 13px; font-weight: bold; color: #000; background: #fff; width: 100%; max-width: 150px; display: block; text-align: center; padding-bottom: 4px; border-radius: 0 0 8px 8px; pointer-events: none; margin: 0 auto;}
 
 .qty-box { background: var(--input-bg); border: 2px solid var(--border-color); color: var(--text-main); font-weight: 800; font-size: 16px; border-radius: 12px; padding: 10px 0; width: 100%; cursor: pointer; display: block; transition: 0.2s;}
 .qty-box:active { background: var(--border-color); transform: scale(0.92); }
@@ -175,6 +176,18 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .btn-fab:active { transform: scale(0.95) translateY(2px); box-shadow: none !important; }
 .btn-fab-scan { flex: 1; min-width: 0; background: linear-gradient(135deg, #FF9800 0%, #d35400 100%); font-size: clamp(13px, 4vw, 16px); box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3); animation: pulseSoft 2s infinite; }
 .btn-fab-qr { flex: 0 0 auto; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); font-size: 15px; padding: 0 20px; box-shadow: 0 8px 20px rgba(142, 68, 173, 0.3); }
+
+/* === АВТО-БАННЕР УСТАНОВКИ === */
+.install-banner { position: fixed; bottom: 95px; left: 15px; right: 15px; background: var(--bg-card); border-radius: var(--radius-md); box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 15px; display: none; flex-direction: column; gap: 12px; z-index: 90; border: 2px solid var(--btn-add); animation: slideInUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.install-banner-header { display: flex; align-items: center; gap: 12px; }
+.install-banner-icon { font-size: 32px; background: var(--input-bg); width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
+.install-banner-text h4 { margin: 0 0 4px 0; color: var(--text-main); font-weight: 800; font-size: 16px; }
+.install-banner-text p { margin: 0; color: var(--text-muted); font-size: 13px; font-weight: 600; line-height: 1.3; }
+.install-banner-actions { display: flex; gap: 10px; }
+.install-banner-actions button { flex: 1; padding: 12px; border: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; }
+.btn-install-yes { background: var(--btn-add); color: white; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3); }
+.btn-install-yes:active { transform: scale(0.95); }
+.btn-install-no { background: var(--input-bg); color: var(--text-main); }
 
 /* === МОДАЛЬНЫЕ ОКНА === */
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); backdrop-filter: var(--modal-backdrop); -webkit-backdrop-filter: var(--modal-backdrop); z-index: 9999; justify-content: center; align-items: flex-end; padding: 0; margin: 0;}
@@ -266,8 +279,8 @@ input:checked + .slider:before { transform: translateX(24px); }
             <div class="dropdown-item" onclick="openAbout()">
                 <span class="menu-icon">ℹ️</span> О приложении
             </div>
-            <!-- Кнопка установки на экран (скрывается, если уже установлено) -->
-            <div class="dropdown-item" id="menuInstallBtn">
+            <!-- Кнопка установки на экран -->
+            <div class="dropdown-item" id="menuInstallBtn" onclick="triggerInstall()">
                 <span class="menu-icon">📥</span> На экран Домой
             </div>
         </div>
@@ -301,6 +314,21 @@ input:checked + .slider:before { transform: translateX(24px); }
 <div class="bottom-action-bar">
     <button class="btn-fab btn-fab-scan" onclick="startScanner()">📷 СКАНИРОВАТЬ</button>
     <button class="btn-fab btn-fab-qr" onclick="showTransferQR()">📲 В EXCEL</button>
+</div>
+
+<!-- АВТОМАТИЧЕСКИЙ БАННЕР УСТАНОВКИ -->
+<div id="installBanner" class="install-banner">
+    <div class="install-banner-header">
+        <div class="install-banner-icon">📲</div>
+        <div class="install-banner-text">
+            <h4>Установить Мой ТСД</h4>
+            <p>Добавьте на экран «Домой» для быстрого запуска и полноэкранного режима</p>
+        </div>
+    </div>
+    <div class="install-banner-actions">
+        <button class="install-btn-close" onclick="dismissInstallBanner()">Закрыть</button>
+        <button class="install-btn-ok" onclick="triggerInstall()">Установить</button>
+    </div>
 </div>
 
 <!-- МОДАЛКА ИНСТРУКЦИИ -->
@@ -338,7 +366,7 @@ input:checked + .slider:before { transform: translateX(24px); }
                     👨‍💻 Джугань Сергей
                 </p>
                 <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
-                    Версия: 3.0 (PWA)
+                    Версия: 3.2 (Smart PWA)
                 </p>
             </div>
         </div>
@@ -441,7 +469,6 @@ function toggleMenu() {
     menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
 }
 
-// Закрываем меню при клике мимо или при выборе пункта
 document.addEventListener('click', function(event) {
     const menu = document.getElementById('dropdownMenu');
     const btn = document.getElementById('menuToggleBtn');
@@ -454,33 +481,65 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// === ЛОГИКА УСТАНОВКИ PWA (ADD TO HOME SCREEN) ===
-const menuInstallBtn = document.getElementById('menuInstallBtn');
+// === ЛОГИКА УСТАНОВКИ (УМНЫЙ БАННЕР + КНОПКА МЕНЮ) ===
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+const menuInstallBtn = document.getElementById('menuInstallBtn');
+const installBanner = document.getElementById('installBanner');
+let deferredPrompt;
 
-if (isStandalone && menuInstallBtn) {
-    menuInstallBtn.style.display = 'none';
+// Проверка ОС
+const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+const isIOS = (/iPad|iPhone|iPod/.test(userAgent)) || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+
+// Скрываем элементы, если приложение УЖЕ установлено
+if (isStandalone) {
+    if (menuInstallBtn) menuInstallBtn.style.display = 'none';
+    if (installBanner) installBanner.style.display = 'none';
+} else {
+    // Если еще не установлено и не скрыто пользователем - показываем баннер с задержкой (только для iOS, Android ждет события)
+    if (localStorage.getItem('hideInstallBanner') !== 'true' && isIOS) {
+        setTimeout(() => { installBanner.style.display = 'flex'; }, 2000);
+    }
 }
 
-let deferredPrompt;
+// Слушаем событие от Android/Chrome
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
+    
+    // Показываем баннер на Android
+    if (localStorage.getItem('hideInstallBanner') !== 'true') {
+        installBanner.style.display = 'flex';
+    }
 });
 
-if (menuInstallBtn) {
-    menuInstallBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                menuInstallBtn.style.display = 'none';
+// Единая функция вызова установки (и из меню, и из баннера)
+function triggerInstall() {
+    if (installBanner) installBanner.style.display = 'none'; // Убираем баннер, чтобы не мешал
+    
+    if (deferredPrompt) {
+        // Вызываем окно Android
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                if (menuInstallBtn) menuInstallBtn.style.display = 'none';
+                localStorage.setItem('hideInstallBanner', 'true');
             }
             deferredPrompt = null;
+        });
+    } else {
+        // Умная заглушка-инструкция для остальных
+        if (isIOS) {
+            alert("Установка на iPhone:\n\n1. Нажмите кнопку «Поделиться» (квадрат со стрелочкой) внизу Safari.\n2. Выберите «На экран \"Домой\"».");
         } else {
-            alert("Для установки приложения на iPhone:\n\n1. Нажмите кнопку «Поделиться» (квадрат со стрелочкой) внизу Safari.\n2. Выберите пункт «На экран Домой».");
+            alert("Нажмите меню браузера (⋮) и выберите «Добавить на главный экран».");
         }
-    });
+    }
+}
+
+function dismissInstallBanner() {
+    installBanner.style.display = 'none';
+    localStorage.setItem('hideInstallBanner', 'true');
 }
 
 // === СВАЙП ВНИЗ ДЛЯ ЗАКРЫТИЯ (BOTTOM SHEET) ===
@@ -699,7 +758,7 @@ function renderCart() {
         tbody.appendChild(fragment);
 
         currentCart.forEach((item, index) => {
-            // ВЕРНУЛИ displayValue: false для картинки, так как цифры выводятся отдельно под ней
+            // displayValue: false для картинки (цифры теперь в блоке code-cell)
             try { 
                 JsBarcode("#barcode-" + index, item.code, { format: "EAN13", lineColor: "#000", background: "transparent", width: 1.8, height: 45, displayValue: false, margin: 2});
             } catch (e) {
@@ -771,7 +830,6 @@ function startScanner() {
     initAudio(); isScannerPaused = false;
     document.getElementById('scannerModal').style.display = 'flex';
 
-    let isIOS = (/iPad|iPhone|iPod/.test(navigator.userAgent)) || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
     if (isIOS) { document.getElementById('iosScanHint').style.display = 'block'; } else { document.getElementById('iosScanHint').style.display = 'none'; }
 
     setTimeout(() => {
@@ -969,7 +1027,7 @@ window.restoreArchiveToTable = function(index) {
     if (!archive[index]) return;
     
     if (currentCart.length > 0) {
-        if (!confirm("Текущая корзина будет очищена. Загрузить данные из архива?")) return;
+        if (!confirm("Внимание! Текущие данные в корзине будут стерты.\nВы точно хотите загрузить старые данные из архива?")) return;
     }
     
     let payload = archive[index].payload;
