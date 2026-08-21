@@ -15,14 +15,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-    <title>Мой ТСД</title>
-
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <title>Мой ТСД - Недоступно</title>
 
     <style>
-        /* === ПЕРЕМЕННЫЕ ТЕМ И ДИЗАЙНА === */
         :root {
             --bg-body: #f2f4f7;
             --bg-card: #ffffff;
@@ -39,55 +34,592 @@
             --btn-add: #27ae60;
             --shadow-soft: 0 4px 20px rgba(0,0,0,0.04);
             --shadow-hover: 0 8px 25px rgba(0,0,0,0.08);
-            --modal-bg: rgba(0,0,0,0.5);
-            --modal-backdrop: blur(8px);
-            --numpad-bg: #f2f4f7;
-            --numpad-btn: #ffffff;
-            --info-bg: #e8f8f5; --info-text: #117a65;
-            --warn-bg: #fff3cd; --warn-text: #856404;
+            --modal-bg: rgba(0,0,0,0.85);
+            --modal-backdrop: blur(15px);
             --radius-sm: 12px; --radius-md: 20px; --radius-lg: 28px;
-        }
-
-        [data-theme="dark"] {
-            --bg-body: #151618;
-            --bg-card: #26282a;
-            --bg-card-rgb: 38, 40, 42;
-            --text-main: #f5f6f8;
-            --text-muted: #9ba0a6;
-            --header-bg: linear-gradient(135deg, #0b110e 0%, #15291d 100%);
-            --header-text: #e0e0e0;
-            --header-icon-bg: rgba(255, 255, 255, 0.08);
-            --header-icon-hover: rgba(255, 255, 255, 0.15);
-            --border-color: #3a3f45;
-            --input-bg: #151618;
-            --input-border: #3a3f45;
-            --btn-add: #2ecc71;
-            --shadow-soft: 0 8px 24px rgba(0,0,0,0.2);
-            --shadow-hover: 0 12px 32px rgba(46, 204, 113, 0.15);
-            --modal-bg: rgba(0,0,0,0.7);
-            --numpad-bg: #151618;
-            --numpad-btn: #26282a;
-            --info-bg: #153229; --info-text: #66cdaa;
-            --warn-bg: #3a2e12; --warn-text: #ffd54f;
+            --danger-color: #ff4757;
+            --warning-color: #f39c12;
         }
 
         * { box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { margin: 0; padding: 0; background-color: var(--bg-body); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; transition: background-color 0.3s ease; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            min-height: 100dvh; 
+            display: flex; 
+            flex-direction: column; 
+            overflow-x: hidden; 
+            transition: background-color 0.3s ease; 
+            -webkit-user-select: none; 
+            user-select: none;
+        }
 
-        @keyframes slideInUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes slideInDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes popIn { 0% { opacity: 0; transform: scale(0.9) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
-        @keyframes pulseSoft { 0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(243, 156, 18, 0); } 100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); } }
-        @keyframes glowBrightness {
-            0% { color: #f39c12; text-shadow: 0 0 5px rgba(243, 156, 18, 0.3); transform: scale(1); }
-            50% { color: #ffffff; text-shadow: 0 0 15px #f1c40f, 0 0 25px #f1c40f, 0 0 35px #ffffff; transform: scale(1.05); }
-            100% { color: #f39c12; text-shadow: 0 0 5px rgba(243, 156, 18, 0.3); transform: scale(1); }
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes pulseWarning {
+            0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.6); }
+            50% { box-shadow: 0 0 0 20px rgba(255, 71, 87, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
         }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+            20%, 40%, 60%, 80% { transform: translateX(3px); }
         }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Шапка */
+        header {
+            position: sticky;
+            top: 0;
+            background: var(--header-bg);
+            color: var(--header-text);
+            padding: calc(12px + env(safe-area-inset-top)) 15px 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            margin-bottom: 15px;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 19px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.2px;
+        }
+        .header-controls {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .btn-icon {
+            background: var(--header-icon-bg);
+            color: var(--header-text);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+            transition: 0.2s;
+        }
+
+        /* Основной контейнер */
+        .main-container {
+            padding: 5px 15px 120px 15px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Карточки интерфейса (заблокированные) */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            transition: 0.3s;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+        .input-card {
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: var(--bg-card);
+        }
+        .input-field {
+            flex: 1;
+            padding: 15px 20px;
+            background: var(--input-bg);
+            color: var(--text-main);
+            border: 2px solid transparent;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+        .btn-manual-add {
+            background: var(--btn-add);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0 20px;
+            height: 52px;
+            font-weight: 800;
+            font-size: 18px;
+            transition: 0.2s;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+        .cart-card {
+            background: transparent;
+            box-shadow: none;
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .cart-header {
+            padding: 5px 5px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 800;
+            font-size: 16px;
+            color: var(--text-main);
+        }
+        .btn-clear {
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 8px 15px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+        }
+        .no-data {
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-align: center;
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* Нижняя панель (заблокированная) */
+        .bottom-action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(var(--bg-card-rgb), 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 15px calc(15px + env(safe-area-inset-bottom));
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 12px;
+            z-index: 50;
+            border-top: 1px solid var(--border-color);
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        .btn-fab {
+            border: none;
+            border-radius: 20px;
+            font-weight: 800;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 60px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 10px;
+        }
+        .btn-fab-scan {
+            flex: 1;
+            min-width: 0;
+            background: linear-gradient(135deg, #FF9800 0%, #d35400 100%);
+            font-size: clamp(13px, 4vw, 16px);
+            box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3);
+        }
+        .btn-fab-qr {
+            flex: 0 0 auto;
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            font-size: 15px;
+            padding: 0 20px;
+            box-shadow: 0 8px 20px rgba(142, 68, 173, 0.3);
+        }
+
+        /* Модальное окно отключения */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--modal-bg);
+            backdrop-filter: var(--modal-backdrop);
+            -webkit-backdrop-filter: var(--modal-backdrop);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+        .modal-content {
+            background: var(--bg-card);
+            color: var(--text-main);
+            padding: 30px 25px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            animation: slideInUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 480px;
+            width: 100%;
+            border: 3px solid #ff4757;
+            position: relative;
+            overflow: hidden;
+        }
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff4757, #ff6b81, #ff4757);
+            background-size: 200% 100%;
+            animation: gradientShift 2s ease infinite;
+        }
+        .offline-icon {
+            font-size: 72px;
+            margin-bottom: 15px;
+            animation: shake 0.6s ease-in-out;
+            display: inline-block;
+            filter: drop-shadow(0 5px 15px rgba(255, 71, 87, 0.3));
+        }
+        .offline-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: #ff4757;
+            letter-spacing: -0.5px;
+        }
+        .offline-subtitle {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #f39c12;
+            background: rgba(243, 156, 18, 0.1);
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(243, 156, 18, 0.3);
+        }
+        .offline-message {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+        .offline-message strong {
+            color: #ff4757;
+            font-weight: 800;
+        }
+        .btn-understand {
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 16px 30px;
+            font-weight: 800;
+            font-size: 17px;
+            cursor: pointer;
+            transition: 0.3s;
+            animation: pulseWarning 2s infinite;
+            letter-spacing: 0.5px;
+            width: 100%;
+        }
+        .btn-understand:hover {
+            background: #e03440;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.4);
+        }
+        .btn-understand:active {
+            transform: scale(0.96);
+            animation: none;
+        }
+        .btn-understand:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(255, 71, 87, 0.3);
+        }
+        .contact-info {
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            font-weight: 600;
+        }
+        .contact-info span {
+            display: block;
+            margin-top: 5px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Таблица (заблокированная) */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            margin-top: -10px;
+        }
+        td {
+            padding: 12px 10px;
+            vertical-align: middle;
+            text-align: center;
+            border: none;
+            background: var(--bg-card);
+            box-shadow: var(--shadow-soft);
+            border-radius: var(--radius-md);
+        }
+
+        /* Медиа-запросы */
+        @media (max-width: 480px) {
+            .modal-content {
+                padding: 25px 18px;
+                border-radius: 20px;
+            }
+            .offline-icon {
+                font-size: 60px;
+            }
+            .offline-title {
+                font-size: 20px;
+            }
+            .offline-subtitle {
+                font-size: 15px;
+            }
+            .offline-message {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка (заблокированная) -->
+    <header>
+        <h1>📦 Мой ТСД</h1>
+        <div class="header-controls">
+            <button class="btn-icon" title="Тема">☀️</button>
+            <button class="btn-icon" title="Архив">🗄️</button>
+            <button class="btn-icon" title="Настройки">⚙️</button>
+            <button class="btn-icon" title="Инструкция">❓</button>
+        </div>
+    </header>
+
+    <!-- Основной контейнер (заблокированный) -->
+    <div class="main-container">
+        <!-- Ручной ввод -->
+        <div class="card input-card">
+            <input type="text" class="input-field" placeholder="Введите артикул..." disabled>
+            <button class="btn-manual-add" disabled>✚</button>
+        </div>
+
+        <!-- Корзина -->
+        <div class="cart-card">
+            <div class="cart-header">
+                <span>0 строк (0 шт.)</span>
+                <button class="btn-clear" disabled>Очистить 🗑️</button>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="no-data">✨ Начните сканировать товары</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Нижняя панель (заблокированная) -->
+    <div class="bottom-action-bar">
+        <button class="btn-fab btn-fab-scan" disabled>📷 СКАНИРОВАТЬ</button>
+        <button class="btn-fab btn-fab-qr" disabled>📲 В EXCEL</button>
+    </div>
+
+    <!-- Модальное окно отключения -->
+    <div class="modal-overlay" id="offlineModal">
+        <div class="modal-content">
+            <div class="offline-icon">🚫</div>
+            <div class="offline-title">Приложение остановлено</div>
+            <div class="offline-subtitle">⚠️ Работа приложения прекращена</div>
+            <div class="offline-message">
+                К сожалению, <strong>«Мой ТСД»</strong> больше не будет работать.<br>
+                Это решение принято разработчиком в соответствии с политикой компании.<br><br>
+                Мы приносим извинения за возможные неудобства.
+            </div>
+            <button class="btn-understand" id="understandBtn" onclick="handleUnderstand()">Понятно</button>
+            <div class="contact-info">
+                Для получения дополнительной информации обратитесь к администратору системы
+                <span>👨‍💻 Джугань Сергей</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Функция обработки нажатия кнопки "Понятно"
+        function handleUnderstand() {
+            // Пытаемся заблокировать любые действия
+            document.body.style.pointerEvents = 'none';
+            
+            // Показываем уведомление
+            alert('Приложение полностью отключено. Все функции заблокированы.');
+            
+            // Возвращаем события
+            document.body.style.pointerEvents = 'auto';
+            
+            // Пытаемся закрыть вкладку (может не сработать)
+            setTimeout(() => {
+                window.close();
+            }, 500);
+            
+            // Если закрытие не удалось, показываем дополнительное сообщение
+            setTimeout(() => {
+                alert('Пожалуйста, закройте вкладку вручную. Приложение не будет работать.');
+            }, 1000);
+        }
+
+        // Блокируем все взаимодействия с интерфейсом
+        document.addEventListener('DOMContentLoaded', function() {
+            // Блокируем все кнопки и элементы ввода
+            const allButtons = document.querySelectorAll('button');
+            const allInputs = document.querySelectorAll('input');
+            
+            allButtons.forEach(btn => {
+                btn.disabled = true;
+                btn.style.pointerEvents = 'none';
+            });
+            
+            allInputs.forEach(input => {
+                input.disabled = true;
+                input.style.pointerEvents = 'none';
+            });
+            
+            // Блокируем контекстное меню
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Блокируем выделение текста
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Блокируем перетаскивание
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Блокируем копирование
+            document.addEventListener('copy', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Блокируем вырезание
+            document.addEventListener('cut', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Блокируем вставку
+            document.addEventListener('paste', function(e) {
+                e.preventDefault();
+                return false;
+            });
+        });
+
+        // Блокируем клавиши
+        document.addEventListener('keydown', function(e) {
+            // Блокируем F5 (обновление)
+            if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
+                e.preventDefault();
+                alert('Обновление страницы заблокировано. Приложение отключено.');
+                return false;
+            }
+            
+            // Блокируем Ctrl+Shift+J (консоль разработчика)
+            if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Блокируем F12 (инструменты разработчика)
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Блокируем Ctrl+U (просмотр исходного кода)
+            if (e.ctrlKey && e.key === 'u') {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Дополнительная защита от обновления
+        window.addEventListener('beforeunload', function(e) {
+            // Оставляем пустым, чтобы не мешать работе
+        });
+
+        // Блокируем масштабирование
+        document.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) {
+                e.preventDefault();
+                return false;
+            }
+        }, { passive: false });
+
+        // Показываем модальное окно при загрузке
+        window.addEventListener('load', function() {
+            const modal = document.getElementById('offlineModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.style.animation = 'fadeIn 0.4s ease';
+            }
+        });
+    </script>
+</body>
+</html>        }
 
         .brightness-text {
             font-weight: 800;
