@@ -1,6 +1,29 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <!-- Определяем "тир" мощности устройства ДО отрисовки CSS, чтобы не было
+         визуального "мигания" эффектов при загрузке. Логика:
+         - ручной override пользователя (настройки) имеет приоритет;
+         - иначе смотрим prefers-reduced-motion, число ядер CPU, объём памяти
+           и режим экономии трафика (Data Saver). -->
+    <script>
+    (function(){
+        try {
+            var forced = localStorage.getItem('tsd_force_simple');
+            var tier = 'high';
+            if (forced === 'true') {
+                tier = 'low';
+            } else {
+                var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                var cores = navigator.hardwareConcurrency || 4;
+                var mem = navigator.deviceMemory || 4;
+                var saveData = navigator.connection && navigator.connection.saveData;
+                if (reduced || saveData || cores <= 4 || mem <= 4) tier = 'low';
+            }
+            document.documentElement.setAttribute('data-fx', tier);
+        } catch(e) { document.documentElement.setAttribute('data-fx', 'low'); }
+    })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
@@ -61,6 +84,15 @@
     --warn-bg: #fffbeb; --warn-text: #b45309;
     
     --radius-sm: 12px; --radius-md: 16px; --radius-lg: 24px;
+
+    /* Молодёжная акцентная палитра для свечений/анимаций высокого тира */
+    --accent-a: #22c55e;
+    --accent-b: #06b6d4;
+    --accent-fun-a: #8b5cf6;
+    --accent-fun-b: #ec4899;
+    --accent-grad: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+    --accent-fun-grad: linear-gradient(135deg, var(--accent-fun-a), var(--accent-fun-b));
+    --glow-soft: rgba(16, 185, 129, 0.35);
 }
 
 [data-theme="dark"] {
@@ -91,6 +123,7 @@
     
     --info-bg: #064e3b; --info-text: #34d399;
     --warn-bg: #451a03; --warn-text: #fbbf24;
+    --glow-soft: rgba(52, 211, 153, 0.45);
 }
 
 /* === БАЗОВЫЕ НАСТРОЙКИ === */
@@ -346,9 +379,116 @@ input:checked + .slider:before { transform: translateX(22px); }
 .install-steps li { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px; font-size: 15px; font-weight: 700; color: var(--text-main); }
 .install-steps .step-num { flex: 0 0 auto; width: 28px; height: 28px; border-radius: 50%; background: var(--btn-add); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; }
 .install-steps .step-icon { font-size: 20px; }
+
+/* ============================================================
+   АДАПТИВНЫЙ ВИЗУАЛ (data-fx="high" | "low")
+   На мощных устройствах — полный набор анимаций.
+   На слабых — эффекты вообще не создаются в DOM (см. JS),
+   а не просто скрываются. prefers-reduced-motion — сильнее всего.
+   ============================================================ */
+
+.bg-blob {
+    position: fixed;
+    z-index: -1;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.28;
+    pointer-events: none;
+    display: none;
+    will-change: transform;
+}
+[data-fx="high"] .bg-blob { display: block; }
+[data-theme="dark"] .bg-blob { opacity: 0.45; }
+
+.blob-1 { width: 280px; height: 280px; top: -90px; left: -70px; background: var(--accent-grad); animation: blobFloatA 18s ease-in-out infinite; }
+.blob-2 { width: 240px; height: 240px; bottom: -70px; right: -60px; background: var(--accent-fun-grad); animation: blobFloatB 22s ease-in-out infinite; }
+
+@keyframes blobFloatA {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(35px, 45px) scale(1.15); }
+}
+@keyframes blobFloatB {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-30px, -35px) scale(1.1); }
+}
+
+[data-fx="high"] header {
+    background-size: 220% 220%;
+    animation: headerGradientShift 12s ease infinite;
+}
+@keyframes headerGradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+[data-fx="high"] .btn-fab-scan {
+    animation: pulseGlow 2.6s ease-in-out infinite;
+}
+@keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
+    50% { box-shadow: 0 10px 34px rgba(16, 185, 129, 0.6), 0 0 0 6px rgba(16, 185, 129, 0.1); }
+}
+
+/* Рябь (ripple) от нажатия — узлы создаются только на высоком тире (см. JS) */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.55);
+    transform: scale(0);
+    opacity: 1;
+    pointer-events: none;
+    animation: rippleAnim 0.55s ease-out forwards;
+}
+@keyframes rippleAnim {
+    to { transform: scale(2.6); opacity: 0; }
+}
+.btn-fab, .btn-manual-add, .num-btn, .archive-btn, .archive-btn-secondary, .btn-modal, .btn-icon {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Конфетти при успешном добавлении товара — узлы создаются только на высоком тире (см. JS) */
+.confetti-piece {
+    position: fixed;
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 500;
+    top: 0; left: 0;
+    animation: confettiPop 0.75s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+}
+@keyframes confettiPop {
+    0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.4); opacity: 0; }
+}
+
+tr { animation-fill-mode: both; }
+
+/* Лёгкая вспышка счётчика корзины — дёшево, работает на всех тирах одинаково */
+.cart-stats-flash { animation: statsFlash 0.5s ease; }
+@keyframes statsFlash {
+    0% { color: var(--btn-add); transform: scale(1.08); }
+    100% { color: var(--text-main); transform: scale(1); }
+}
+
+/* Системная настройка "уменьшить анимацию" побеждает любой тир и любую настройку */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+    .bg-blob { display: none !important; }
+}
 </style>
 </head>
 <body>
+
+<div class="bg-blob blob-1"></div>
+<div class="bg-blob blob-2"></div>
 
 <header>
     <h1>📦 Мой ТСД</h1>
@@ -457,7 +597,7 @@ input:checked + .slider:before { transform: translateX(22px); }
                     👨‍💻 Джугань Сергей
                 </p>
                 <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
-                    Версия: 5.2 (PWA + Offline, улучшенный сканер)
+                    Версия: 5.3 (адаптивный визуал: авто под мощность устройства)
                 </p>
             </div>
         </div>
@@ -480,6 +620,10 @@ input:checked + .slider:before { transform: translateX(22px); }
         <div class="settings-row">
             <span>📳 Вибрация</span>
             <label class="switch"><input type="checkbox" id="setVibro" onchange="saveSettings()"><span class="slider"></span></label>
+        </div>
+        <div class="settings-row">
+            <span>🪄 Упрощённый режим (для слабых устройств)</span>
+            <label class="switch"><input type="checkbox" id="setSimpleMode" onchange="toggleSimpleMode()"><span class="slider"></span></label>
         </div>
         <button class="btn-modal btn-close" onclick="document.getElementById('settingsModal').style.display='none'">Готово</button>
     </div>
@@ -617,6 +761,57 @@ document.addEventListener('click', function(event) {
         }
     }
 });
+
+// === РЯБЬ (RIPPLE) ОТ НАЖАТИЯ — узел создаётся только на высоком тире,
+// поэтому на слабых устройствах эта логика не стоит вообще ничего ===
+document.addEventListener('pointerdown', function(e) {
+    if (!isHighFx()) return;
+    const target = e.target.closest('.btn-fab, .btn-manual-add, .num-btn, .archive-btn, .archive-btn-secondary, .btn-modal, .btn-icon');
+    if (!target) return;
+    const rect = target.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+    target.appendChild(ripple);
+    ripple.addEventListener('animationend', () => ripple.remove());
+});
+
+// === КОНФЕТТИ ПРИ УСПЕШНОМ ДОБАВЛЕНИИ ТОВАРА — только высокий тир ===
+function burstConfetti(x, y) {
+    if (!isHighFx()) return;
+    const colors = ['#22c55e', '#06b6d4', '#8b5cf6', '#ec4899', '#f59e0b'];
+    const count = 10;
+    for (let i = 0; i < count; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
+        const distance = 60 + Math.random() * 50;
+        piece.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+        piece.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+        piece.style.setProperty('--rot', (Math.random() * 360 - 180) + 'deg');
+        piece.style.left = x + 'px';
+        piece.style.top = y + 'px';
+        piece.style.background = colors[i % colors.length];
+        document.body.appendChild(piece);
+        piece.addEventListener('animationend', () => piece.remove());
+    }
+}
+
+// Лёгкая вспышка счётчика (все тиры) + конфетти (только высокий тир), единая точка вызова
+function flashCartStats() {
+    const el = dom.cartStats || document.getElementById('cartStats');
+    if (!el) return;
+    el.classList.remove('cart-stats-flash');
+    void el.offsetWidth; // перезапуск CSS-анимации
+    el.classList.add('cart-stats-flash');
+    if (isHighFx()) {
+        const rect = el.getBoundingClientRect();
+        burstConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    }
+}
 
 // === ЛОГИКА УСТАНОВКИ (УМНЫЙ БАННЕР + КНОПКА МЕНЮ) ===
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
@@ -764,6 +959,7 @@ function openSettings() {
     document.getElementById('setContinuous').checked = settings.continuous;
     document.getElementById('setSound').checked = settings.sound;
     document.getElementById('setVibro').checked = settings.vibro;
+    document.getElementById('setSimpleMode').checked = localStorage.getItem('tsd_force_simple') === 'true';
     document.getElementById('settingsModal').style.display = 'flex';
 }
 
@@ -772,6 +968,23 @@ function saveSettings() {
     settings.sound = document.getElementById('setSound').checked;
     settings.vibro = document.getElementById('setVibro').checked;
     localStorage.setItem('tsd_settings', JSON.stringify(settings));
+}
+
+// === АДАПТИВНЫЙ ВИЗУАЛ: определение "тира" мощности устройства (переиспользуется после смены настройки) ===
+function computeFxTier() {
+    if (localStorage.getItem('tsd_force_simple') === 'true') return 'low';
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const cores = navigator.hardwareConcurrency || 4;
+    const mem = navigator.deviceMemory || 4;
+    const saveData = navigator.connection && navigator.connection.saveData;
+    if (reduced || saveData || cores <= 4 || mem <= 4) return 'low';
+    return 'high';
+}
+function isHighFx() { return document.documentElement.getAttribute('data-fx') === 'high'; }
+function toggleSimpleMode() {
+    const forced = document.getElementById('setSimpleMode').checked;
+    localStorage.setItem('tsd_force_simple', forced ? 'true' : 'false');
+    document.documentElement.setAttribute('data-fx', computeFxTier());
 }
 
 // === ЗВУКОВОЙ СИГНАЛ ===
@@ -921,6 +1134,7 @@ function addOrUpdateItem(code, qty) {
     if (existingIndex !== -1) { currentCart[existingIndex].qty += qty; }
     else { currentCart.unshift({ code: code, qty: qty }); }
     saveState(); renderCart();
+    flashCartStats();
 }
 
 function renderCart() {
@@ -930,8 +1144,10 @@ function renderCart() {
         tbody.innerHTML = '<tr><td colspan="3" class="no-data">✨ Начните сканировать товары</td></tr>';
     } else {
         const fragment = document.createDocumentFragment();
+        const highFx = isHighFx();
         currentCart.forEach((item, index) => {
             const tr = document.createElement('tr');
+            if (highFx) tr.style.animationDelay = Math.min(index * 35, 280) + 'ms';
             tr.innerHTML = `<td class="inline-barcode-container" onmousedown="startPress(event, '${item.code}')" onmouseup="cancelPress()" onmouseleave="cancelPress()" ontouchstart="startPress(event, '${item.code}')" oncontextmenu="return false;" onclick="handleBarcodeClick('${item.code}')">
                 <div class="barcode-wrapper">
                     <svg id="barcode-${index}"></svg>
@@ -1075,7 +1291,7 @@ function startScanner() {
                     });
 
                     if (addedCount > 0) { 
-                        saveState(); renderCart(); stopScanner(); 
+                        saveState(); renderCart(); flashCartStats(); stopScanner(); 
                         setTimeout(() => alert("Успешно распаковано " + addedCount + " позиций из Excel!"), 200); 
                     } else { 
                         isScannerPaused = false; 
