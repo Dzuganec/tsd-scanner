@@ -269,8 +269,14 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .modal-content { -ms-overflow-style: none; scrollbar-width: none; }
 .modal-content::before { content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 40px; height: 5px; background: var(--border-color); border-radius: 10px; }
 
-#reader { width: 100%; min-height: 250px; border-radius: var(--radius-md); overflow: hidden; background: #000; margin-bottom: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);}
+#reader { width: 100%; min-height: 250px; border-radius: var(--radius-md); overflow: hidden; background: #000; margin-bottom: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); position: relative; }
 #reader video { object-fit: cover !important; width: 100%; height: 100%; }
+
+.scan-orientation-hint {
+    position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; pointer-events: none;
+    z-index: 5; font-size: 13px; font-weight: 800; color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8); padding: 0 10px;
+}
 
 .btn-modal { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-weight: 800; font-size: 16px; margin-top: 10px; cursor: pointer; transition: 0.2s;}
 .btn-modal:active { transform: scale(0.96); }
@@ -334,6 +340,12 @@ input:checked + .slider:before { transform: translateX(22px); }
 #zoomModal { background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); justify-content: center; align-items: center;}
 .zoom-container { background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); box-shadow: 0 15px 40px rgba(0,0,0,0.3); text-align: center; width: 90%; max-width: 450px;}
 .zoom-container svg { width: 100%; height: auto; max-height: 200px; display: block; margin: 0 auto; background: #fff; padding: 10px; border-radius: 8px;}
+
+/* === МОДАЛКА УСТАНОВКИ iOS (степ-инструкция вместо alert) === */
+.install-steps { list-style: none; padding: 0; margin: 15px 0 0; text-align: left; }
+.install-steps li { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px; font-size: 15px; font-weight: 700; color: var(--text-main); }
+.install-steps .step-num { flex: 0 0 auto; width: 28px; height: 28px; border-radius: 50%; background: var(--btn-add); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; }
+.install-steps .step-icon { font-size: 20px; }
 </style>
 </head>
 <body>
@@ -425,7 +437,7 @@ input:checked + .slider:before { transform: translateX(22px); }
             </ol>
             <div class="note-box browser-note">
                 <span style="font-size: 18px; line-height: 1;">💡</span>
-                <div style="flex: 1; line-height: 1.4;"><b>Важно:</b> Для быстрой работы камеры используйте браузер <b>Chrome</b> или <b>Safari</b>!</div>
+                <div style="flex: 1; line-height: 1.4;"><b>Важно:</b> Для быстрой работы камеры используйте браузер <b>Chrome</b> или <b>Safari</b>! Штрих-код (1D) считывается быстрее и надёжнее, если держать его ГОРИЗОНТАЛЬНО в рамке — это особенность любых лазерных и камерных сканеров, а не только этого приложения.</div>
             </div>
         </div>
         <button class="btn-modal btn-close" onclick="document.getElementById('instructionModal').style.display='none'">Понятно</button>
@@ -445,7 +457,7 @@ input:checked + .slider:before { transform: translateX(22px); }
                     👨‍💻 Джугань Сергей
                 </p>
                 <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
-                    Версия: 5.1 (PWA + Offline, исправленный сканер)
+                    Версия: 5.2 (PWA + Offline, улучшенный сканер)
                 </p>
             </div>
         </div>
@@ -478,7 +490,9 @@ input:checked + .slider:before { transform: translateX(22px); }
     <div class="modal-content">
         <h3 style="margin-top: 0; margin-bottom: 5px; font-weight: 800;">Наведите камеру</h3>
         <p id="iosScanHint" style="display:none; font-size: 14px; color: #f59e0b; margin-top: 0; margin-bottom: 15px; font-weight: 700;">Отодвиньте телефон на 15-20 см</p>
-        <div id="reader"></div>
+        <div id="reader">
+            <div class="scan-orientation-hint" id="orientationHint">↔️ Держите штрих-код горизонтально</div>
+        </div>
         <button class="btn-modal btn-torch" id="torchBtn" onclick="toggleTorch()">🔦 Включить фонарик</button>
         <button class="btn-modal btn-close" onclick="stopScanner()">Завершить</button>
     </div>
@@ -541,6 +555,38 @@ input:checked + .slider:before { transform: translateX(22px); }
     </div>
 </div>
 
+<!-- МОДАЛКА УСТАНОВКИ НА iOS (пошаговая, вместо alert) -->
+<div class="modal-overlay" id="iosInstallModal">
+    <div class="modal-content">
+        <h3 style="margin-top:0; font-weight: 800;">📲 Установка на iPhone</h3>
+        <p style="font-size: 14px; color: var(--text-muted); font-weight: 600; margin-top: -5px;">
+            Apple не разрешает сайтам устанавливать себя на экран «Домой» автоматически — это можно сделать только вручную, через Safari, вот так:
+        </p>
+        <ol class="install-steps">
+            <li><span class="step-num">1</span><span>Откройте это приложение в браузере <b>Safari</b> (не в Chrome).</span></li>
+            <li><span class="step-num">2</span><span class="step-icon">⬆️</span><span>Нажмите кнопку <b>«Поделиться»</b> внизу экрана.</span></li>
+            <li><span class="step-num">3</span><span class="step-icon">➕</span><span>Выберите <b>«На экран "Домой"»</b> в списке.</span></li>
+            <li><span class="step-num">4</span><span class="step-icon">✅</span><span>Нажмите <b>«Добавить»</b> — готово, иконка появится на рабочем столе.</span></li>
+        </ol>
+        <button class="btn-modal btn-close" onclick="document.getElementById('iosInstallModal').style.display='none'">Понятно</button>
+    </div>
+</div>
+
+<!-- МОДАЛКА УСТАНОВКИ НА ANDROID/ДЕСКТОП, ЕСЛИ БРАУЗЕР НЕ ПРЕДЛОЖИЛ АВТОМАТИЧЕСКИ -->
+<div class="modal-overlay" id="androidInstallModal">
+    <div class="modal-content">
+        <h3 style="margin-top:0; font-weight: 800;">📲 Установка приложения</h3>
+        <p style="font-size: 14px; color: var(--text-muted); font-weight: 600; margin-top: -5px;">
+            Браузер пока не предложил установку автоматически. Установите вручную:
+        </p>
+        <ol class="install-steps">
+            <li><span class="step-num">1</span><span>Откройте меню браузера (обычно значок <b>⋮</b> в углу).</span></li>
+            <li><span class="step-num">2</span><span>Выберите <b>«Установить приложение»</b> или <b>«Добавить на главный экран»</b>.</span></li>
+        </ol>
+        <button class="btn-modal btn-close" onclick="document.getElementById('androidInstallModal').style.display='none'">Понятно</button>
+    </div>
+</div>
+
 <script>
 // === ЗАКРЫТИЕ ОКОН ПО КЛИКУ НА ТЕМНЫЙ ФОН ===
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
@@ -598,10 +644,25 @@ window.addEventListener('beforeinstallprompt', (e) => {
     }
 });
 
+// Если приложение реально установлено (событие появляется и на Android, и на десктопном Chrome) —
+// прячем кнопку/баннер, чтобы не предлагать установку повторно.
+window.addEventListener('appinstalled', () => {
+    if (menuInstallBtn) menuInstallBtn.style.display = 'none';
+    if (installBanner) installBanner.style.display = 'none';
+    localStorage.setItem('hideInstallBanner', 'true');
+});
+
+// ВАЖНО: браузер (JavaScript) не может сам "нажать" кнопку добавления на экран Домой —
+// ни на iOS, ни на Android/десктопе без предварительного системного события beforeinstallprompt.
+// На Android/Chrome/Desktop мы ловим это системное событие (deferredPrompt) и показываем
+// РЕАЛЬНЫЙ системный диалог установки. На iOS Safari такого API вообще не существует —
+// Apple разрешает добавление на экран «Домой» только вручную через кнопку «Поделиться»,
+// поэтому там мы показываем понятную пошаговую инструкцию вместо алерта.
 function triggerInstall() {
     if (installBanner) installBanner.style.display = 'none';
-    
+
     if (deferredPrompt) {
+        // Настоящая установка одним нажатием — доступно там, где браузер это поддерживает
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then((choiceResult) => {
             if (choiceResult.outcome === 'accepted') {
@@ -610,12 +671,13 @@ function triggerInstall() {
             }
             deferredPrompt = null;
         });
+        return;
+    }
+
+    if (isIOS) {
+        document.getElementById('iosInstallModal').style.display = 'flex';
     } else {
-        if (isIOS) {
-            alert("Установка на iPhone:\n\n1. Нажмите кнопку «Поделиться» (квадрат со стрелочкой) внизу Safari.\n2. Выберите «На экран \"Домой\"».");
-        } else {
-            alert("Нажмите меню браузера (⋮) и выберите «Добавить на главный экран».");
-        }
+        document.getElementById('androidInstallModal').style.display = 'flex';
     }
 }
 
@@ -744,15 +806,27 @@ window.cancelPress = function() {
     if (pressTimer) clearTimeout(pressTimer);
 };
 
+// Единая функция отрисовки штрихкода с автоматическим fallback EAN13 -> CODE128 -> текст.
+// Раньше этот try/catch дублировался в трёх местах — теперь один helper.
+function renderBarcodeSafe(targetId, code, opts) {
+    opts = opts || {};
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    try {
+        JsBarcode(el, code, Object.assign({ format: "EAN13", lineColor: "#000", background: opts.background || "transparent" }, opts));
+    } catch (e) {
+        try {
+            JsBarcode(el, code, Object.assign({ format: "CODE128", lineColor: "#000", background: opts.background || "transparent" }, opts));
+        } catch (err) {
+            el.outerHTML = `<span style="font-family: monospace; font-weight: bold; font-size: 14px;">${code}</span>`;
+        }
+    }
+}
+
 window.handleBarcodeClick = function(code) {
     if (!isLongPress) {
         document.getElementById('zoomModal').style.display = 'flex';
-        try {
-            JsBarcode("#zoomedBarcodeSvg", code, { format: "EAN13", width: 2.5, height: 100, displayValue: true, fontSize: 20, margin: 10});
-        } catch (e) {
-            try { JsBarcode("#zoomedBarcodeSvg", code, { format: "CODE128", width: 2, height: 80, displayValue: true, fontSize: 20, margin: 10 });
-            } catch (err) {}
-        }
+        renderBarcodeSafe('zoomedBarcodeSvg', code, { width: 2.5, height: 100, displayValue: true, fontSize: 20, margin: 10 });
     }
 };
 
@@ -783,7 +857,18 @@ let currentCart = [];
 let html5QrCode = null;
 let torchEnabled = false;
 
+// Кэш часто используемых DOM-узлов, чтобы не искать их по id в каждом рендере.
+const dom = {
+    cartTableBody: null,
+    cartStats: null
+};
+function cacheDom() {
+    dom.cartTableBody = document.getElementById('cartTableBody');
+    dom.cartStats = document.getElementById('cartStats');
+}
+
 window.onload = function() {
+    cacheDom();
     const savedCart = localStorage.getItem('tsd_lite_cart');
     if (savedCart) { try { currentCart = JSON.parse(savedCart); renderCart(); } catch(e) {} }
 };
@@ -839,7 +924,7 @@ function addOrUpdateItem(code, qty) {
 }
 
 function renderCart() {
-    const tbody = document.getElementById('cartTableBody');
+    const tbody = dom.cartTableBody || document.getElementById('cartTableBody');
     tbody.innerHTML = '';
     if (currentCart.length === 0) {
         tbody.innerHTML = '<tr><td colspan="3" class="no-data">✨ Начните сканировать товары</td></tr>';
@@ -859,20 +944,12 @@ function renderCart() {
         tbody.appendChild(fragment);
 
         currentCart.forEach((item, index) => {
-            try { 
-                JsBarcode("#barcode-" + index, item.code, { format: "EAN13", lineColor: "#000", background: "transparent", width: 2, height: 45, displayValue: true, fontSize: 15, margin: 2 });
-            } catch (e) {
-                try { 
-                    JsBarcode("#barcode-" + index, item.code, { format: "CODE128", lineColor: "#000", background: "transparent", width: 1.5, height: 40, displayValue: true, fontSize: 14, margin: 2 });
-                } catch (err) { 
-                    document.getElementById("barcode-" + index).outerHTML = `<span style="font-family: monospace; font-weight: bold; font-size: 14px;">${item.code}</span>`; 
-                } 
-            } 
-        }); 
+            renderBarcodeSafe('barcode-' + index, item.code, { width: 2, height: 45, displayValue: true, fontSize: 15, margin: 2 });
+        });
     } 
     let total = 0; 
     currentCart.forEach(i => total += i.qty); 
-    document.getElementById('cartStats').innerText = `${currentCart.length} строк (${total} шт.)`;
+    (dom.cartStats || document.getElementById('cartStats')).innerText = `${currentCart.length} строк (${total} шт.)`;
 }
 
 window.removeItem = function(index) { currentCart.splice(index, 1); saveState(); renderCart(); }
@@ -946,7 +1023,15 @@ function startScanner() {
 
         const config = {
             fps: 15,
-            qrbox: { width: 280, height: 280 },
+            // Раньше рамка была фиксированной (280x280), из-за чего на части экрана
+            // ничего не считывалось. Теперь рамка динамически подстраивается под
+            // размер видео и занимает почти весь кадр — это даёт декодеру больше
+            // пикселей на анализ и заметно повышает шанс поймать код под любым углом.
+            qrbox: function (viewfinderWidth, viewfinderHeight) {
+                const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+                const size = Math.floor(minEdge * 0.9);
+                return { width: size, height: size };
+            },
             disableFlip: false,
             formatsToSupport: [
                 Html5QrcodeSupportedFormats.EAN_13,
@@ -955,7 +1040,14 @@ function startScanner() {
                 Html5QrcodeSupportedFormats.DATA_MATRIX,
                 Html5QrcodeSupportedFormats.CODE_128,
                 Html5QrcodeSupportedFormats.QR_CODE
-            ]
+            ],
+            // Там, где браузер поддерживает нативный Shape Detection API (BarcodeDetector —
+            // сейчас это Chrome/Android), отдаём декодирование ему: он заметно точнее
+            // распознаёт повёрнутые штрихкоды, чем JS-декодер. На Safari/iOS этот API
+            // отсутствует (ограничение WebKit), поэтому там используется обычный путь.
+            experimentalFeatures: {
+                useBarCodeDetectorIfSupported: true
+            }
         };
 
         const startVideo = (cameraSettings) => {
