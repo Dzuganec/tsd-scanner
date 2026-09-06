@@ -1,21 +1,22 @@
 // sw.js — Service Worker для «Мой ТСД»
-// Задачи:
-// 1) Дать приложению открываться офлайн (после первого захода) — сама HTML-страница
-//    и манифест/иконка кэшируются как "app shell".
-// 2) Внешние библиотеки (html5-qrcode, JsBarcode, qrcode, шрифты) кэшируются
-//    по мере использования, чтобы повторный офлайн-запуск не требовал сети.
-// 3) При обновлении версии приложения — старые кэши подчищаются, новая версия
-//    подхватывается сразу после закрытия всех вкладок (skipWaiting + clients.claim).
+// В этой версии все необходимые библиотеки принудительно скачиваются 
+// в момент установки SW (на фоне), чтобы сканер работал 100% оффлайн 
+// даже при самом первом выходе без связи.
 
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v7';
 const CACHE_NAME = 'moy-tsd-cache-' + CACHE_VERSION;
 
-// Замените список на реальные имена файлов вашего проекта, если они отличаются.
+// Список файлов, которые браузер обязан загрузить и положить в кэш
 const APP_SHELL = [
     './',
     './index.html',
     './manifest.json',
-    './icon.png'
+    './icon.png',
+    // Принудительно кэшируем CDN-библиотеки для оффлайна:
+    'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js',
+    'https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js',
+    'https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js',
+    'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap'
 ];
 
 self.addEventListener('install', (event) => {
@@ -25,7 +26,9 @@ self.addEventListener('install', (event) => {
             // addAll не должен валить установку целиком, если один из файлов недоступен
             // (например, иконки ещё нет на сервере) — поэтому кэшируем по одному.
             return Promise.all(
-                APP_SHELL.map((url) => cache.add(url).catch(() => {}))
+                APP_SHELL.map((url) => cache.add(url).catch((e) => { 
+                    console.warn(`Не удалось закэшировать ресурс ${url} при установке SW:`, e); 
+                }))
             );
         })
     );
