@@ -168,6 +168,18 @@ header h1 { font-size: clamp(17px, 4.6vw, 21px); font-weight: 900; display: flex
 .main-container { padding: 0 16px calc(140px + var(--safe-b)) 16px; max-width: 640px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 18px; flex: 1; }
 .card { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); border: 1px solid var(--border-color); overflow: hidden; transition: box-shadow var(--t-med), border-color var(--t-med); animation: fadeUp var(--t-med) var(--ease-smooth); }
 
+/* ---------- ПАЛЛЕТЫ (НОВОЕ) ---------- */
+.pallet-bar { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); padding: 12px 16px; margin-bottom: -6px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid var(--border-color); transition: transform var(--t-fast); }
+.pallet-bar:active { transform: scale(0.98); }
+.pallet-bar-text { font-weight: 800; font-size: 15px; color: var(--text-muted); }
+.pallet-badge { background: var(--btn-add); color: white; padding: 4px 12px; border-radius: 12px; font-weight: 800; font-size: 14px; box-shadow: 0 2px 8px rgba(5,150,105,0.3); transition: background var(--t-fast); }
+
+.pallet-header-content { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px 0; }
+.pallet-name { font-weight: 900; font-size: 17px; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
+.btn-pallet-qr { background: var(--btn-blue); color: white; border: none; padding: 6px 14px; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 10px rgba(37,99,235,0.3); transition: transform var(--t-fast); }
+.btn-pallet-qr:active { transform: scale(0.9); }
+
+/* ---------- ВВОД И КОРЗИНА ---------- */
 .input-card { padding: 7px; display: flex; gap: 7px; align-items: center; border-radius: var(--radius-lg); transition: box-shadow var(--t-fast) ease, border-color var(--t-fast) ease; }
 .input-card:focus-within { border-color: var(--btn-add); box-shadow: 0 0 0 5px var(--glow-soft); }
 .input-field { flex: 1; padding: 15px 16px; background: transparent; color: var(--text-main); border: none; font-size: 16px; font-weight: 700; }
@@ -183,6 +195,7 @@ header h1 { font-size: clamp(17px, 4.6vw, 21px); font-weight: 900; display: flex
 table { width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: -10px;}
 th { display: none; }
 tr { background: var(--bg-card); box-shadow: var(--shadow-soft); border-radius: var(--radius-md); border: 1px solid var(--border-color); transition: transform var(--t-fast); }
+.pallet-header-row { background: transparent !important; box-shadow: none !important; border: none !important; }
 td { padding: 12px 10px; vertical-align: middle; text-align: center; border: none; }
 td:first-child { border-top-left-radius: var(--radius-md); border-bottom-left-radius: var(--radius-md); width: 58%; }
 td:nth-child(2) { width: 26%; }
@@ -221,6 +234,20 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 @keyframes pulseGlow { 0%, 100% { box-shadow: 0 10px 24px rgba(16, 185, 129, 0.32); } 50% { box-shadow: 0 12px 38px rgba(16, 185, 129, 0.62), 0 0 0 7px rgba(16, 185, 129, 0.12); } }
 .btn-fab-qr { flex: 1; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); font-size: 15px; padding: 0 18px; box-shadow: 0 10px 24px rgba(59, 130, 246, 0.32); }
 
+/* ---------- SNACKBAR (ОТМЕНА УДАЛЕНИЯ) ---------- */
+#snackbar {
+    visibility: hidden;
+    min-width: 250px; background-color: var(--text-main); color: var(--bg-card);
+    text-align: center; border-radius: var(--radius-md); padding: 14px 16px;
+    position: fixed; z-index: 10000; left: 50%; bottom: 85px; transform: translateX(-50%);
+    font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    transition: visibility 0s, opacity 0.3s, bottom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); opacity: 0;
+}
+#snackbar.show { visibility: visible; bottom: 96px; opacity: 1; }
+.snackbar-btn { background: var(--btn-add); color: white; border: none; padding: 8px 16px; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer; transition: transform var(--t-fast); }
+.snackbar-btn:active { transform: scale(0.9); }
+
 .install-banner { position: fixed; bottom: 106px; left: 16px; right: 16px; background: var(--bg-card); border-radius: var(--radius-md); box-shadow: 0 18px 46px rgba(0,0,0,0.18); padding: 16px; display: none; flex-direction: column; gap: 12px; z-index: 90; border: 1px solid var(--border-color); animation: slideInUp var(--t-slow) var(--ease-smooth); }
 .install-banner-header { display: flex; align-items: center; gap: 14px; }
 .install-banner-icon { font-size: 30px; background: var(--info-bg); width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 13px; }
@@ -242,59 +269,18 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 /* ============================================================
    ПОЛНОЭКРАННЫЙ СКАНЕР
    ============================================================ */
-#scannerModal {
-    align-items: center;
-}
-#scannerModal .modal-content {
-    height: 100dvh;
-    max-height: 100dvh;
-    width: 100%;
-    max-width: 100%;
-    border-radius: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    padding: calc(40px + var(--safe-t)) 16px calc(15px + var(--safe-b)) 16px;
-}
-#scannerModal .modal-content::before {
-    top: calc(16px + var(--safe-t));
-}
-#scannerModal .modal-title, 
-#iosScanHint, 
-.scanner-controls-row {
-    flex-shrink: 0; /* Эти элементы не должны сжиматься */
-}
+#scannerModal { align-items: center; }
+#scannerModal .modal-content { height: 100dvh; max-height: 100dvh; width: 100%; max-width: 100%; border-radius: 0; margin: 0; display: flex; flex-direction: column; padding: calc(40px + var(--safe-t)) 16px calc(15px + var(--safe-b)) 16px; }
+#scannerModal .modal-content::before { top: calc(16px + var(--safe-t)); }
+#scannerModal .modal-title, #iosScanHint, .scanner-controls-row { flex-shrink: 0; }
 
 @media (min-width: 640px) {
-    #scannerModal .modal-content {
-        height: 90dvh;
-        max-width: 600px;
-        border-radius: 34px;
-        margin-bottom: 20px;
-    }
+    #scannerModal .modal-content { height: 90dvh; max-width: 600px; border-radius: 34px; margin-bottom: 20px; }
 }
 
-.scanner-wrapper { 
-    flex: 1; /* Растягивается на всю свободную высоту */
-    position: relative; 
-    width: 100%; 
-    margin-bottom: 15px; 
-    border-radius: var(--radius-lg); 
-    overflow: hidden; 
-    display: flex;
-    flex-direction: column;
-}
-#reader { 
-    flex: 1; /* Камера занимает всё место внутри обертки */
-    width: 100%; 
-    background: #000; 
-    box-shadow: inset 0 0 24px rgba(0,0,0,0.55); 
-    display: flex;
-    flex-direction: column;
-}
-#reader > div {
-    flex: 1;
-}
+.scanner-wrapper { flex: 1; position: relative; width: 100%; margin-bottom: 15px; border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; }
+#reader { flex: 1; width: 100%; background: #000; box-shadow: inset 0 0 24px rgba(0,0,0,0.55); display: flex; flex-direction: column; }
+#reader > div { flex: 1; }
 #reader video { object-fit: cover !important; width: 100%; height: 100%; }
 
 .scan-orientation-hint { position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; pointer-events: none; z-index: 5; font-size: 13px; font-weight: 800; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); padding: 0 10px; }
@@ -386,7 +372,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 
 .ripple { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.55); transform: scale(0); opacity: 1; pointer-events: none; animation: rippleAnim 0.75s ease-out forwards; }
 @keyframes rippleAnim { to { transform: scale(2.8); opacity: 0; } }
-.btn-fab, .btn-manual-add, .num-btn, .archive-btn, .archive-btn-secondary, .btn-modal, .btn-icon, .toggle { position: relative; overflow: hidden; }
+.btn-fab, .btn-manual-add, .num-btn, .archive-btn, .archive-btn-secondary, .btn-modal, .btn-icon, .toggle, .pallet-bar { position: relative; overflow: hidden; }
 
 .confetti-piece { position: fixed; width: 7px; height: 7px; border-radius: 2px; pointer-events: none; z-index: 500; top: 0; left: 0; animation: confettiPop 1.1s cubic-bezier(0.2, 0.8, 0.3, 1) forwards; }
 @keyframes confettiPop { 0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.4); opacity: 0; } }
@@ -448,6 +434,12 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
 </header>
 
 <div class="main-container">
+    <!-- ПАНЕЛЬ УПРАВЛЕНИЯ ПАЛЛЕТОМ -->
+    <div class="pallet-bar" onclick="openPalletModal()">
+        <div class="pallet-bar-text">Текущий паллет:</div>
+        <div class="pallet-badge" id="currentPalletBadge">Основной</div>
+    </div>
+
     <div class="card input-card">
         <input type="text" id="codeInput" class="input-field" placeholder="Введите артикул...">
         <button class="btn-manual-add" onclick="manualAdd()">✚</button>
@@ -459,10 +451,8 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
             <button class="btn-clear" onclick="clearCart()">Очистить 🗑️</button>
         </div>
         <div class="table-wrapper">
-            <table>
-                <tbody id="cartTableBody">
-                    <tr><td colspan="3" class="no-data">✨ Начните сканировать товары</td></tr>
-                </tbody>
+            <table id="cartTable">
+                <!-- Таблица теперь генерируется JS -->
             </table>
         </div>
     </div>
@@ -470,7 +460,13 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
 
 <div class="bottom-action-bar">
     <button class="btn-fab btn-fab-scan" onclick="startScanner()">📷 СКАНИРОВАТЬ</button>
-    <button class="btn-fab btn-fab-qr" onclick="showTransferQR()">📲 В EXCEL</button>
+    <button class="btn-fab btn-fab-qr" onclick="showTransferQR()">📲 В EXCEL (Всё)</button>
+</div>
+
+<!-- SNACKBAR ОТМЕНЫ -->
+<div id="snackbar">
+    <span id="snackbarText">Товар удалён</span>
+    <button class="snackbar-btn" onclick="undoDelete()">Вернуть</button>
 </div>
 
 <div id="installBanner" class="install-banner">
@@ -493,11 +489,10 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
         <div class="instruction-content">
             <ol>
                 <li>Нажми <b>📷 СКАНИРОВАТЬ</b> внизу или введи артикул вручную.</li>
-                <li>Сканер читает ШК, QR и <b>DataMatrix (Честный ЗНАК ✅)</b>.</li>
+                <li>Товары автоматически добавляются в выбранный <b>Паллет</b>. Паллеты можно менять.</li>
                 <li>Камера сама подбирает объектив (основной / макро / телевик) для лучшей чёткости.</li>
                 <li><b>Режим «🔄 Непрерывный скан»</b>: сканируй потоком без закрытия камеры.</li>
-                <li>Собери карточку из товаров (не более 50 строк).</li>
-                <li>Нажми <b>📲 В EXCEL</b>, яркость выкрутится на максимум.</li>
+                <li>Нажми <b>Показать QR</b> у нужного паллета в корзине, чтобы выгрузить только его. Либо <b>В EXCEL</b> внизу, чтобы выгрузить всё.</li>
                 <li>В Excel нажми «Получить данные из QR-кода» и отсканируй экран.</li>
             </ol>
             <div class="note-box browser-note">
@@ -518,7 +513,7 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
             </p>
             <div style="background: var(--input-bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color);">
                 <p style="margin: 0 0 8px 0; font-size: 16px; font-weight: 800; color: var(--text-main);">👨‍💻 Джугань Сергей</p>
-                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">Версия: 6.1 (Полноэкранная камера)</p>
+                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">Версия: 6.2 (Паллеты + Отмена удаления)</p>
             </div>
         </div>
         <button class="btn-modal btn-close" onclick="document.getElementById('aboutModal').style.display='none'">Закрыть</button>
@@ -615,6 +610,25 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     </div>
 </div>
 
+<!-- МОДАЛЬНОЕ ОКНО ПАЛЛЕТОВ -->
+<div class="modal-overlay" id="palletModal">
+    <div class="modal-content">
+        <h3 class="modal-title">📦 Выбор паллета</h3>
+        <p style="font-size: 14px; color: var(--text-muted); font-weight: 600; margin-top: 5px; margin-bottom: 0;">Все новые сканирования будут привязаны к нему</p>
+        
+        <input type="text" id="palletInput" class="input-field" style="background:var(--input-bg); width:100%; border-radius:12px; margin: 15px 0; border:1px solid var(--border-color); text-align:center; font-size:18px;" placeholder="Введите название...">
+        
+        <div id="existingPallets" style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:15px;">
+            <!-- Сюда вставятся существующие паллеты для быстрого выбора -->
+        </div>
+
+        <div class="scanner-controls-row">
+            <button class="btn-modal btn-close" onclick="document.getElementById('palletModal').style.display='none'">Отмена</button>
+            <button class="btn-modal" style="background:var(--btn-add); color:#fff;" onclick="confirmPallet()">Выбрать</button>
+        </div>
+    </div>
+</div>
+
 <div class="modal-overlay" id="qrModal" style="align-items: center;">
     <div class="modal-content" style="background: transparent; box-shadow: none;">
         <div class="brightness-text">Выкрути яркость на максимум!</div>
@@ -676,6 +690,7 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
             if (this.id === 'scannerModal') stopScanner();
             else if (this.id === 'numpadModal') numCancel();
             else if (this.id === 'qrModal') closeQRModal();
+            else if (this.id === 'palletModal') this.style.display = 'none';
             else this.style.display = 'none';
         }
     });
@@ -696,7 +711,7 @@ document.addEventListener('click', function(event) {
 
 document.addEventListener('pointerdown', function(e) {
     if (!isHighFx()) return;
-    const target = e.target.closest('.btn-fab, .btn-manual-add, .num-btn, .archive-btn, .archive-btn-secondary, .btn-modal, .btn-icon, .toggle');
+    const target = e.target.closest('.btn-fab, .btn-manual-add, .num-btn, .archive-btn, .archive-btn-secondary, .btn-modal, .btn-icon, .toggle, .pallet-bar');
     if (!target) return;
     const rect = target.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height);
@@ -808,6 +823,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (modal.id === 'scannerModal') stopScanner();
                 else if (modal.id === 'numpadModal') numCancel();
                 else if (modal.id === 'qrModal') closeQRModal();
+                else if (modal.id === 'palletModal') modal.style.display = 'none';
                 else modal.style.display = 'none';
                 setTimeout(() => { content.style.transform = ''; }, 280);
             } else {
@@ -930,20 +946,29 @@ function fallbackCopyTextToClipboard(text) {
     document.body.removeChild(textArea);
 }
 
+/* ================= ПАЛЛЕТЫ И КОРЗИНА ================= */
 const MASTER_CODES = { "14630557641291": { code: "4601501761856", qtyInBox: 50 } };
 let currentCart = [];
+let activePallet = "Основной";
 let html5QrCode = null;
 let torchEnabled = false;
 
-const dom = { cartTableBody: null, cartStats: null };
-function cacheDom() { dom.cartTableBody = document.getElementById('cartTableBody'); dom.cartStats = document.getElementById('cartStats'); }
+const dom = { cartTable: null, cartStats: null };
+function cacheDom() { dom.cartTable = document.getElementById('cartTable'); dom.cartStats = document.getElementById('cartStats'); }
 window.onload = function() {
     cacheDom();
     const savedCart = localStorage.getItem('tsd_lite_cart');
-    if (savedCart) { try { currentCart = JSON.parse(savedCart); renderCart(); } catch(e) {} }
+    if (savedCart) { 
+        try { 
+            currentCart = JSON.parse(savedCart); 
+            // Совместимость со старыми сохранениями (где не было паллетов)
+            currentCart = currentCart.map(item => ({...item, pallet: item.pallet || "Основной"}));
+            renderCart(); 
+        } catch(e) {} 
+    }
 };
 function saveState() { localStorage.setItem('tsd_lite_cart', JSON.stringify(currentCart)); }
-function getSafeId(text) { return text.replace(/[^a-zA-Z0-9_-]/g, '_'); }
+function getSafeId(text) { return encodeURIComponent(text).replace(/%/g, '_').replace(/[^a-zA-Z0-9_-]/g, '_'); }
 
 function normalizeBarcode(text) {
     let cleanText = text.trim().replace(/[\x00-\x1F\x7F ]/g, '');
@@ -953,6 +978,25 @@ function normalizeBarcode(text) {
     if (cleanText.length === 13 && cleanText.startsWith("0")) cleanText = cleanText.substring(1);
     if (MASTER_CODES[cleanText]) cleanText = MASTER_CODES[cleanText].code;
     return cleanText;
+}
+
+function openPalletModal() {
+    document.getElementById('palletInput').value = activePallet;
+    const pallets = [...new Set(currentCart.map(i => i.pallet))];
+    const container = document.getElementById('existingPallets');
+    if (pallets.length > 0) {
+        container.innerHTML = pallets.map(p => `<button style="background:var(--input-bg); border:1px solid var(--border-color); border-radius:10px; padding:8px 14px; font-weight:800; font-size:14px; color:var(--text-main); cursor:pointer;" onclick="document.getElementById('palletInput').value='${p}'">${p}</button>`).join('');
+    } else {
+        container.innerHTML = '';
+    }
+    document.getElementById('palletModal').style.display = 'flex';
+}
+function confirmPallet() {
+    let val = document.getElementById('palletInput').value.trim();
+    if(!val) val = "Основной";
+    activePallet = val;
+    document.getElementById('currentPalletBadge').innerText = activePallet;
+    document.getElementById('palletModal').style.display = 'none';
 }
 
 document.getElementById('codeInput').addEventListener('keypress', function (e) { if (e.key === 'Enter') { e.preventDefault(); manualAdd(); } });
@@ -974,13 +1018,14 @@ function updateCartStats() {
 }
 
 function addOrUpdateItem(code, qty) {
-    const tbody = dom.cartTableBody || document.getElementById('cartTableBody');
-    const existingIndex = currentCart.findIndex(item => item.code === code);
+    const pallet = activePallet;
+    const existingIndex = currentCart.findIndex(item => item.code === code && item.pallet === pallet);
     const safeId = getSafeId(code);
+    const safePallet = getSafeId(pallet);
 
     if (existingIndex !== -1) {
         currentCart[existingIndex].qty += qty;
-        const qtyBox = document.getElementById(`qty-${safeId}`);
+        const qtyBox = document.getElementById(`qty-${safeId}-${safePallet}`);
         if (qtyBox) {
             qtyBox.innerText = currentCart[existingIndex].qty;
             qtyBox.style.transform = 'scale(1.18)';
@@ -988,71 +1033,157 @@ function addOrUpdateItem(code, qty) {
             setTimeout(() => { qtyBox.style.transform = ''; qtyBox.style.borderColor = ''; }, 320);
         }
     } else {
-        currentCart.unshift({ code: code, qty: qty });
-        const noData = tbody.querySelector('.no-data');
-        if (noData) noData.closest('tr').remove();
+        currentCart.unshift({ code: code, qty: qty, pallet: pallet });
+        
+        const table = dom.cartTable || document.getElementById('cartTable');
+        const noData = table.querySelector('.no-data');
+        if (noData) noData.closest('tbody').remove();
+
+        let tbody = document.getElementById(`pallet-section-${safePallet}`);
+        if (!tbody) {
+            tbody = document.createElement('tbody');
+            tbody.id = `pallet-section-${safePallet}`;
+            tbody.innerHTML = `
+                <tr class="pallet-header-row">
+                    <td colspan="3" style="background: transparent; border:none; padding-bottom:5px;">
+                        <div class="pallet-header-content">
+                            <span class="pallet-name">📦 ${pallet}</span>
+                            <button class="btn-pallet-qr" onclick="showPalletQR('${pallet}')">Показать QR</button>
+                        </div>
+                    </td>
+                </tr>`;
+            table.insertBefore(tbody, table.firstChild);
+        }
 
         const tr = document.createElement('tr');
-        tr.id = `tr-${safeId}`;
+        tr.id = `tr-${safeId}-${safePallet}`;
         if (isHighFx()) tr.style.animation = 'popIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
 
         tr.innerHTML = `
             <td class="inline-barcode-container" onmousedown="startPress(event, '${code}')" onmouseup="cancelPress()" onmouseleave="cancelPress()" ontouchstart="startPress(event, '${code}')" oncontextmenu="return false;" onclick="handleBarcodeClick('${code}')">
-                <div class="barcode-wrapper"><svg id="barcode-${safeId}"></svg></div>
+                <div class="barcode-wrapper"><svg id="barcode-${safeId}-${safePallet}"></svg></div>
             </td>
-            <td><button class="qty-box" id="qty-${safeId}" onclick="showNumpadForEdit('${code}')">${qty}</button></td>
-            <td><button class="btn-remove" onclick="removeItemByCode('${code}')">✖</button></td>
+            <td><button class="qty-box" id="qty-${safeId}-${safePallet}" onclick="showNumpadForEdit('${code}', '${pallet}')">${qty}</button></td>
+            <td><button class="btn-remove" onclick="removeItemByCode('${code}', '${pallet}')">✖</button></td>
         `;
-        tbody.insertBefore(tr, tbody.firstChild);
-        renderBarcodeSafe(`barcode-${safeId}`, code, { width: 2, height: 45, displayValue: true, fontSize: 15, margin: 2 });
+        
+        // Вставляем сразу после заголовка паллета
+        if (tbody.children.length > 1) tbody.insertBefore(tr, tbody.children[1]);
+        else tbody.appendChild(tr);
+        
+        renderBarcodeSafe(`barcode-${safeId}-${safePallet}`, code, { width: 2, height: 45, displayValue: true, fontSize: 15, margin: 2 });
     }
     saveState(); updateCartStats(); flashCartStats();
 }
 
 function renderCart() {
-    const tbody = dom.cartTableBody || document.getElementById('cartTableBody');
-    tbody.innerHTML = '';
+    const table = dom.cartTable || document.getElementById('cartTable');
+    table.innerHTML = '';
     if (currentCart.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" class="no-data">✨ Начните сканировать товары</td></tr>';
+        table.innerHTML = '<tbody><tr><td colspan="3" class="no-data">✨ Начните сканировать товары</td></tr></tbody>';
         updateCartStats(); return;
     }
-    const fragment = document.createDocumentFragment();
-    const highFx = isHighFx();
-    currentCart.forEach((item, index) => {
-        const safeId = getSafeId(item.code);
-        const tr = document.createElement('tr');
-        tr.id = `tr-${safeId}`;
-        if (highFx) tr.style.animationDelay = Math.min(index * 40, 320) + 'ms';
-        tr.innerHTML = `
-            <td class="inline-barcode-container" onmousedown="startPress(event, '${item.code}')" onmouseup="cancelPress()" onmouseleave="cancelPress()" ontouchstart="startPress(event, '${item.code}')" oncontextmenu="return false;" onclick="handleBarcodeClick('${item.code}')">
-                <div class="barcode-wrapper"><svg id="barcode-${safeId}"></svg></div>
-            </td>
-            <td><button class="qty-box" id="qty-${safeId}" onclick="showNumpadForEdit('${item.code}')">${item.qty}</button></td>
-            <td><button class="btn-remove" onclick="removeItemByCode('${item.code}')">✖</button></td>`;
-        fragment.appendChild(tr);
+    
+    // Группировка по паллетам
+    const pallets = {};
+    currentCart.forEach(item => {
+        if (!pallets[item.pallet]) pallets[item.pallet] = [];
+        pallets[item.pallet].push(item);
     });
-    tbody.appendChild(fragment);
-    currentCart.forEach((item) => { renderBarcodeSafe(`barcode-${getSafeId(item.code)}`, item.code, { width: 2, height: 45, displayValue: true, fontSize: 15, margin: 2 }); });
-    updateCartStats();
-}
 
-window.removeItemByCode = function(code) {
-    currentCart = currentCart.filter(item => item.code !== code);
-    saveState();
-    const tr = document.getElementById(`tr-${getSafeId(code)}`);
-    if (tr) tr.remove();
-    if (currentCart.length === 0) {
-        const tbody = dom.cartTableBody || document.getElementById('cartTableBody');
-        tbody.innerHTML = '<tr><td colspan="3" class="no-data">✨ Начните сканировать товары</td></tr>';
+    const highFx = isHighFx();
+    for (const [palletName, items] of Object.entries(pallets)) {
+        const safePallet = getSafeId(palletName);
+        const tbody = document.createElement('tbody');
+        tbody.id = `pallet-section-${safePallet}`;
+
+        tbody.innerHTML = `
+            <tr class="pallet-header-row">
+                <td colspan="3" style="background: transparent; border:none; padding-bottom:5px;">
+                    <div class="pallet-header-content">
+                        <span class="pallet-name">📦 ${palletName}</span>
+                        <button class="btn-pallet-qr" onclick="showPalletQR('${palletName}')">Показать QR</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+
+        items.forEach((item, index) => {
+            const safeId = getSafeId(item.code);
+            const tr = document.createElement('tr');
+            tr.id = `tr-${safeId}-${safePallet}`;
+            if (highFx) tr.style.animationDelay = Math.min(index * 40, 320) + 'ms';
+            tr.innerHTML = `
+                <td class="inline-barcode-container" onmousedown="startPress(event, '${item.code}')" onmouseup="cancelPress()" onmouseleave="cancelPress()" ontouchstart="startPress(event, '${item.code}')" oncontextmenu="return false;" onclick="handleBarcodeClick('${item.code}')">
+                    <div class="barcode-wrapper"><svg id="barcode-${safeId}-${safePallet}"></svg></div>
+                </td>
+                <td><button class="qty-box" id="qty-${safeId}-${safePallet}" onclick="showNumpadForEdit('${item.code}', '${palletName}')">${item.qty}</button></td>
+                <td><button class="btn-remove" onclick="removeItemByCode('${item.code}', '${palletName}')">✖</button></td>`;
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+
+        items.forEach((item) => { 
+            renderBarcodeSafe(`barcode-${getSafeId(item.code)}-${safePallet}`, item.code, { width: 2, height: 45, displayValue: true, fontSize: 15, margin: 2 }); 
+        });
     }
     updateCartStats();
 }
-window.clearCart = function() {
-    if (currentCart.length === 0) return;
-    if (confirm("Очистить корзину?")) { currentCart = []; saveState(); renderCart(); }
+
+/* ================= ОТМЕНА УДАЛЕНИЯ (UNDO) ================= */
+let lastDeletedItem = null;
+let snackbarTimer = null;
+
+function showSnackbar() {
+    const sb = document.getElementById('snackbar');
+    sb.classList.add('show');
+    if (snackbarTimer) clearTimeout(snackbarTimer);
+    snackbarTimer = setTimeout(() => { sb.classList.remove('show'); }, 4000);
 }
 
-let numpadValue = "1"; let isNewNumpadEntry = true; let numpadMode = ""; let numpadTargetCode = ""; let numpadTargetBoxQty = 1;
+window.undoDelete = function() {
+    if (lastDeletedItem) {
+        const index = currentCart.findIndex(i => i.code === lastDeletedItem.code && i.pallet === lastDeletedItem.pallet);
+        if (index !== -1) {
+            currentCart[index].qty += lastDeletedItem.qty;
+        } else {
+            currentCart.unshift(lastDeletedItem);
+        }
+        lastDeletedItem = null;
+        saveState();
+        renderCart();
+        document.getElementById('snackbar').classList.remove('show');
+        if (snackbarTimer) clearTimeout(snackbarTimer);
+    }
+}
+
+window.removeItemByCode = function(code, pallet) {
+    const index = currentCart.findIndex(item => item.code === code && item.pallet === pallet);
+    if (index !== -1) {
+        lastDeletedItem = currentCart.splice(index, 1)[0];
+        saveState();
+        const tr = document.getElementById(`tr-${getSafeId(code)}-${getSafeId(pallet)}`);
+        if (tr) tr.remove();
+        
+        // Удаляем секцию паллета, если он опустел
+        const tbody = document.getElementById(`pallet-section-${getSafeId(pallet)}`);
+        if (tbody && tbody.children.length <= 1) tbody.remove();
+
+        if (currentCart.length === 0) {
+            const table = dom.cartTable || document.getElementById('cartTable');
+            table.innerHTML = '<tbody><tr><td colspan="3" class="no-data">✨ Начните сканировать товары</td></tr></tbody>';
+        }
+        updateCartStats();
+        showSnackbar();
+    }
+}
+
+window.clearCart = function() {
+    if (currentCart.length === 0) return;
+    if (confirm("Очистить корзину целиком?")) { currentCart = []; saveState(); renderCart(); }
+}
+
+let numpadValue = "1"; let isNewNumpadEntry = true; let numpadMode = ""; let numpadTargetCode = ""; let numpadTargetPallet = ""; let numpadTargetBoxQty = 1;
 function updateNumpadDisplay() { document.getElementById('numpadDisplay').innerText = numpadValue === "" ? "0" : numpadValue; }
 function showNumpadForScan(code) {
     numpadMode = 'scan'; numpadTargetCode = code; isNewNumpadEntry = true; numpadTargetBoxQty = 1;
@@ -1061,10 +1192,10 @@ function showNumpadForScan(code) {
     document.getElementById('numpadTitle').innerText = "ШК: " + code;
     updateNumpadDisplay(); document.getElementById('numpadModal').style.display = 'flex';
 }
-function showNumpadForEdit(code) {
-    const item = currentCart.find(i => i.code === code);
+function showNumpadForEdit(code, pallet) {
+    const item = currentCart.find(i => i.code === code && i.pallet === pallet);
     if (!item) return;
-    numpadMode = 'edit'; numpadTargetCode = code; numpadValue = item.qty.toString(); isNewNumpadEntry = true;
+    numpadMode = 'edit'; numpadTargetCode = code; numpadTargetPallet = pallet; numpadValue = item.qty.toString(); isNewNumpadEntry = true;
     document.getElementById('numpadTitle').innerText = "Изменить: " + code;
     updateNumpadDisplay(); document.getElementById('numpadModal').style.display = 'flex';
 }
@@ -1082,10 +1213,10 @@ function numConfirm() {
         addOrUpdateItem(numpadTargetCode, finalQty);
         if (settings.continuous) { setTimeout(() => { isScannerPaused = false; if (isIOS) startRotateAssist(); }, 500); } else { stopScanner(); }
     } else if(numpadMode === 'edit') {
-        const item = currentCart.find(i => i.code === numpadTargetCode);
+        const item = currentCart.find(i => i.code === numpadTargetCode && i.pallet === numpadTargetPallet);
         if (item) {
             item.qty = finalQty; saveState();
-            const qtyBox = document.getElementById(`qty-${getSafeId(numpadTargetCode)}`);
+            const qtyBox = document.getElementById(`qty-${getSafeId(numpadTargetCode)}-${getSafeId(numpadTargetPallet)}`);
             if (qtyBox) qtyBox.innerText = finalQty;
             updateCartStats();
         }
@@ -1375,22 +1506,44 @@ function toggleTorch() {
     }).catch(() => { alert("Фонарик не поддерживается на этом устройстве"); torchEnabled = false; });
 }
 
+/* ================= ЭКСПОРТ (QR) ================= */
+
+// Экспорт отдельного паллета (вызывается из корзины)
+window.showPalletQR = function(palletName) {
+    const items = currentCart.filter(i => i.pallet === palletName);
+    if (items.length === 0) return;
+    let payload = items.map(item => `${item.code}-${item.qty}`).join(" ");
+    renderAndShowQR(payload);
+};
+
+// Экспорт всей корзины (нижняя синяя кнопка)
 function showTransferQR() {
     if (currentCart.length === 0) { alert("Корзина пуста!"); return; }
     let payload = currentCart.map(item => `${item.code}-${item.qty}`).join(" ");
     addToArchive(currentCart.length, currentCart.reduce((sum, item) => sum + item.qty, 0), payload);
-    if (typeof QRCode === 'undefined') { alert("Не удалось загрузить библиотеку генерации QR-кода. Проверьте интернет-соединение и попробуйте снова. Данные уже сохранены в архив."); return; }
+    renderAndShowQR(payload);
+}
+
+function renderAndShowQR(payload) {
+    if (typeof QRCode === 'undefined') { alert("Не удалось загрузить библиотеку генерации QR-кода. Проверьте интернет-соединение."); return; }
     document.getElementById('qrModal').style.display = 'flex';
     let canvas = document.getElementById('finalQrCanvas'); canvas.style.display = 'block';
-    QRCode.toCanvas(canvas, payload, { width: 340, margin: 2, color: { dark: '#000000', light: '#ffffff' } }, function (error) { if (error) alert("Не удалось сгенерировать QR-код: " + error); });
+    
+    // Временная глобальная переменная для кнопки "Поделиться"
+    window.currentQRPayload = payload; 
+
+    QRCode.toCanvas(canvas, payload, { width: 340, margin: 2, color: { dark: '#000000', light: '#ffffff' } }, function (error) { 
+        if (error) alert("Не удалось сгенерировать QR-код: " + error); 
+    });
 }
+
 function closeQRModal() { document.getElementById('qrModal').style.display = 'none'; }
 function downloadQR() {
     let canvas = document.getElementById('finalQrCanvas'); let url = canvas.toDataURL("image/png");
     let link = document.createElement('a'); link.download = 'Мой_ТСД_QR_' + new Date().getTime() + '.png';
     link.href = url; link.click();
 }
-function shareToExcel() { let payload = currentCart.map(item => `${item.code}-${item.qty}`).join(" "); copyToClipboard(payload); }
+function shareToExcel() { copyToClipboard(window.currentQRPayload || ""); }
 
 function addToArchive(lines, totalQty, payload) {
     let archive = JSON.parse(localStorage.getItem('tsd_archive')) || []; let now = new Date();
@@ -1412,11 +1565,8 @@ function renderArchive() {
 }
 window.restoreArchive = function(index) {
     let archive = JSON.parse(localStorage.getItem('tsd_archive')) || []; if (!archive[index]) return;
-    let payload = archive[index].payload;
-    if (typeof QRCode === 'undefined') { alert("Не удалось загрузить библиотеку генерации QR-кода. Проверьте интернет-соединение и попробуйте снова."); return; }
-    document.getElementById('archiveModal').style.display = 'none'; document.getElementById('qrModal').style.display = 'flex';
-    let canvas = document.getElementById('finalQrCanvas'); canvas.style.display = 'block';
-    QRCode.toCanvas(canvas, payload, { width: 340, margin: 2, color: { dark: '#000000', light: '#ffffff' } }, function (error) { if (error) alert("Не удалось сгенерировать QR-код: " + error); });
+    renderAndShowQR(archive[index].payload);
+    document.getElementById('archiveModal').style.display = 'none'; 
 };
 window.restoreArchiveToTable = function(index) {
     let archive = JSON.parse(localStorage.getItem('tsd_archive')) || []; if (!archive[index]) return;
@@ -1424,7 +1574,7 @@ window.restoreArchiveToTable = function(index) {
     let payload = archive[index].payload; currentCart = [];
     if (payload) {
         let items = payload.split(" ");
-        items.forEach(itemStr => { let parts = itemStr.split("-"); if (parts.length === 2) currentCart.push({ code: parts[0], qty: parseInt(parts[1]) }); });
+        items.forEach(itemStr => { let parts = itemStr.split("-"); if (parts.length === 2) currentCart.push({ code: parts[0], qty: parseInt(parts[1]), pallet: "Из архива" }); });
     }
     saveState(); renderCart(); document.getElementById('archiveModal').style.display = 'none';
 };
