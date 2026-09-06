@@ -185,8 +185,9 @@ header h1 { font-size: 20px; font-weight: 800; display: flex; align-items: cente
 /* === ЕДИНАЯ СТРОКА РУЧНОГО ВВОДА === */
 .input-card { 
     padding: 6px; display: flex; gap: 6px; align-items: center; 
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-lg); transition: box-shadow 0.25s, border-color 0.25s;
 }
+.input-card:focus-within { border-color: var(--btn-add); box-shadow: 0 0 0 4px var(--glow-soft); }
 .input-field { 
     flex: 1; padding: 15px 15px; background: transparent; color: var(--text-main); 
     border: none; font-size: 16px; font-weight: 700; transition: 0.2s;
@@ -273,7 +274,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
     position: fixed; bottom: 100px; left: 15px; right: 15px; background: var(--bg-card); 
     border-radius: var(--radius-md); box-shadow: 0 15px 40px rgba(0,0,0,0.15); padding: 16px; 
     display: none; flex-direction: column; gap: 12px; z-index: 90; border: 1px solid var(--border-color); 
-    animation: slideInUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); 
+    animation: slideInUp 0.4s cubic-bezier(0.175, 0.885, 0.1); 
 }
 .install-banner-header { display: flex; align-items: center; gap: 14px; }
 .install-banner-icon { font-size: 30px; background: var(--info-bg); width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
@@ -310,6 +311,21 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
     z-index: 5; font-size: 13px; font-weight: 800; color: #fff;
     text-shadow: 0 1px 3px rgba(0,0,0,0.8); padding: 0 10px;
 }
+
+/* === ПИЛЮЛЯ ЗУМА (1x / 2x / 3x) поверх картинки с камеры === */
+.zoom-pill {
+    position: absolute; left: 50%; top: 14px; transform: translateX(-50%);
+    display: flex; gap: 4px; background: rgba(0,0,0,0.45); backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px); border-radius: 20px; padding: 4px; z-index: 6;
+}
+.zoom-btn {
+    border: none; background: transparent; color: rgba(255,255,255,0.75); font-weight: 800;
+    font-size: 13px; padding: 7px 13px; border-radius: 16px; cursor: pointer; transition: 0.2s;
+}
+.zoom-btn.active { background: #fff; color: #111827; }
+.zoom-btn:active { transform: scale(0.92); }
+.scanner-controls-row { display: flex; gap: 10px; }
+.scanner-controls-row .btn-modal { flex: 1; }
 
 .btn-modal { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-weight: 800; font-size: 16px; margin-top: 10px; cursor: pointer; transition: 0.2s;}
 .btn-modal:active { transform: scale(0.96); }
@@ -348,7 +364,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .settings-row:last-child { border-bottom: none; }
 .switch { position: relative; display: inline-block; width: 52px; height: 30px; }
 .switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--input-border); transition: .3s; border-radius: 34px; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .3s; border-radius: 34px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); }
 .slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
 input:checked + .slider { background-color: var(--btn-add); }
 input:checked + .slider:before { transform: translateX(22px); }
@@ -483,6 +499,47 @@ tr { animation-fill-mode: both; }
     }
     .bg-blob { display: none !important; }
 }
+
+/* ============================================================
+   АДАПТАЦИЯ ПОД РАЗМЕР ЭКРАНА
+   Один и тот же HTML/CSS рендерится идентично в любом браузере —
+   на iPhone и на Android разницы в дизайне нет и быть не может,
+   это просто веб-страница. Разница в старых скриншотах — это
+   системные экраны самого браузера (например, встроенный
+   сканер Chrome), не относящиеся к этому приложению.
+   Ниже — плавное масштабирование интерфейса от узкого телефона
+   до планшета и десктопа. ============================================================ */
+header h1 { font-size: clamp(17px, 4.4vw, 21px); }
+.numpad-display { font-size: clamp(38px, 11vw, 52px); }
+.brightness-text { font-size: clamp(15px, 4vw, 19px); }
+
+@media (min-width: 640px) {
+    .main-container { max-width: 640px; }
+    .bottom-action-bar { max-width: 640px; left: 50%; transform: translateX(-50%); border-radius: var(--radius-lg) var(--radius-lg) 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.12); }
+    header { max-width: 640px; margin-left: auto; margin-right: auto; left: 0; right: 0; }
+}
+@media (min-width: 900px) {
+    body { background-image: radial-gradient(circle at 50% 0%, rgba(5,150,105,0.06), transparent 60%); }
+    .main-container { max-width: 720px; }
+    .bottom-action-bar { max-width: 720px; }
+    header { max-width: 720px; }
+    .modal-content { max-width: 460px; border-radius: 32px; margin-bottom: 24px; }
+    .modal-overlay { align-items: center; }
+}
+@media (min-width: 1200px) {
+    .main-container { max-width: 780px; }
+    .bottom-action-bar { max-width: 780px; }
+    header { max-width: 780px; }
+}
+
+/* Панель снизу: сканирование — главное действие (шире и заметнее),
+   ручной ввод и экспорт — второстепенные, одинакового размера по бокам. */
+.bottom-action-bar { align-items: stretch; }
+.btn-fab-manual {
+    flex: 0 0 60px; background: var(--bg-card); color: var(--text-main);
+    border: 1px solid var(--border-color); font-size: 22px; box-shadow: var(--shadow-soft);
+}
+.btn-fab-scan { flex: 1.6; }
 </style>
 </head>
 <body>
@@ -541,8 +598,10 @@ tr { animation-fill-mode: both; }
     </div>
 </div>
 
-<!-- ПЛАВАЮЩАЯ ПАНЕЛЬ ТСД -->
+<!-- ПЛАВАЮЩАЯ ПАНЕЛЬ ТСД: 3 равнозначных по смыслу, но разных по весу действия —
+     ручной ввод (быстрый доступ к полю), сканирование (главное действие), экспорт -->
 <div class="bottom-action-bar">
+    <button class="btn-fab btn-fab-manual" onclick="focusManualInput()" title="Ввести артикул вручную">✏️</button>
     <button class="btn-fab btn-fab-scan" onclick="startScanner()">📷 СКАНИРОВАТЬ</button>
     <button class="btn-fab btn-fab-qr" onclick="showTransferQR()">📲 В EXCEL</button>
 </div>
@@ -577,7 +636,7 @@ tr { animation-fill-mode: both; }
             </ol>
             <div class="note-box browser-note">
                 <span style="font-size: 18px; line-height: 1;">💡</span>
-                <div style="flex: 1; line-height: 1.4;"><b>Важно:</b> Для быстрой работы камеры используйте браузер <b>Chrome</b> или <b>Safari</b>! Штрих-код (1D) считывается быстрее и надёжнее, если держать его ГОРИЗОНТАЛЬНО в рамке — это особенность любых лазерных и камерных сканеров, а не только этого приложения.</div>
+                <div style="flex: 1; line-height: 1.4;"><b>Важно:</b> Для быстрой работы камеры используйте браузер <b>Chrome</b> или <b>Safari</b>! Штрихкод можно держать в любом развороте — приложение считывает и горизонтально, и вертикально, но горизонтально распознавание всегда чуть быстрее.</div>
             </div>
         </div>
         <button class="btn-modal btn-close" onclick="document.getElementById('instructionModal').style.display='none'">Понятно</button>
@@ -635,10 +694,18 @@ tr { animation-fill-mode: both; }
         <h3 style="margin-top: 0; margin-bottom: 5px; font-weight: 800;">Наведите камеру</h3>
         <p id="iosScanHint" style="display:none; font-size: 14px; color: #f59e0b; margin-top: 0; margin-bottom: 15px; font-weight: 700;">Отодвиньте телефон на 15-20 см</p>
         <div id="reader">
-            <div class="scan-orientation-hint" id="orientationHint">↔️ Держите штрих-код горизонтально</div>
+            <div class="scan-orientation-hint" id="orientationHint">📦 Наведите на любой штрихкод — код можно держать как угодно</div>
+            <div class="zoom-pill" id="zoomPill">
+                <button class="zoom-btn active" data-zoom="1" onclick="setZoomLevel(1)">1x</button>
+                <button class="zoom-btn" data-zoom="2" onclick="setZoomLevel(2)">2x</button>
+                <button class="zoom-btn" data-zoom="3" id="zoomBtn3" style="display:none;" onclick="setZoomLevel(3)">3x</button>
+            </div>
         </div>
-        <button class="btn-modal btn-torch" id="torchBtn" onclick="toggleTorch()">🔦 Включить фонарик</button>
-        <button class="btn-modal btn-close" onclick="stopScanner()">Завершить</button>
+        <div id="rotate-assist-hidden" style="display:none;"></div>
+        <div class="scanner-controls-row">
+            <button class="btn-modal btn-torch" id="torchBtn" onclick="toggleTorch()" style="margin-top:0;">🔦 Фонарик</button>
+            <button class="btn-modal btn-close" onclick="stopScanner()" style="margin-top:0;">Завершить</button>
+        </div>
     </div>
 </div>
 
@@ -1114,6 +1181,13 @@ document.getElementById('codeInput').addEventListener('keypress', function (e) {
     }
 });
 
+function focusManualInput() {
+    const card = document.querySelector('.input-card');
+    const input = document.getElementById('codeInput');
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => { if (input) input.focus(); }, 250);
+}
+
 function manualAdd() {
     const input = document.getElementById('codeInput');
     const code = input.value;
@@ -1206,7 +1280,7 @@ function numBackspace() { if (isNewNumpadEntry) return; numpadValue = numpadValu
 function numCancel() {
     document.getElementById('numpadModal').style.display = 'none';
     if (numpadMode === 'scan') { 
-        if (settings.continuous) { setTimeout(() => { isScannerPaused = false; }, 500); } 
+        if (settings.continuous) { setTimeout(() => { isScannerPaused = false; if (isIOS) startRotateAssist(); }, 500); } 
         else { stopScanner(); } 
     }
 }
@@ -1217,7 +1291,7 @@ function numConfirm() {
 
     if(numpadMode === 'scan') {
         addOrUpdateItem(numpadTargetCode, finalQty);
-        if (settings.continuous) { setTimeout(() => { isScannerPaused = false; }, 500); } 
+        if (settings.continuous) { setTimeout(() => { isScannerPaused = false; if (isIOS) startRotateAssist(); }, 500); } 
         else { stopScanner(); }
     } else if(numpadMode === 'edit') {
         currentCart[numpadTargetIndex].qty = finalQty;
@@ -1225,139 +1299,252 @@ function numConfirm() {
     }
 }
 
-// === СКАНЕР (исправленный выбор камеры + фикус для iPhone) ===
+// === СКАНЕР: адаптивный выбор объектива (основной/теле/макро) + зум + скан в любой ориентации ===
 let isScannerPaused = false;
+let cameraList = [];           // все задние камеры устройства
+let camerasByType = {};        // { main, ultrawide, telephoto, macro }
+let activeCameraId = null;     // id объектива, который сейчас используется потоком
+let currentZoomLevel = 1;      // 1 / 2 / 3 — то, что выбрал пользователь пилюлей
+let maxDigitalZoom = 1;        // максимум цифрового зума, который поддерживает активный сенсор
+let rotateAssistTimer = null;  // ассистент для чтения штрихкода в любом развороте (iOS)
+let scannerBusy = false;       // защита от повторного старта, пока идёт переключение камеры
+
+// Определяем тип объектива по его системному названию.
+// Названия камер не стандартизированы, поэтому это эвристика на ключевых словах (ru/en) —
+// она не обязана быть идеальной, важно лишь не спутать "основной" объектив с ultra-wide/macro,
+// с которых при сканировании вблизи всё будет размыто.
+function classifyLensLabel(label) {
+    const l = (label || '').toLowerCase();
+    if (/front|передн|user-facing|selfie/.test(l)) return 'front';
+    if (/ultra ?wide|0\.5x|sverh|сверхширок|wide angle camera/.test(l)) return 'ultrawide';
+    if (/macro|макро/.test(l)) return 'macro';
+    if (/tele(photo)?|zoom|2x|3x|periscope/.test(l)) return 'telephoto';
+    return 'main';
+}
+
+// Собираем и классифицируем все задние камеры один раз при открытии сканера.
+// Работает одинаково на iOS и Android — раньше отдельная логика выбора объектива
+// была только для iOS, и Android часто доставался случайный объектив от браузера.
+async function detectCameras() {
+    camerasByType = {};
+    cameraList = [];
+    try {
+        const devices = await Html5Qrcode.getCameras();
+        if (!devices || !devices.length) return;
+        const backCams = devices.filter(d => classifyLensLabel(d.label) !== 'front');
+        cameraList = backCams.length ? backCams : devices;
+        // Если несколько устройств попали в одну и ту же категорию (типично для Android,
+        // где лейблы часто пустые/generic), сохраняем только первый найденный экземпляр.
+        cameraList.forEach(d => {
+            const type = classifyLensLabel(d.label);
+            if (!camerasByType[type]) camerasByType[type] = d;
+        });
+    } catch (e) { /* enumerateDevices недоступен без разрешения камеры — fallback на facingMode */ }
+}
+
+function pickDefaultCameraId() {
+    const preferred = camerasByType.main || camerasByType.telephoto || (cameraList[0] || null);
+    return preferred ? preferred.id : null;
+}
+
+function updateZoomPillAvailability() {
+    const btn3 = document.getElementById('zoomBtn3');
+    // Кнопку 3x показываем, только если реально есть отдельный телеобъектив
+    // или сенсор поддерживает достаточный цифровой зум — иначе она будет бесполезной.
+    if (btn3) btn3.style.display = (camerasByType.telephoto || maxDigitalZoom >= 3) ? 'flex' : 'none';
+}
+
+function readZoomCapabilities() {
+    maxDigitalZoom = 1;
+    try {
+        const videoEl = document.querySelector('#reader video');
+        const stream = videoEl && videoEl.srcObject;
+        const track = stream && stream.getVideoTracks && stream.getVideoTracks()[0];
+        if (track && track.getCapabilities) {
+            const caps = track.getCapabilities();
+            if (caps && caps.zoom && caps.zoom.max) maxDigitalZoom = caps.zoom.max;
+        }
+    } catch (e) {}
+    updateZoomPillAvailability();
+}
 
 function startScanner() {
+    if (scannerBusy) return;
     initAudio(); isScannerPaused = false;
     document.getElementById('scannerModal').style.display = 'flex';
+    document.getElementById('iosScanHint').style.display = isIOS ? 'block' : 'none';
+    currentZoomLevel = 1;
+    document.querySelectorAll('.zoom-btn').forEach(b => b.classList.toggle('active', b.dataset.zoom === '1'));
 
-    if (isIOS) { document.getElementById('iosScanHint').style.display = 'block'; } else { document.getElementById('iosScanHint').style.display = 'none'; }
-
-    setTimeout(() => {
+    setTimeout(async () => {
         if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-
-        const config = {
-            fps: 15,
-            // Раньше рамка была фиксированной (280x280), из-за чего на части экрана
-            // ничего не считывалось. Теперь рамка динамически подстраивается под
-            // размер видео и занимает почти весь кадр — это даёт декодеру больше
-            // пикселей на анализ и заметно повышает шанс поймать код под любым углом.
-            qrbox: function (viewfinderWidth, viewfinderHeight) {
-                const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-                const size = Math.floor(minEdge * 0.9);
-                return { width: size, height: size };
-            },
-            disableFlip: false,
-            formatsToSupport: [
-                Html5QrcodeSupportedFormats.EAN_13,
-                Html5QrcodeSupportedFormats.EAN_8,
-                Html5QrcodeSupportedFormats.UPC_A,
-                Html5QrcodeSupportedFormats.DATA_MATRIX,
-                Html5QrcodeSupportedFormats.CODE_128,
-                Html5QrcodeSupportedFormats.QR_CODE
-            ],
-            // Там, где браузер поддерживает нативный Shape Detection API (BarcodeDetector —
-            // сейчас это Chrome/Android), отдаём декодирование ему: он заметно точнее
-            // распознаёт повёрнутые штрихкоды, чем JS-декодер. На Safari/iOS этот API
-            // отсутствует (ограничение WebKit), поэтому там используется обычный путь.
-            experimentalFeatures: {
-                useBarCodeDetectorIfSupported: true
-            }
-        };
-
-        const startVideo = (cameraSettings) => {
-            html5QrCode.start(cameraSettings, config, (text) => {
-                if(isScannerPaused) return;
-                let rawText = text.trim();
-
-                if (rawText.includes("-") && /\d-\d/.test(rawText)) {
-                    isScannerPaused = true; playBeep();
-                    if (settings.vibro && navigator.vibrate) navigator.vibrate(100);
-                    let items = rawText.split(" ");
-                    let addedCount = 0;
-                    items.forEach(function(itemStr) {
-                        let parts = itemStr.split("-");
-                        if (parts.length === 2) {
-                            let barcode = normalizeBarcode(parts[0]);
-                            let qty = parseInt(parts[1]);
-                            if (barcode && barcode.length > 0 && !isNaN(qty) && qty > 0) {
-                                const existingIndex = currentCart.findIndex(item => item.code === barcode);
-                                if (existingIndex !== -1) { currentCart[existingIndex].qty += qty; } 
-                                else { currentCart.unshift({ code: barcode, qty: qty }); }
-                                addedCount++;
-                            }
-                        }
-                    });
-
-                    if (addedCount > 0) { 
-                        saveState(); renderCart(); flashCartStats(); stopScanner(); 
-                        setTimeout(() => alert("Успешно распаковано " + addedCount + " позиций из Excel!"), 200); 
-                    } else { 
-                        isScannerPaused = false; 
-                    }
-                    return;
-                }
-
-                let cleanCode = normalizeBarcode(rawText);
-                playBeep();
-                if (settings.vibro && navigator.vibrate) navigator.vibrate(100);
-                
-                isScannerPaused = true;
-                showNumpadForScan(cleanCode);
-
-            }, undefined).then(() => {
-                // Небольшой программный зум на iPhone помогает камере
-                // сфокусироваться на мелких штрихкодах вблизи
-                if (isIOS) {
-                    setTimeout(() => {
-                        try { html5QrCode.applyVideoConstraints({ advanced: [{ zoom: 2.0 }] }); } catch(e) {}
-                    }, 400);
-                }
-            }).catch((err) => {
-                document.getElementById('scannerModal').style.display = 'none';
-                alert("Ошибка камеры: " + err);
-            });
-        };
-
-        if (isIOS) {
-            // На iPhone может быть несколько задних камер (обычная, ultra-wide, теле).
-            // html5-qrcode иногда выбирает не ту камеру, из-за чего сканер "не видит" код.
-            // Ищем именно основную заднюю камеру и используем её по deviceId.
-            Html5Qrcode.getCameras().then(devices => {
-                let selectedCameraId = null;
-                if (devices && devices.length > 0) {
-                    let backCams = devices.filter(d => {
-                        let l = (d.label || '').toLowerCase();
-                        return l.includes("back") || l.includes("задн");
-                    });
-                    if (backCams.length > 0) {
-                        let mainCam = backCams.find(d => {
-                            let l = d.label.toLowerCase();
-                            return !l.includes("ultra") && !l.includes("tele") && !l.includes("dual") && !l.includes("triple")
-                                && !l.includes("сверх") && !l.includes("теле") && !l.includes("двойн") && !l.includes("тройн");
-                        });
-                        selectedCameraId = mainCam ? mainCam.id : backCams[0].id;
-                    } else {
-                        selectedCameraId = devices[devices.length - 1].id;
-                    }
-                    startVideo({ deviceId: { exact: selectedCameraId } });
-                } else {
-                    startVideo({ facingMode: "environment" });
-                }
-            }).catch(err => {
-                startVideo({ facingMode: "environment" });
-            });
-        } else {
-            // На Android/десктопе facingMode "environment" работает надёжнее,
-            // чем перебор устройств по индексу (часто попадал на неправильную камеру).
-            startVideo({ facingMode: "environment" });
-        }
-
+        await detectCameras();
+        activeCameraId = pickDefaultCameraId();
+        const cameraSettings = activeCameraId ? { deviceId: { exact: activeCameraId } } : { facingMode: "environment" };
+        await openCameraStream(cameraSettings);
     }, 300);
 }
 
+const SCAN_CONFIG = {
+    fps: 15,
+    // Рамка динамически подстраивается под размер видео и занимает почти весь кадр —
+    // это даёт декодеру больше пикселей на анализ и заметно повышает шанс поймать код.
+    qrbox: function (viewfinderWidth, viewfinderHeight) {
+        const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+        const size = Math.floor(minEdge * 0.9);
+        return { width: size, height: size };
+    },
+    disableFlip: false,
+    formatsToSupport: [
+        Html5QrcodeSupportedFormats.EAN_13,
+        Html5QrcodeSupportedFormats.EAN_8,
+        Html5QrcodeSupportedFormats.UPC_A,
+        Html5QrcodeSupportedFormats.DATA_MATRIX,
+        Html5QrcodeSupportedFormats.CODE_128,
+        Html5QrcodeSupportedFormats.QR_CODE
+    ],
+    // Там, где браузер поддерживает нативный Shape Detection API (BarcodeDetector — сейчас
+    // это Chrome/Android), отдаём декодирование ему: он заметно точнее и меньше зависит
+    // от разворота штрихкода, чем JS-декодер. На Safari/iOS этот API отсутствует (ограничение
+    // WebKit) — там разворот компенсирует отдельный "ассистент" (см. startRotateAssist).
+    experimentalFeatures: { useBarCodeDetectorIfSupported: true }
+};
+
+function openCameraStream(cameraSettings) {
+    scannerBusy = true;
+    return html5QrCode.start(cameraSettings, SCAN_CONFIG, onScanFrameDecoded, undefined).then(() => {
+        scannerBusy = false;
+        setTimeout(readZoomCapabilities, 300);
+        // Небольшой стартовый зум на iPhone помогает камере сфокусироваться на мелких кодах вблизи.
+        if (isIOS) {
+            setTimeout(() => { try { html5QrCode.applyVideoConstraints({ advanced: [{ zoom: 1.5 }] }); } catch (e) {} }, 400);
+            startRotateAssist();
+        }
+    }).catch((err) => {
+        scannerBusy = false;
+        document.getElementById('scannerModal').style.display = 'none';
+        alert("Ошибка камеры: " + err);
+    });
+}
+
+// Единая точка обработки успешно распознанного текста — вызывается и из live-сканера,
+// и из "ассистента" для повёрнутых штрихкодов, чтобы логика не дублировалась.
+function handleDecodedText(rawTextIn) {
+    if (isScannerPaused) return;
+    let rawText = rawTextIn.trim();
+
+    if (rawText.includes("-") && /\d-\d/.test(rawText)) {
+        isScannerPaused = true; playBeep();
+        if (settings.vibro && navigator.vibrate) navigator.vibrate(100);
+        let items = rawText.split(" ");
+        let addedCount = 0;
+        items.forEach(function (itemStr) {
+            let parts = itemStr.split("-");
+            if (parts.length === 2) {
+                let barcode = normalizeBarcode(parts[0]);
+                let qty = parseInt(parts[1]);
+                if (barcode && barcode.length > 0 && !isNaN(qty) && qty > 0) {
+                    const existingIndex = currentCart.findIndex(item => item.code === barcode);
+                    if (existingIndex !== -1) { currentCart[existingIndex].qty += qty; }
+                    else { currentCart.unshift({ code: barcode, qty: qty }); }
+                    addedCount++;
+                }
+            }
+        });
+
+        if (addedCount > 0) {
+            saveState(); renderCart(); flashCartStats(); stopScanner();
+            setTimeout(() => alert("Успешно распаковано " + addedCount + " позиций из Excel!"), 200);
+        } else {
+            isScannerPaused = false;
+        }
+        return;
+    }
+
+    let cleanCode = normalizeBarcode(rawText);
+    playBeep();
+    if (settings.vibro && navigator.vibrate) navigator.vibrate(100);
+    isScannerPaused = true;
+    stopRotateAssist();
+    showNumpadForScan(cleanCode);
+}
+
+function onScanFrameDecoded(text) { handleDecodedText(text); }
+
+// === АССИСТЕНТ ЧТЕНИЯ ШТРИХКОДА В ЛЮБОМ РАЗВОРОТЕ (для iOS) ===
+// zxing (внутри html5-qrcode) для 1D-кодов уверенно читает код только близко к горизонтали.
+// На iOS нет нативного BarcodeDetector, который умеет это лучше, поэтому раз в ~900мс
+// берём кадр с камеры, поворачиваем его на 90° и прогоняем через отдельный разовый декодер.
+// Так вертикально поднесённый штрихкод тоже считывается — просто с небольшой задержкой.
+function startRotateAssist() {
+    stopRotateAssist();
+    rotateAssistTimer = setInterval(() => {
+        if (isScannerPaused || !html5QrCode || scannerBusy) return;
+        const videoEl = document.querySelector('#reader video');
+        if (!videoEl || videoEl.readyState < 2 || !videoEl.videoWidth) return;
+        try {
+            const canvas = document.createElement('canvas');
+            canvas.width = videoEl.videoHeight;
+            canvas.height = videoEl.videoWidth;
+            const ctx = canvas.getContext('2d');
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(Math.PI / 2);
+            ctx.drawImage(videoEl, -videoEl.videoWidth / 2, -videoEl.videoHeight / 2);
+            canvas.toBlob(async (blob) => {
+                if (!blob || isScannerPaused) return;
+                try {
+                    const file = new File([blob], "frame.png", { type: "image/png" });
+                    const tempScanner = new Html5Qrcode("rotate-assist-hidden", { formatsToSupport: SCAN_CONFIG.formatsToSupport, verbose: false });
+                    try {
+                        const result = await tempScanner.scanFileV2(file, false);
+                        if (result && result.decodedText && !isScannerPaused) handleDecodedText(result.decodedText);
+                    } catch (noCodeFound) { /* обычная ситуация — в повёрнутом кадре кода не нашлось */ }
+                    tempScanner.clear();
+                } catch (e) {}
+            }, 'image/png');
+        } catch (e) {}
+    }, 900);
+}
+function stopRotateAssist() {
+    if (rotateAssistTimer) { clearInterval(rotateAssistTimer); rotateAssistTimer = null; }
+}
+
+// === ПЕРЕКЛЮЧЕНИЕ ЗУМА: используем оптику (отдельный телеобъектив), если она есть у устройства,
+// иначе — цифровой зум сенсора через applyVideoConstraints ===
+async function setZoomLevel(level) {
+    if (!html5QrCode || scannerBusy) return;
+    currentZoomLevel = level;
+    document.querySelectorAll('.zoom-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.zoom) === level));
+
+    const wantsTelephoto = level >= 2 && camerasByType.telephoto;
+    const usingTelephoto = activeCameraId === (camerasByType.telephoto && camerasByType.telephoto.id);
+
+    if (wantsTelephoto && !usingTelephoto) {
+        activeCameraId = camerasByType.telephoto.id;
+        await switchCameraDevice(activeCameraId);
+        return;
+    }
+    if (level === 1 && usingTelephoto) {
+        activeCameraId = pickDefaultCameraId();
+        await switchCameraDevice(activeCameraId);
+        return;
+    }
+    try {
+        const zoomTarget = Math.min(level, Math.max(maxDigitalZoom, level));
+        await html5QrCode.applyVideoConstraints({ advanced: [{ zoom: zoomTarget }] });
+    } catch (e) { /* сенсор не поддерживает программный зум — оптического переключения тоже нет, оставляем 1x */ }
+}
+
+function switchCameraDevice(deviceId) {
+    if (!deviceId || scannerBusy) return Promise.resolve();
+    scannerBusy = true;
+    return html5QrCode.stop().then(() => {
+        return openCameraStream({ deviceId: { exact: deviceId } });
+    }).catch(() => { scannerBusy = false; });
+}
+
 function stopScanner() {
+    stopRotateAssist();
     if (html5QrCode) {
         html5QrCode.stop().then(() => {
             html5QrCode.clear();
@@ -1373,7 +1560,7 @@ function toggleTorch() {
     html5QrCode.applyVideoConstraints({
         advanced: [{ torch: torchEnabled }]
     }).then(() => {
-        document.getElementById('torchBtn').innerText = torchEnabled ? '🔦 Выключить фонарик' : '🔦 Включить фонарик';
+        document.getElementById('torchBtn').innerText = torchEnabled ? '🔦 Выключить' : '🔦 Фонарик';
     }).catch(err => {
         alert("Фонарик не поддерживается на этом устройстве");
         torchEnabled = false;
