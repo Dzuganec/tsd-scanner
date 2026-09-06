@@ -222,7 +222,9 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .modal-content::-webkit-scrollbar { display: none; }
 .modal-content::before { content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 40px; height: 5px; background: var(--border-color); border-radius: 10px; }
 
-#reader { width: 100%; min-height: 250px; border-radius: var(--radius-md); overflow: hidden; background: #000; margin-bottom: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); position: relative; }
+/* === НОВЫЕ СТИЛИ ДЛЯ ОБЕРТКИ СКАНЕРА === */
+.scanner-wrapper { position: relative; width: 100%; margin-bottom: 15px; border-radius: var(--radius-md); overflow: hidden; }
+#reader { width: 100%; min-height: 250px; background: #000; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
 #reader video { object-fit: cover !important; width: 100%; height: 100%; }
 
 .scan-orientation-hint { position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; pointer-events: none; z-index: 5; font-size: 13px; font-weight: 800; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); padding: 0 10px; }
@@ -432,7 +434,7 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
                     👨‍💻 Джугань Сергей
                 </p>
                 <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
-                    Версия: 5.4 (Улучшенная оптимизация DOM и Зум)
+                    Версия: 5.5 (Фикс UI-зума)
                 </p>
             </div>
         </div>
@@ -463,11 +465,15 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     </div>
 </div>
 
+<!-- ИСПРАВЛЕННОЕ МОДАЛЬНОЕ ОКНО СКАНЕРА -->
 <div class="modal-overlay" id="scannerModal">
     <div class="modal-content">
         <h3 style="margin-top: 0; margin-bottom: 5px; font-weight: 800;">Наведите камеру</h3>
         <p id="iosScanHint" style="display:none; font-size: 14px; color: #f59e0b; margin-top: 0; margin-bottom: 15px; font-weight: 700;">Отодвиньте телефон на 15-20 см</p>
-        <div id="reader">
+        
+        <!-- Обертка сканера, чтобы UI-элементы не удалялись библиотекой -->
+        <div class="scanner-wrapper">
+            <div id="reader"></div>
             <div class="scan-orientation-hint" id="orientationHint">📦 Наведите на любой штрихкод</div>
             <div class="zoom-pill" id="zoomPill">
                 <button class="zoom-btn active" data-zoom="1" onclick="setZoomLevel(1)">1x</button>
@@ -475,6 +481,7 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
                 <button class="zoom-btn" data-zoom="3" id="zoomBtn3" style="display:none;" onclick="setZoomLevel(3)">3x</button>
             </div>
         </div>
+        
         <div id="rotate-assist-hidden" style="display:none;"></div>
         <div class="scanner-controls-row">
             <button class="btn-modal btn-torch" id="torchBtn" onclick="toggleTorch()" style="margin-top:0;">🔦 Фонарик</button>
@@ -893,7 +900,6 @@ function updateCartStats() {
     if (stats) stats.innerText = `${currentCart.length} строк (${total} шт.)`;
 }
 
-// === ОПТИМИЗИРОВАННОЕ ДОБАВЛЕНИЕ (Обновление DOM) ===
 function addOrUpdateItem(code, qty) {
     const tbody = dom.cartTableBody || document.getElementById('cartTableBody');
     const existingIndex = currentCart.findIndex(item => item.code === code);
@@ -1175,7 +1181,6 @@ function startRotateAssist() {
 }
 function stopRotateAssist() { if (rotateAssistTimer) { clearInterval(rotateAssistTimer); rotateAssistTimer = null; } }
 
-// === ОПТИМИЗИРОВАННЫЙ ЗУМ (работа напрямую через Video Track) ===
 async function setZoomLevel(level) {
     if (!html5QrCode || scannerBusy) return;
     currentZoomLevel = level;
@@ -1198,7 +1203,6 @@ async function setZoomLevel(level) {
                 const zoomTarget = Math.min(level, caps.zoom.max);
                 await track.applyConstraints({ advanced: [{ zoom: zoomTarget }] });
             } else {
-                // Fallback, если getCapabilities() вернул пустой объект (некоторые старые браузеры)
                 const zoomTarget = Math.min(level, Math.max(maxDigitalZoom, level));
                 await html5QrCode.applyVideoConstraints({ advanced: [{ zoom: zoomTarget }] });
             }
