@@ -1,79 +1,83 @@
-const CACHE_NAME = 'tsd-cache-v2'; // Поменял версию, чтобы обновить старый кэш
+// sw.js — Service Worker для «Мой ТСД»
+// Задачи:
+// 1) Дать приложению открываться офлайн (после первого захода) — сама HTML-страница
+//    и манифест/иконка кэшируются как "app shell".
+// 2) Внешние библиотеки (html5-qrcode, JsBarcode, qrcode, шрифты) кэшируются
+//    по мере использования, чтобы повторный офлайн-запуск не требовал сети.
+// 3) При обновлении версии приложения — старые кэши подчищаются, новая версия
+//    подхватывается сразу после закрытия всех вкладок (skipWaiting + clients.claim).
 
-// Базовый список только самых критичных файлов
-const urlsToCache = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon.png',
-  'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js',
-  'https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js',
-  'https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js' // Исправил ссылку на ту, что в HTML
+const CACHE_VERSION = 'v6';
+const CACHE_NAME = 'moy-tsd-cache-' + CACHE_VERSION;
+
+// Замените список на реальные имена файлов вашего проекта, если они отличаются.
+const APP_SHELL = [
+    './',
+    './index.html',
+    './manifest.json',
+    './icon.png'
 ];
 
-// 1. УСТАНОВКА: Кэшируем базовые файлы
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('[SW] Кэширование базовых ресурсов');
-        // Используем addAll, но ошибки не "роняют" весь процесс
-        return cache.addAll(urlsToCache);
-      })
-      .then(() => self.skipWaiting()) // Заставляет SW активироваться немедленно
-  );
-});
-
-// 2. АКТИВАЦИЯ: Очистка старого кэша при смене CACHE_NAME
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('[SW] Удаление старого кэша:', cacheName);
-            return caches.delete(cacheName);
-          }
+self.addEventListener('install', (event) => {
+    self.skipWaiting();
+    event.waitUntil(
+        caches.open(CACHE_NAME).then((cache) => {
+            // addAll не должен валить установку целиком, если один из файлов недоступен
+            // (например, иконки ещё нет на сервере) — поэтому кэшируем по одному.
+            return Promise.all(
+                APP_SHELL.map((url) => cache.add(url).catch(() => {}))
+            );
         })
-      );
-    }).then(() => self.clients.claim()) // SW сразу берет под контроль открытые вкладки
-  );
+    );
 });
 
-// 3. ПЕРЕХВАТ ЗАПРОСОВ: Стратегия "Кэш, с фоллбэком на сеть и динамическим кэшированием"
-self.addEventListener('fetch', event => {
-  // Игнорируем запросы, которые не относятся к GET (например, POST/PUT) или специфичные схемы (chrome-extension)
-  if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) return;
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((keys) =>
+            Promise.all(
+                keys
+                    .filter((key) => key !== CACHE_NAME)
+                    .map((key) => caches.delete(key))
+            )
+        ).then(() => self.clients.claim())
+    );
+});
 
-  event.respondWith(
-    caches.match(event.request)
-      .then(cachedResponse => {
-        // 1. Если файл есть в кэше — отдаём мгновенно
-        if (cachedResponse) {
-          return cachedResponse;
-        }
+self.addEventListener('fetch', (event) => {
+    const req = event.request;
 
-        // 2. Если файла нет, идём в интернет
-        return fetch(event.request).then(networkResponse => {
-          // Проверяем валидность ответа (200 OK) и тип (basic для своих файлов, cors для CDN)
-          if (!networkResponse || networkResponse.status !== 200 || (networkResponse.type !== 'basic' && networkResponse.type !== 'cors')) {
-            return networkResponse;
-          }
+    // POST/PUT и т.п. не кэшируем — просто пропускаем в сеть как есть.
+    if (req.method !== 'GET') return;
 
-          // Клонируем ответ, так как поток (stream) можно прочитать только один раз
-          const responseToCache = networkResponse.clone();
+    const url = new URL(req.url);
 
-          // 3. Динамически сохраняем новый файл в кэш (например, Google Шрифты)
-          caches.open(CACHE_NAME)
-            .then(cache => {
-              cache.put(event.request, responseToCache);
-            });
+    // Внешние ресурсы (CDN-библиотеки, шрифты Google Fonts): "network first,
+    // затем кэш" — так пользователь всегда получает свежую версию библиотеки,
+    // когда есть сеть, а офлайн получает последнюю сохранённую копию.
+    if (url.origin !== self.location.origin) {
+        event.respondWith(
+            fetch(req)
+                .then((res) => {
+                    const resClone = res.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone)).catch(() => {});
+                    return res;
+                })
+                .catch(() => caches.match(req))
+        );
+        return;
+    }
 
-          return networkResponse;
-        }).catch(err => {
-          // Сюда попадем, если нет ни кэша, ни интернета
-          console.warn('[SW] Сеть недоступна, запрос не выполнен:', event.request.url);
-        });
-      })
-  );
+    // Собственные файлы приложения: "кэш, но обнови в фоне" (stale-while-revalidate) —
+    // мгновенная загрузка из кэша + подтягивание новой версии на следующий раз.
+    event.respondWith(
+        caches.match(req).then((cached) => {
+            const fetchPromise = fetch(req)
+                .then((res) => {
+                    caches.open(CACHE_NAME).then((cache) => cache.put(req, res.clone())).catch(() => {});
+                    return res;
+                })
+                .catch(() => cached);
+            return cached || fetchPromise;
+        })
+    );
 });
