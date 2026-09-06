@@ -26,7 +26,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#059669" id="meta-theme-color">
+<meta name="theme-color" content="#10b981" id="meta-theme-color">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2327ae60'/><text y='68' x='15' font-size='65'>📦</text></svg>">
 <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
@@ -40,19 +40,22 @@
 
 <style>
 /* ============================================================
-   ДИЗАЙН-СИСТЕМА
+   ДИЗАЙН-СИСТЕМА И ГРАДИЕНТЫ
    ============================================================ */
 :root {
+    /* Светлая тема */
     --bg-body: #f2f5f4;
+    --bg-gradient: radial-gradient(circle at 50% 0%, #dcf0e7 0%, #f2f5f4 70%);
     --bg-card: #ffffff;
     --bg-card-rgb: 255, 255, 255;
     --text-main: #10221a;
     --text-muted: #667a72;
 
-    --header-bg: linear-gradient(120deg, #0f4c34 0%, #059669 55%, #10b981 100%);
+    /* Сочный, свежий изумрудный градиент для светлой темы */
+    --header-bg: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
     --header-text: #ffffff;
-    --header-icon-bg: rgba(255, 255, 255, 0.16);
-    --header-icon-hover: rgba(255, 255, 255, 0.28);
+    --header-icon-bg: rgba(255, 255, 255, 0.2);
+    --header-icon-hover: rgba(255, 255, 255, 0.35);
 
     --border-color: #e3e9e6;
     --input-bg: #f5f8f6;
@@ -76,7 +79,7 @@
 
     --radius-sm: 14px; --radius-md: 18px; --radius-lg: 26px; --radius-xl: 32px;
 
-    --accent-a: #22c55e; --accent-b: #06b6d4;
+    --accent-a: #10b981; --accent-b: #0ea5e9;
     --accent-fun-a: #8b5cf6; --accent-fun-b: #ec4899;
     --accent-grad: linear-gradient(135deg, var(--accent-a), var(--accent-b));
     --accent-fun-grad: linear-gradient(135deg, var(--accent-fun-a), var(--accent-fun-b));
@@ -93,13 +96,16 @@
 }
 
 [data-theme="dark"] {
+    /* Темная тема */
     --bg-body: #0b1512;
+    --bg-gradient: radial-gradient(circle at 50% 0%, #11261d 0%, #0b1512 70%);
     --bg-card: #16221d;
     --bg-card-rgb: 22, 34, 29;
     --text-main: #f2f7f4;
     --text-muted: #93a69c;
 
-    --header-bg: linear-gradient(120deg, #052e21 0%, #065f46 55%, #059669 100%);
+    /* Глубокий, строгий изумрудный градиент для темной темы */
+    --header-bg: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #059669 100%);
     --header-icon-bg: rgba(255, 255, 255, 0.10);
     --header-icon-hover: rgba(255, 255, 255, 0.20);
 
@@ -125,7 +131,7 @@
 * { box-sizing: border-box; font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; outline: none; margin: 0; padding: 0; -webkit-user-select: none; user-select: none; }
 input, textarea { -webkit-user-select: text; user-select: text; }
 html { -webkit-text-size-adjust: 100%; }
-body { background-color: var(--bg-body); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; transition: background-color var(--t-med) ease, color var(--t-med) ease; }
+body { background-color: var(--bg-body); background-image: var(--bg-gradient); background-attachment: fixed; color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; transition: background-color var(--t-med) ease, color var(--t-med) ease; }
 
 @keyframes slideInUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
@@ -367,9 +373,9 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .install-steps .step-icon { font-size: 20px; }
 
 /* ---------- ФОНОВЫЕ ЭФФЕКТЫ ---------- */
-.bg-blob { position: fixed; z-index: -1; border-radius: 50%; filter: blur(64px); opacity: 0.26; pointer-events: none; display: none; will-change: transform; }
+.bg-blob { position: fixed; z-index: -1; border-radius: 50%; filter: blur(64px); opacity: 0.45; pointer-events: none; display: none; will-change: transform; }
 [data-fx="high"] .bg-blob { display: block; }
-[data-theme="dark"] .bg-blob { opacity: 0.42; }
+[data-theme="dark"] .bg-blob { opacity: 0.35; }
 .blob-1 { width: 300px; height: 300px; top: -100px; left: -80px; background: var(--accent-grad); animation: blobFloatA 22s ease-in-out infinite; }
 .blob-2 { width: 260px; height: 260px; bottom: -80px; right: -70px; background: var(--accent-fun-grad); animation: blobFloatB 26s ease-in-out infinite; }
 @keyframes blobFloatA { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(40px, 50px) scale(1.18); } }
@@ -404,7 +410,6 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     header { max-width: 640px; margin-left: auto; margin-right: auto; left: 0; right: 0; }
 }
 @media (min-width: 900px) {
-    body { background-image: radial-gradient(circle at 50% 0%, rgba(5,150,105,0.07), transparent 60%); }
     .main-container { max-width: 740px; }
     .bottom-action-bar { max-width: 740px; }
     header { max-width: 740px; }
@@ -444,7 +449,8 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     </div>
 
     <div class="card input-card">
-        <input type="text" id="codeInput" class="input-field" placeholder="Введите артикул...">
+        <!-- ИСПРАВЛЕНИЕ: Добавлен inputmode="numeric" для вызова цифровой клавиатуры -->
+        <input type="text" inputmode="numeric" pattern="[0-9]*" id="codeInput" class="input-field" placeholder="Введите артикул...">
         <button class="btn-manual-add" onclick="manualAdd()">✚</button>
     </div>
 
@@ -514,7 +520,7 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
             </p>
             <div style="background: var(--input-bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color);">
                 <p style="margin: 0 0 8px 0; font-size: 16px; font-weight: 800; color: var(--text-main);">👨‍💻 Джугань Сергей</p>
-                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">Версия: 6.3 (Фикс нумпада, Умный Архив и Зум по удержанию)</p>
+                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">Версия: 6.4 (Улучшенный UI Светлой темы + Нумпад)</p>
             </div>
         </div>
         <button class="btn-modal btn-close" onclick="document.getElementById('aboutModal').style.display='none'">Закрыть</button>
@@ -810,7 +816,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isSwiping) return;
             touchCurrentY = e.touches[0].clientY;
             let deltaY = touchCurrentY - touchStartY;
-            // ИСПРАВЛЕНИЕ: Добавлен порог (10px) для исключения моргания при быстром наборе на нумпаде
             if (deltaY > 10) { 
                 content.style.transform = `translateY(${deltaY}px)`; 
                 if (e.cancelable) e.preventDefault(); 
@@ -851,7 +856,7 @@ let settings = Object.assign({ theme: 'light', continuous: true, sound: true, vi
 function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     document.getElementById('themeToggle').innerText = theme === 'dark' ? '☀️' : '🌙';
-    document.getElementById('meta-theme-color').setAttribute('content', theme === 'dark' ? '#052e21' : '#059669');
+    document.getElementById('meta-theme-color').setAttribute('content', theme === 'dark' ? '#064e3b' : '#10b981');
 }
 function toggleTheme() { settings.theme = settings.theme === 'dark' ? 'light' : 'dark'; saveSettings(); applyTheme(settings.theme); }
 applyTheme(settings.theme);
@@ -934,10 +939,9 @@ window.startPress = function(e, text) {
         isLongPress = true; 
         copyToClipboard(text);
         if (settings.vibro && navigator.vibrate) navigator.vibrate([50, 50, 50]);
-        // Открываем зум-штрихкод только при удержании
         document.getElementById('zoomModal').style.display = 'flex';
         renderBarcodeSafe('zoomedBarcodeSvg', text, { width: 2.5, height: 100, displayValue: true, fontSize: 20, margin: 10 });
-    }, 600); // 600мс для срабатывания (чтобы исключить случайные тапы)
+    }, 600); 
 };
 window.cancelPress = function() { if (pressTimer) clearTimeout(pressTimer); };
 
@@ -1078,7 +1082,6 @@ function addOrUpdateItem(code, qty) {
         tr.id = `tr-${safeId}-${safePallet}`;
         if (isHighFx()) tr.style.animation = 'popIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
 
-        // ИСПРАВЛЕНИЕ: onclick заменен на ontouchend, чтобы исключить случайные срабатывания при листании
         tr.innerHTML = `
             <td class="inline-barcode-container" onmousedown="startPress(event, '${code}')" onmouseup="cancelPress()" onmouseleave="cancelPress()" ontouchstart="startPress(event, '${code}')" ontouchend="cancelPress()" oncontextmenu="return false;">
                 <div class="barcode-wrapper"><svg id="barcode-${safeId}-${safePallet}"></svg></div>
@@ -1542,7 +1545,6 @@ function downloadQR() {
 }
 function shareToExcel() { copyToClipboard(window.currentQRPayload || ""); }
 
-// ИСПРАВЛЕНИЕ: Архивация теперь сохраняет полную копию таблицы со всеми паллетами
 function addToArchive(lines, totalQty, payload, cartData) {
     let archive = JSON.parse(localStorage.getItem('tsd_archive')) || []; let now = new Date();
     let dateStr = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU');
@@ -1570,11 +1572,9 @@ window.restoreArchiveToTable = function(index) {
     let archive = JSON.parse(localStorage.getItem('tsd_archive')) || []; if (!archive[index]) return;
     if (currentCart.length > 0) { if (!confirm("Внимание! Текущие данные в корзине будут стерты.\nВы точно хотите загрузить старые данные из архива?")) return; }
     
-    // Восстанавливаем точную копию массива с паллетами
     if (archive[index].cartData) {
         currentCart = JSON.parse(JSON.stringify(archive[index].cartData));
     } else {
-        // Поддержка старых бэкапов (когда паллетов еще не было)
         let payload = archive[index].payload; currentCart = [];
         if (payload) {
             let items = payload.split(" ");
