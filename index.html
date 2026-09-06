@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <!-- Определяем "тир" мощности устройства ДО отрисовки CSS, чтобы не было
-         визуального "мигания" эффектов при загрузке. Логика:
-         - ручной override пользователя (настройки) имеет приоритет;
-         - иначе смотрим prefers-reduced-motion, число ядер CPU, объём памяти
-           и режим экономии трафика (Data Saver). -->
     <script>
     (function(){
         try {
@@ -21,7 +16,10 @@
                 if (reduced || saveData || cores <= 4 || mem <= 4) tier = 'low';
             }
             document.documentElement.setAttribute('data-fx', tier);
-        } catch(e) { document.documentElement.setAttribute('data-fx', 'low'); }
+        } catch(e) { 
+            console.warn("Fx tier error:", e);
+            document.documentElement.setAttribute('data-fx', 'low'); 
+        }
     })();
     </script>
     <meta charset="UTF-8">
@@ -31,36 +29,29 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#059669" id="meta-theme-color">
 
-    <!-- ВАЖНО: Ссылка на манифест для PWA-установки -->
     <link rel="manifest" href="manifest.json">
-
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2327ae60'/><text y='68' x='15' font-size='65'>📦</text></svg>">
     <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
 
-    <!-- Подключаем дружелюбный шрифт Nunito -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <title>Мой ТСД</title>
 
-    <!-- Библиотеки -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-    <!-- Правильная библиотека для генерации QR-кода -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
 <style>
 /* === ПЕРЕМЕННЫЕ ТЕМ И ДИЗАЙНА === */
 :root {
-    /* Светлая тема */
     --bg-body: #f4f6f8;
     --bg-card: #ffffff;
     --bg-card-rgb: 255, 255, 255;
     --text-main: #111827;
     --text-muted: #6b7280;
     
-    /* Зеленая шапка - премиум градиент */
     --header-bg: linear-gradient(135deg, #14532d 0%, #059669 100%);
     --header-text: #ffffff;
     --header-icon-bg: rgba(255, 255, 255, 0.15);
@@ -85,18 +76,14 @@
     
     --radius-sm: 12px; --radius-md: 16px; --radius-lg: 24px;
 
-    /* Молодёжная акцентная палитра для свечений/анимаций высокого тира */
-    --accent-a: #22c55e;
-    --accent-b: #06b6d4;
-    --accent-fun-a: #8b5cf6;
-    --accent-fun-b: #ec4899;
+    --accent-a: #22c55e; --accent-b: #06b6d4;
+    --accent-fun-a: #8b5cf6; --accent-fun-b: #ec4899;
     --accent-grad: linear-gradient(135deg, var(--accent-a), var(--accent-b));
     --accent-fun-grad: linear-gradient(135deg, var(--accent-fun-a), var(--accent-fun-b));
     --glow-soft: rgba(16, 185, 129, 0.35);
 }
 
 [data-theme="dark"] {
-    /* Темная тема */
     --bg-body: #111827;
     --bg-card: #1f2937;
     --bg-card-rgb: 31, 41, 55;
@@ -126,11 +113,9 @@
     --glow-soft: rgba(52, 211, 153, 0.45);
 }
 
-/* === БАЗОВЫЕ НАСТРОЙКИ === */
 * { box-sizing: border-box; font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; outline: none; margin: 0; padding: 0; }
 body { background-color: var(--bg-body); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; transition: background-color 0.3s ease; }
 
-/* === АНИМАЦИИ === */
 @keyframes slideInUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes popIn { 0% { opacity: 0; transform: scale(0.95) translateY(5px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 @keyframes glowBrightness {
@@ -144,7 +129,6 @@ body { background-color: var(--bg-body); color: var(--text-main); min-height: 10
     animation: glowBrightness 2.5s infinite ease-in-out; padding-top: max(20px, env(safe-area-inset-top));
 }
 
-/* === ШАПКА === */
 header { 
     position: sticky; top: 0; background: var(--header-bg); color: var(--header-text); 
     padding: calc(12px + env(safe-area-inset-top)) 15px 15px; 
@@ -154,14 +138,9 @@ header {
 }
 header h1 { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: 0.3px; }
 .header-controls { display: flex; gap: 8px; align-items: center; position: relative; }
-.btn-icon { 
-    background: var(--header-icon-bg); color: var(--header-text); border: none; 
-    width: 38px; height: 38px; border-radius: 12px; font-size: 16px; cursor: pointer; 
-    display: flex; align-items: center; justify-content: center; transition: 0.2s; 
-}
+.btn-icon { background: var(--header-icon-bg); color: var(--header-text); border: none; width: 38px; height: 38px; border-radius: 12px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
 .btn-icon:active { transform: scale(0.9); background: var(--header-icon-hover); }
 
-/* === ВЫПАДАЮЩЕЕ МЕНЮ === */
 .dropdown-menu {
     position: absolute; top: 50px; right: 0px; background: var(--bg-card); 
     border-radius: var(--radius-md); box-shadow: 0 10px 40px rgba(0,0,0,0.2);
@@ -169,55 +148,29 @@ header h1 { font-size: 20px; font-weight: 800; display: flex; align-items: cente
     border: 1px solid var(--border-color); transform-origin: top right;
     animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.dropdown-item {
-    padding: 14px 20px; font-weight: 700; font-size: 15px; color: var(--text-main); 
-    display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); 
-    cursor: pointer; transition: 0.2s;
-}
+.dropdown-item { padding: 14px 20px; font-weight: 700; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; }
 .dropdown-item:last-child { border-bottom: none; }
 .dropdown-item:active { background: var(--input-bg); }
 .menu-icon { font-size: 18px; width: 24px; text-align: center; }
 
-/* === ОСНОВНОЙ КОНТЕЙНЕР === */
 .main-container { padding: 0 15px 120px 15px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; flex: 1; }
 .card { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); border: 1px solid var(--border-color); overflow: hidden; transition: 0.3s; }
 
-/* === ЕДИНАЯ СТРОКА РУЧНОГО ВВОДА === */
-.input-card { 
-    padding: 6px; display: flex; gap: 6px; align-items: center; 
-    border-radius: var(--radius-lg); transition: box-shadow 0.25s, border-color 0.25s;
-}
+.input-card { padding: 6px; display: flex; gap: 6px; align-items: center; border-radius: var(--radius-lg); transition: box-shadow 0.25s, border-color 0.25s; }
 .input-card:focus-within { border-color: var(--btn-add); box-shadow: 0 0 0 4px var(--glow-soft); }
-.input-field { 
-    flex: 1; padding: 15px 15px; background: transparent; color: var(--text-main); 
-    border: none; font-size: 16px; font-weight: 700; transition: 0.2s;
-}
+.input-field { flex: 1; padding: 15px 15px; background: transparent; color: var(--text-main); border: none; font-size: 16px; font-weight: 700; transition: 0.2s; }
 .input-field::placeholder { color: var(--text-muted); font-weight: 600; }
-.btn-manual-add { 
-    background: var(--btn-add); color: white; border: none; border-radius: var(--radius-md); 
-    width: 50px; height: 50px; font-weight: 800; font-size: 24px; display: flex; 
-    justify-content: center; align-items: center; cursor: pointer; 
-    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3); transition: 0.2s;
-}
+.btn-manual-add { background: var(--btn-add); color: white; border: none; border-radius: var(--radius-md); width: 50px; height: 50px; font-weight: 800; font-size: 24px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3); transition: 0.2s; }
 .btn-manual-add:active { transform: scale(0.92); }
 
-/* === КОРЗИНА И ТАБЛИЦА === */
 .cart-card { background: transparent; box-shadow: none; border: none; border-radius: 0; display: flex; flex-direction: column; }
 .cart-header { padding: 0 5px 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 16px; color: var(--text-main);}
-.btn-clear { 
-    background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); 
-    border-radius: var(--radius-sm); padding: 6px 12px; font-size: 13px; font-weight: 700; 
-    cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px;
-}
+.btn-clear { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 6px 12px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
 .btn-clear:active { background: var(--btn-remove-bg); color: var(--btn-remove-text); border-color: var(--btn-remove-text); }
 
 table { width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: -10px;}
 th { display: none; }
-tr { 
-    background: var(--bg-card); box-shadow: var(--shadow-soft); border-radius: var(--radius-md); 
-    border: 1px solid var(--border-color); transition: 0.2s; 
-    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
-}
+tr { background: var(--bg-card); box-shadow: var(--shadow-soft); border-radius: var(--radius-md); border: 1px solid var(--border-color); transition: 0.2s; }
 td { padding: 12px 10px; vertical-align: middle; text-align: center; border: none; }
 td:first-child { border-top-left-radius: var(--radius-md); border-bottom-left-radius: var(--radius-md); width: 60%; }
 td:nth-child(2) { width: 25%; }
@@ -228,29 +181,19 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .barcode-wrapper { background-color: #ffffff; padding: 6px; border-radius: 8px; display: inline-block; }
 .barcode-wrapper svg { width: 100%; max-width: 140px; height: auto; display: block; margin: 0 auto; pointer-events: none;}
 
-.qty-box { 
-    background: var(--input-bg); border: 2px solid var(--border-color); color: var(--text-main); 
-    font-weight: 800; font-size: 17px; border-radius: 12px; padding: 12px 0; width: 100%; 
-    cursor: pointer; display: block; transition: 0.2s;
-}
+.qty-box { background: var(--input-bg); border: 2px solid var(--border-color); color: var(--text-main); font-weight: 800; font-size: 17px; border-radius: 12px; padding: 12px 0; width: 100%; cursor: pointer; display: block; transition: 0.2s; }
 .qty-box:active { background: var(--border-color); transform: scale(0.92); }
 
-.btn-remove { 
-    -webkit-appearance: none; appearance: none; background: var(--btn-remove-bg); 
-    color: var(--btn-remove-text); border: none; font-size: 18px; width: 38px; height: 38px; 
-    border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; 
-    display: flex; align-items: center; justify-content: center; margin: 0 auto; padding: 0;
-}
+.btn-remove { -webkit-appearance: none; appearance: none; background: var(--btn-remove-bg); color: var(--btn-remove-text); border: none; font-size: 18px; width: 38px; height: 38px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; margin: 0 auto; padding: 0; }
 .btn-remove:active { transform: scale(0.8) rotate(10deg); }
 
 .no-data { padding: 40px 20px; color: var(--text-muted); font-weight: 700; text-align: center; background: var(--bg-card); border-radius: var(--radius-md); font-size: 15px; border: 2px dashed var(--border-color); box-shadow: none;}
 
-/* === ПЛАВАЮЩАЯ ПАНЕЛЬ СНИЗУ === */
 .bottom-action-bar { 
     position: fixed; bottom: 0; left: 0; width: 100%; 
     background: rgba(var(--bg-card-rgb), 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
     padding: 15px calc(15px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 30px rgba(0,0,0,0.05); 
-    display: flex; gap: 12px; z-index: 50; border-top: 1px solid var(--border-color); 
+    display: flex; gap: 12px; z-index: 50; border-top: 1px solid var(--border-color); align-items: stretch;
 }
 .btn-fab { 
     border: none; border-radius: var(--radius-lg); font-weight: 800; color: white; 
@@ -260,22 +203,10 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 }
 .btn-fab:active { transform: scale(0.96); box-shadow: none !important; }
 
-.btn-fab-scan { 
-    flex: 1; min-width: 0; background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-    font-size: clamp(14px, 4vw, 16px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); 
-}
-.btn-fab-qr { 
-    flex: 0 0 auto; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
-    font-size: 15px; padding: 0 20px; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); 
-}
+.btn-fab-scan { flex: 1.6; min-width: 0; background: linear-gradient(135deg, #10b981 0%, #059669 100%); font-size: clamp(14px, 4vw, 16px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
+.btn-fab-qr { flex: 1; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); font-size: 15px; padding: 0 20px; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); }
 
-/* === АВТО-БАННЕР УСТАНОВКИ === */
-.install-banner { 
-    position: fixed; bottom: 100px; left: 15px; right: 15px; background: var(--bg-card); 
-    border-radius: var(--radius-md); box-shadow: 0 15px 40px rgba(0,0,0,0.15); padding: 16px; 
-    display: none; flex-direction: column; gap: 12px; z-index: 90; border: 1px solid var(--border-color); 
-    animation: slideInUp 0.4s cubic-bezier(0.175, 0.885, 0.1); 
-}
+.install-banner { position: fixed; bottom: 100px; left: 15px; right: 15px; background: var(--bg-card); border-radius: var(--radius-md); box-shadow: 0 15px 40px rgba(0,0,0,0.15); padding: 16px; display: none; flex-direction: column; gap: 12px; z-index: 90; border: 1px solid var(--border-color); animation: slideInUp 0.4s cubic-bezier(0.175, 0.885, 0.1); }
 .install-banner-header { display: flex; align-items: center; gap: 14px; }
 .install-banner-icon { font-size: 30px; background: var(--info-bg); width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
 .install-banner-text h4 { margin: 0 0 4px 0; color: var(--text-main); font-weight: 800; font-size: 16px; }
@@ -286,42 +217,17 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .btn-install-yes:active { transform: scale(0.95); }
 .btn-install-no { background: var(--input-bg); color: var(--text-muted); border: 1px solid var(--border-color); }
 
-/* === МОДАЛЬНЫЕ ОКНА === */
-.modal-overlay { 
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    background: var(--modal-bg); backdrop-filter: var(--modal-backdrop); -webkit-backdrop-filter: var(--modal-backdrop); 
-    z-index: 9999; justify-content: center; align-items: flex-end; padding: 0; margin: 0;
-}
-.modal-content { 
-    background: var(--bg-card); color: var(--text-main); padding: 30px 20px 20px; 
-    border-radius: 32px 32px 0 0; width: 100%; max-width: 500px; text-align: center; 
-    box-shadow: 0 -20px 40px rgba(0,0,0,0.2); animation: slideInUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); 
-    position: relative; padding-bottom: calc(20px + env(safe-area-inset-bottom)); 
-    max-height: 85vh; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; 
-}
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); backdrop-filter: var(--modal-backdrop); -webkit-backdrop-filter: var(--modal-backdrop); z-index: 9999; justify-content: center; align-items: flex-end; padding: 0; margin: 0; }
+.modal-content { background: var(--bg-card); color: var(--text-main); padding: 30px 20px 20px; border-radius: 32px 32px 0 0; width: 100%; max-width: 500px; text-align: center; box-shadow: 0 -20px 40px rgba(0,0,0,0.2); animation: slideInUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); position: relative; padding-bottom: calc(20px + env(safe-area-inset-bottom)); max-height: 85vh; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; -ms-overflow-style: none; scrollbar-width: none; }
 .modal-content::-webkit-scrollbar { display: none; }
-.modal-content { -ms-overflow-style: none; scrollbar-width: none; }
 .modal-content::before { content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 40px; height: 5px; background: var(--border-color); border-radius: 10px; }
 
 #reader { width: 100%; min-height: 250px; border-radius: var(--radius-md); overflow: hidden; background: #000; margin-bottom: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); position: relative; }
 #reader video { object-fit: cover !important; width: 100%; height: 100%; }
 
-.scan-orientation-hint {
-    position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; pointer-events: none;
-    z-index: 5; font-size: 13px; font-weight: 800; color: #fff;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.8); padding: 0 10px;
-}
-
-/* === ПИЛЮЛЯ ЗУМА (1x / 2x / 3x) поверх картинки с камеры === */
-.zoom-pill {
-    position: absolute; left: 50%; top: 14px; transform: translateX(-50%);
-    display: flex; gap: 4px; background: rgba(0,0,0,0.45); backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px); border-radius: 20px; padding: 4px; z-index: 6;
-}
-.zoom-btn {
-    border: none; background: transparent; color: rgba(255,255,255,0.75); font-weight: 800;
-    font-size: 13px; padding: 7px 13px; border-radius: 16px; cursor: pointer; transition: 0.2s;
-}
+.scan-orientation-hint { position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; pointer-events: none; z-index: 5; font-size: 13px; font-weight: 800; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); padding: 0 10px; }
+.zoom-pill { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); display: flex; gap: 4px; background: rgba(0,0,0,0.45); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-radius: 20px; padding: 4px; z-index: 6; }
+.zoom-btn { border: none; background: transparent; color: rgba(255,255,255,0.75); font-weight: 800; font-size: 13px; padding: 7px 13px; border-radius: 16px; cursor: pointer; transition: 0.2s; }
 .zoom-btn.active { background: #fff; color: #111827; }
 .zoom-btn:active { transform: scale(0.92); }
 .scanner-controls-row { display: flex; gap: 10px; }
@@ -332,25 +238,16 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .btn-torch { background: #374151; color: white; }
 .btn-close { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); }
 
-/* === ВНУТРИ ИНСТРУКЦИИ === */
 .instruction-content { padding: 10px 0; font-size: 15px; color: var(--text-muted); font-weight: 600; text-align: left;}
 .instruction-content ol { margin: 10px 0 0 0; padding-left: 20px; }
 .instruction-content li { margin-bottom: 12px; line-height: 1.5; color: var(--text-main);}
-.browser-note { padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 0; font-size: 13px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; text-align: left; background: var(--warn-bg); color: var(--warn-text); margin-top: 15px;}
+.browser-note { padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; text-align: left; background: var(--warn-bg); color: var(--warn-text); margin-top: 15px;}
 
-/* === NUMPAD (КЛАССИЧЕСКИЕ ШИРОКИЕ КНОПКИ) === */
 .numpad-content { background: var(--numpad-bg); padding-top: 20px; }
 .numpad-title { font-size: 15px; font-weight: 800; color: var(--text-muted); margin: 0 0 10px 0;}
-.numpad-display { 
-    background: transparent; font-size: 48px; font-weight: 800; padding: 10px; 
-    margin-bottom: 15px; text-align: center; color: var(--text-main); letter-spacing: 2px;
-}
+.numpad-display { background: transparent; font-size: 48px; font-weight: 800; padding: 10px; margin-bottom: 15px; text-align: center; color: var(--text-main); letter-spacing: 2px; }
 .numpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.num-btn { 
-    background: var(--numpad-btn); color: var(--text-main); border: none; 
-    border-radius: 20px; font-size: 26px; font-weight: 800; padding: 18px 0; 
-    cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.15s;
-}
+.num-btn { background: var(--numpad-btn); color: var(--text-main); border: none; border-radius: 20px; font-size: 26px; font-weight: 800; padding: 18px 0; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.15s; }
 .num-btn:active { background: var(--border-color); transform: scale(0.9) translateY(4px); box-shadow: none;}
 .num-btn.action-c { color: #dc2626; }
 .num-btn.action-back { color: #d97706; font-size: 24px; }
@@ -359,7 +256,6 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .btn-numpad-ok { flex: 2; background: var(--btn-add); color: white; border: none; border-radius: 20px; font-size: 18px; font-weight: 800; padding: 18px 0; cursor: pointer; box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);}
 .btn-numpad-cancel:active, .btn-numpad-ok:active { transform: scale(0.95); }
 
-/* === НАСТРОЙКИ === */
 .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--border-color); font-size: 16px; font-weight: 700;}
 .settings-row:last-child { border-bottom: none; }
 .switch { position: relative; display: inline-block; width: 52px; height: 30px; }
@@ -369,12 +265,10 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 input:checked + .slider { background-color: var(--btn-add); }
 input:checked + .slider:before { transform: translateX(22px); }
 
-/* === QR ОКНО === */
 #qrModal { background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); justify-content: center; align-items: center;}
 #qrModal .modal-content { background: transparent; box-shadow: none; display: flex; flex-direction: column; align-items: center; justify-content: center; max-height: none;}
 #finalQrCanvas { display: none; margin: 0 auto; max-width: 100%; border-radius: var(--radius-lg); background: #fff; padding: 12px; box-shadow: 0 10px 40px rgba(255,255,255,0.2);}
 
-/* === АРХИВ === */
 .archive-list { display: flex; flex-direction: column; gap: 12px; padding: 5px; margin: 0 -5px;}
 .archive-item { background: var(--input-bg); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; gap: 12px; text-align: left; transition: 0.2s; border: 1px solid var(--border-color);}
 .archive-info-row { display: flex; justify-content: space-between; align-items: center; }
@@ -385,130 +279,41 @@ input:checked + .slider:before { transform: translateX(22px); }
 .archive-btn-secondary { flex: 1; background: var(--border-color); color: var(--text-main); border: none; padding: 10px 5px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 13px; transition: 0.2s; white-space: nowrap;}
 .archive-btn:active, .archive-btn-secondary:active { transform: scale(0.95); }
 
-/* === ОКНО УВЕЛИЧЕНИЯ ШТРИХКОДА === */
 #zoomModal { background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); justify-content: center; align-items: center;}
 .zoom-container { background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); box-shadow: 0 15px 40px rgba(0,0,0,0.3); text-align: center; width: 90%; max-width: 450px;}
 .zoom-container svg { width: 100%; height: auto; max-height: 200px; display: block; margin: 0 auto; background: #fff; padding: 10px; border-radius: 8px;}
 
-/* === МОДАЛКА УСТАНОВКИ iOS (степ-инструкция вместо alert) === */
 .install-steps { list-style: none; padding: 0; margin: 15px 0 0; text-align: left; }
 .install-steps li { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px; font-size: 15px; font-weight: 700; color: var(--text-main); }
 .install-steps .step-num { flex: 0 0 auto; width: 28px; height: 28px; border-radius: 50%; background: var(--btn-add); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; }
 .install-steps .step-icon { font-size: 20px; }
 
-/* ============================================================
-   АДАПТИВНЫЙ ВИЗУАЛ (data-fx="high" | "low")
-   На мощных устройствах — полный набор анимаций.
-   На слабых — эффекты вообще не создаются в DOM (см. JS),
-   а не просто скрываются. prefers-reduced-motion — сильнее всего.
-   ============================================================ */
-
-.bg-blob {
-    position: fixed;
-    z-index: -1;
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.28;
-    pointer-events: none;
-    display: none;
-    will-change: transform;
-}
+.bg-blob { position: fixed; z-index: -1; border-radius: 50%; filter: blur(60px); opacity: 0.28; pointer-events: none; display: none; will-change: transform; }
 [data-fx="high"] .bg-blob { display: block; }
 [data-theme="dark"] .bg-blob { opacity: 0.45; }
-
 .blob-1 { width: 280px; height: 280px; top: -90px; left: -70px; background: var(--accent-grad); animation: blobFloatA 18s ease-in-out infinite; }
 .blob-2 { width: 240px; height: 240px; bottom: -70px; right: -60px; background: var(--accent-fun-grad); animation: blobFloatB 22s ease-in-out infinite; }
 
-@keyframes blobFloatA {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(35px, 45px) scale(1.15); }
-}
-@keyframes blobFloatB {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(-30px, -35px) scale(1.1); }
-}
+@keyframes blobFloatA { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(35px, 45px) scale(1.15); } }
+@keyframes blobFloatB { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-30px, -35px) scale(1.1); } }
 
-[data-fx="high"] header {
-    background-size: 220% 220%;
-    animation: headerGradientShift 12s ease infinite;
-}
-@keyframes headerGradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
+[data-fx="high"] header { background-size: 220% 220%; animation: headerGradientShift 12s ease infinite; }
+@keyframes headerGradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+[data-fx="high"] .btn-fab-scan { animation: pulseGlow 2.6s ease-in-out infinite; }
+@keyframes pulseGlow { 0%, 100% { box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); } 50% { box-shadow: 0 10px 34px rgba(16, 185, 129, 0.6), 0 0 0 6px rgba(16, 185, 129, 0.1); } }
 
-[data-fx="high"] .btn-fab-scan {
-    animation: pulseGlow 2.6s ease-in-out infinite;
-}
-@keyframes pulseGlow {
-    0%, 100% { box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
-    50% { box-shadow: 0 10px 34px rgba(16, 185, 129, 0.6), 0 0 0 6px rgba(16, 185, 129, 0.1); }
-}
+.ripple { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.55); transform: scale(0); opacity: 1; pointer-events: none; animation: rippleAnim 0.55s ease-out forwards; }
+@keyframes rippleAnim { to { transform: scale(2.6); opacity: 0; } }
+.btn-fab, .btn-manual-add, .num-btn, .archive-btn, .archive-btn-secondary, .btn-modal, .btn-icon { position: relative; overflow: hidden; }
 
-/* Рябь (ripple) от нажатия — узлы создаются только на высоком тире (см. JS) */
-.ripple {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.55);
-    transform: scale(0);
-    opacity: 1;
-    pointer-events: none;
-    animation: rippleAnim 0.55s ease-out forwards;
-}
-@keyframes rippleAnim {
-    to { transform: scale(2.6); opacity: 0; }
-}
-.btn-fab, .btn-manual-add, .num-btn, .archive-btn, .archive-btn-secondary, .btn-modal, .btn-icon {
-    position: relative;
-    overflow: hidden;
-}
+.confetti-piece { position: fixed; width: 7px; height: 7px; border-radius: 2px; pointer-events: none; z-index: 500; top: 0; left: 0; animation: confettiPop 0.75s cubic-bezier(0.2, 0.8, 0.3, 1) forwards; }
+@keyframes confettiPop { 0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.4); opacity: 0; } }
 
-/* Конфетти при успешном добавлении товара — узлы создаются только на высоком тире (см. JS) */
-.confetti-piece {
-    position: fixed;
-    width: 7px;
-    height: 7px;
-    border-radius: 2px;
-    pointer-events: none;
-    z-index: 500;
-    top: 0; left: 0;
-    animation: confettiPop 0.75s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
-}
-@keyframes confettiPop {
-    0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
-    100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.4); opacity: 0; }
-}
-
-tr { animation-fill-mode: both; }
-
-/* Лёгкая вспышка счётчика корзины — дёшево, работает на всех тирах одинаково */
 .cart-stats-flash { animation: statsFlash 0.5s ease; }
-@keyframes statsFlash {
-    0% { color: var(--btn-add); transform: scale(1.08); }
-    100% { color: var(--text-main); transform: scale(1); }
-}
+@keyframes statsFlash { 0% { color: var(--btn-add); transform: scale(1.08); } 100% { color: var(--text-main); transform: scale(1); } }
 
-/* Системная настройка "уменьшить анимацию" побеждает любой тир и любую настройку */
-@media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        animation-duration: 0.001ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.001ms !important;
-        scroll-behavior: auto !important;
-    }
-    .bg-blob { display: none !important; }
-}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; } .bg-blob { display: none !important; } }
 
-/* ============================================================
-   АДАПТАЦИЯ ПОД РАЗМЕР ЭКРАНА
-   Один и тот же HTML/CSS рендерится идентично в любом браузере —
-   на iPhone и на Android разницы в дизайне нет и быть не может,
-   это просто веб-страница. Разница в старых скриншотах — это
-   системные экраны самого браузера (например, встроенный
-   сканер Chrome), не относящиеся к этому приложению.
-   Ниже — плавное масштабирование интерфейса от узкого телефона
-   до планшета и десктопа. ============================================================ */
 header h1 { font-size: clamp(17px, 4.4vw, 21px); }
 .numpad-display { font-size: clamp(38px, 11vw, 52px); }
 .brightness-text { font-size: clamp(15px, 4vw, 19px); }
@@ -531,15 +336,6 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     .bottom-action-bar { max-width: 780px; }
     header { max-width: 780px; }
 }
-
-/* Панель снизу: сканирование — главное действие (шире и заметнее),
-   ручной ввод и экспорт — второстепенные, одинакового размера по бокам. */
-.bottom-action-bar { align-items: stretch; }
-.btn-fab-manual {
-    flex: 0 0 60px; background: var(--bg-card); color: var(--text-main);
-    border: 1px solid var(--border-color); font-size: 22px; box-shadow: var(--shadow-soft);
-}
-.btn-fab-scan { flex: 1.6; }
 </style>
 </head>
 <body>
@@ -551,38 +347,24 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     <h1>📦 Мой ТСД</h1>
     <div class="header-controls">
         <button class="btn-icon" id="themeToggle" onclick="toggleTheme()" title="Сменить тему">☀️</button>
-        <!-- КНОПКА МЕНЮ (ТРИ ТОЧКИ) -->
         <button class="btn-icon" id="menuToggleBtn" onclick="toggleMenu()" style="font-weight: 900; font-size: 20px;">⋮</button>
         
-        <!-- ЛОГИЧНОЕ ВЫПАДАЮЩЕЕ МЕНЮ -->
         <div id="dropdownMenu" class="dropdown-menu">
-            <div class="dropdown-item" onclick="openArchive()">
-                <span class="menu-icon">🗄️</span> Архив
-            </div>
-            <div class="dropdown-item" onclick="openSettings()">
-                <span class="menu-icon">⚙️</span> Настройки
-            </div>
-            <div class="dropdown-item" onclick="openInstruction()">
-                <span class="menu-icon">📖</span> Инструкция
-            </div>
-            <div class="dropdown-item" onclick="openAbout()">
-                <span class="menu-icon">ℹ️</span> О приложении
-            </div>
-            <div class="dropdown-item" id="menuInstallBtn" onclick="triggerInstall()">
-                <span class="menu-icon">📥</span> На экран Домой
-            </div>
+            <div class="dropdown-item" onclick="openArchive()"><span class="menu-icon">🗄️</span> Архив</div>
+            <div class="dropdown-item" onclick="openSettings()"><span class="menu-icon">⚙️</span> Настройки</div>
+            <div class="dropdown-item" onclick="openInstruction()"><span class="menu-icon">📖</span> Инструкция</div>
+            <div class="dropdown-item" onclick="openAbout()"><span class="menu-icon">ℹ️</span> О приложении</div>
+            <div class="dropdown-item" id="menuInstallBtn" onclick="triggerInstall()"><span class="menu-icon">📥</span> На экран Домой</div>
         </div>
     </div>
 </header>
 
 <div class="main-container">
-    <!-- РУЧНОЙ ВВОД -->
     <div class="card input-card">
         <input type="text" id="codeInput" class="input-field" placeholder="Введите артикул...">
         <button class="btn-manual-add" onclick="manualAdd()">✚</button>
     </div>
 
-    <!-- КОРЗИНА -->
     <div class="cart-card">
         <div class="cart-header">
             <span id="cartStats">0 строк (0 шт.)</span>
@@ -598,15 +380,11 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     </div>
 </div>
 
-<!-- ПЛАВАЮЩАЯ ПАНЕЛЬ ТСД: 3 равнозначных по смыслу, но разных по весу действия —
-     ручной ввод (быстрый доступ к полю), сканирование (главное действие), экспорт -->
 <div class="bottom-action-bar">
-    <button class="btn-fab btn-fab-manual" onclick="focusManualInput()" title="Ввести артикул вручную">✏️</button>
     <button class="btn-fab btn-fab-scan" onclick="startScanner()">📷 СКАНИРОВАТЬ</button>
     <button class="btn-fab btn-fab-qr" onclick="showTransferQR()">📲 В EXCEL</button>
 </div>
 
-<!-- АВТОМАТИЧЕСКИЙ БАННЕР УСТАНОВКИ -->
 <div id="installBanner" class="install-banner">
     <div class="install-banner-header">
         <div class="install-banner-icon">📲</div>
@@ -621,7 +399,6 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     </div>
 </div>
 
-<!-- МОДАЛКА ИНСТРУКЦИИ -->
 <div class="modal-overlay" id="instructionModal">
     <div class="modal-content">
         <h3 style="margin-top:0; font-weight: 800;">📖 Как это работает?</h3>
@@ -636,14 +413,13 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
             </ol>
             <div class="note-box browser-note">
                 <span style="font-size: 18px; line-height: 1;">💡</span>
-                <div style="flex: 1; line-height: 1.4;"><b>Важно:</b> Для быстрой работы камеры используйте браузер <b>Chrome</b> или <b>Safari</b>! Штрихкод можно держать в любом развороте — приложение считывает и горизонтально, и вертикально, но горизонтально распознавание всегда чуть быстрее.</div>
+                <div style="flex: 1; line-height: 1.4;"><b>Важно:</b> Для быстрой работы камеры используйте браузер <b>Chrome</b> или <b>Safari</b>! Штрихкод можно держать в любом развороте.</div>
             </div>
         </div>
         <button class="btn-modal btn-close" onclick="document.getElementById('instructionModal').style.display='none'">Понятно</button>
     </div>
 </div>
 
-<!-- МОДАЛКА "О ПРИЛОЖЕНИИ" -->
 <div class="modal-overlay" id="aboutModal">
     <div class="modal-content">
         <h3 style="margin-top:0; font-weight: 800;">ℹ️ О приложении</h3>
@@ -656,7 +432,7 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
                     👨‍💻 Джугань Сергей
                 </p>
                 <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
-                    Версия: 5.3 (адаптивный визуал: авто под мощность устройства)
+                    Версия: 5.4 (Улучшенная оптимизация DOM и Зум)
                 </p>
             </div>
         </div>
@@ -664,7 +440,6 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     </div>
 </div>
 
-<!-- МОДАЛКА НАСТРОЕК -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal-content">
         <h3 style="margin-top:0; font-weight: 800;">Настройки</h3>
@@ -688,13 +463,12 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     </div>
 </div>
 
-<!-- МОДАЛКА СКАНЕРА -->
 <div class="modal-overlay" id="scannerModal">
     <div class="modal-content">
         <h3 style="margin-top: 0; margin-bottom: 5px; font-weight: 800;">Наведите камеру</h3>
         <p id="iosScanHint" style="display:none; font-size: 14px; color: #f59e0b; margin-top: 0; margin-bottom: 15px; font-weight: 700;">Отодвиньте телефон на 15-20 см</p>
         <div id="reader">
-            <div class="scan-orientation-hint" id="orientationHint">📦 Наведите на любой штрихкод — код можно держать как угодно</div>
+            <div class="scan-orientation-hint" id="orientationHint">📦 Наведите на любой штрихкод</div>
             <div class="zoom-pill" id="zoomPill">
                 <button class="zoom-btn active" data-zoom="1" onclick="setZoomLevel(1)">1x</button>
                 <button class="zoom-btn" data-zoom="2" onclick="setZoomLevel(2)">2x</button>
@@ -709,7 +483,6 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     </div>
 </div>
 
-<!-- МОДАЛКА NUMPAD -->
 <div class="modal-overlay" id="numpadModal">
     <div class="modal-content numpad-content">
         <div class="numpad-title" id="numpadTitle">Количество товара</div>
@@ -735,7 +508,6 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     </div>
 </div>
 
-<!-- МОДАЛКА QR И СКАЧИВАНИЯ -->
 <div class="modal-overlay" id="qrModal" style="align-items: center;">
     <div class="modal-content" style="background: transparent; box-shadow: none;">
         <div class="brightness-text">Выкрути яркость на максимум!</div>
@@ -746,7 +518,6 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     </div>
 </div>
 
-<!-- МОДАЛКА АРХИВА -->
 <div class="modal-overlay" id="archiveModal">
     <div class="modal-content">
         <h3 style="margin-top: 0; font-weight: 800;">История выгрузок</h3>
@@ -756,7 +527,6 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     </div>
 </div>
 
-<!-- ОКНО УВЕЛИЧЕННОГО ШТРИХКОДА -->
 <div class="modal-overlay" id="zoomModal">
     <div class="zoom-container">
         <div style="background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
@@ -766,40 +536,37 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     </div>
 </div>
 
-<!-- МОДАЛКА УСТАНОВКИ НА iOS (пошаговая, вместо alert) -->
 <div class="modal-overlay" id="iosInstallModal">
     <div class="modal-content">
         <h3 style="margin-top:0; font-weight: 800;">📲 Установка на iPhone</h3>
         <p style="font-size: 14px; color: var(--text-muted); font-weight: 600; margin-top: -5px;">
-            Apple не разрешает сайтам устанавливать себя на экран «Домой» автоматически — это можно сделать только вручную, через Safari, вот так:
+            Apple не разрешает сайтам устанавливать себя на экран «Домой» автоматически — это можно сделать только вручную, через Safari:
         </p>
         <ol class="install-steps">
-            <li><span class="step-num">1</span><span>Откройте это приложение в браузере <b>Safari</b> (не в Chrome).</span></li>
+            <li><span class="step-num">1</span><span>Откройте это приложение в браузере <b>Safari</b>.</span></li>
             <li><span class="step-num">2</span><span class="step-icon">⬆️</span><span>Нажмите кнопку <b>«Поделиться»</b> внизу экрана.</span></li>
             <li><span class="step-num">3</span><span class="step-icon">➕</span><span>Выберите <b>«На экран "Домой"»</b> в списке.</span></li>
-            <li><span class="step-num">4</span><span class="step-icon">✅</span><span>Нажмите <b>«Добавить»</b> — готово, иконка появится на рабочем столе.</span></li>
+            <li><span class="step-num">4</span><span class="step-icon">✅</span><span>Нажмите <b>«Добавить»</b>.</span></li>
         </ol>
         <button class="btn-modal btn-close" onclick="document.getElementById('iosInstallModal').style.display='none'">Понятно</button>
     </div>
 </div>
 
-<!-- МОДАЛКА УСТАНОВКИ НА ANDROID/ДЕСКТОП, ЕСЛИ БРАУЗЕР НЕ ПРЕДЛОЖИЛ АВТОМАТИЧЕСКИ -->
 <div class="modal-overlay" id="androidInstallModal">
     <div class="modal-content">
         <h3 style="margin-top:0; font-weight: 800;">📲 Установка приложения</h3>
         <p style="font-size: 14px; color: var(--text-muted); font-weight: 600; margin-top: -5px;">
-            Браузер пока не предложил установку автоматически. Установите вручную:
+            Установите приложение вручную:
         </p>
         <ol class="install-steps">
             <li><span class="step-num">1</span><span>Откройте меню браузера (обычно значок <b>⋮</b> в углу).</span></li>
-            <li><span class="step-num">2</span><span>Выберите <b>«Установить приложение»</b> или <b>«Добавить на главный экран»</b>.</span></li>
+            <li><span class="step-num">2</span><span>Выберите <b>«Установить приложение»</b>.</span></li>
         </ol>
         <button class="btn-modal btn-close" onclick="document.getElementById('androidInstallModal').style.display='none'">Понятно</button>
     </div>
 </div>
 
 <script>
-// === ЗАКРЫТИЕ ОКОН ПО КЛИКУ НА ТЕМНЫЙ ФОН ===
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', function(e) {
         if (e.target === this) {
@@ -811,7 +578,6 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
     });
 });
 
-// === ЛОГИКА ВЫПАДАЮЩЕГО МЕНЮ (⋮) ===
 function toggleMenu() {
     const menu = document.getElementById('dropdownMenu');
     menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
@@ -829,8 +595,6 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// === РЯБЬ (RIPPLE) ОТ НАЖАТИЯ — узел создаётся только на высоком тире,
-// поэтому на слабых устройствах эта логика не стоит вообще ничего ===
 document.addEventListener('pointerdown', function(e) {
     if (!isHighFx()) return;
     const target = e.target.closest('.btn-fab, .btn-manual-add, .num-btn, .archive-btn, .archive-btn-secondary, .btn-modal, .btn-icon');
@@ -846,7 +610,6 @@ document.addEventListener('pointerdown', function(e) {
     ripple.addEventListener('animationend', () => ripple.remove());
 });
 
-// === КОНФЕТТИ ПРИ УСПЕШНОМ ДОБАВЛЕНИИ ТОВАРА — только высокий тир ===
 function burstConfetti(x, y) {
     if (!isHighFx()) return;
     const colors = ['#22c55e', '#06b6d4', '#8b5cf6', '#ec4899', '#f59e0b'];
@@ -867,12 +630,11 @@ function burstConfetti(x, y) {
     }
 }
 
-// Лёгкая вспышка счётчика (все тиры) + конфетти (только высокий тир), единая точка вызова
 function flashCartStats() {
     const el = dom.cartStats || document.getElementById('cartStats');
     if (!el) return;
     el.classList.remove('cart-stats-flash');
-    void el.offsetWidth; // перезапуск CSS-анимации
+    void el.offsetWidth;
     el.classList.add('cart-stats-flash');
     if (isHighFx()) {
         const rect = el.getBoundingClientRect();
@@ -880,12 +642,10 @@ function flashCartStats() {
     }
 }
 
-// === ЛОГИКА УСТАНОВКИ (УМНЫЙ БАННЕР + КНОПКА МЕНЮ) ===
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 const menuInstallBtn = document.getElementById('menuInstallBtn');
 const installBanner = document.getElementById('installBanner');
 let deferredPrompt;
-
 const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 const isIOS = (/iPad|iPhone|iPod/.test(userAgent)) || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
 
@@ -906,25 +666,15 @@ window.addEventListener('beforeinstallprompt', (e) => {
     }
 });
 
-// Если приложение реально установлено (событие появляется и на Android, и на десктопном Chrome) —
-// прячем кнопку/баннер, чтобы не предлагать установку повторно.
 window.addEventListener('appinstalled', () => {
     if (menuInstallBtn) menuInstallBtn.style.display = 'none';
     if (installBanner) installBanner.style.display = 'none';
     localStorage.setItem('hideInstallBanner', 'true');
 });
 
-// ВАЖНО: браузер (JavaScript) не может сам "нажать" кнопку добавления на экран Домой —
-// ни на iOS, ни на Android/десктопе без предварительного системного события beforeinstallprompt.
-// На Android/Chrome/Desktop мы ловим это системное событие (deferredPrompt) и показываем
-// РЕАЛЬНЫЙ системный диалог установки. На iOS Safari такого API вообще не существует —
-// Apple разрешает добавление на экран «Домой» только вручную через кнопку «Поделиться»,
-// поэтому там мы показываем понятную пошаговую инструкцию вместо алерта.
 function triggerInstall() {
     if (installBanner) installBanner.style.display = 'none';
-
     if (deferredPrompt) {
-        // Настоящая установка одним нажатием — доступно там, где браузер это поддерживает
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then((choiceResult) => {
             if (choiceResult.outcome === 'accepted') {
@@ -935,12 +685,8 @@ function triggerInstall() {
         });
         return;
     }
-
-    if (isIOS) {
-        document.getElementById('iosInstallModal').style.display = 'flex';
-    } else {
-        document.getElementById('androidInstallModal').style.display = 'flex';
-    }
+    if (isIOS) document.getElementById('iosInstallModal').style.display = 'flex';
+    else document.getElementById('androidInstallModal').style.display = 'flex';
 }
 
 function dismissInstallBanner() {
@@ -948,21 +694,14 @@ function dismissInstallBanner() {
     localStorage.setItem('hideInstallBanner', 'true');
 }
 
-// === СВАЙП ВНИЗ ДЛЯ ЗАКРЫТИЯ (BOTTOM SHEET) ===
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.modal-content').forEach(content => {
-        let touchStartY = 0;
-        let touchCurrentY = 0;
-        let isSwiping = false;
-
+        let touchStartY = 0, touchCurrentY = 0, isSwiping = false;
         content.addEventListener('touchstart', function(e) {
             if (content.scrollTop > 0) return;
-            touchStartY = e.touches[0].clientY;
-            touchCurrentY = touchStartY;
-            isSwiping = true;
-            content.style.transition = 'none';
+            touchStartY = e.touches[0].clientY; touchCurrentY = touchStartY;
+            isSwiping = true; content.style.transition = 'none';
         }, {passive: true});
-
         content.addEventListener('touchmove', function(e) {
             if (!isSwiping) return;
             touchCurrentY = e.touches[0].clientY;
@@ -972,13 +711,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (e.cancelable) e.preventDefault();
             }
         }, {passive: false});
-
         content.addEventListener('touchend', function(e) {
             if (!isSwiping) return;
             isSwiping = false;
             let deltaY = touchCurrentY - touchStartY;
             content.style.transition = 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1)';
-
             if (deltaY > 80) {
                 let modal = content.closest('.modal-overlay');
                 if (modal.id === 'scannerModal') stopScanner();
@@ -994,7 +731,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// === ЗАЩИТА ОТ ПОТЕРИ ДАННЫХ ===
 window.addEventListener("beforeunload", function (e) {
     if (currentCart.length > 0) {
         var confirmationMessage = "В корзине остались товары. Вы точно хотите выйти?";
@@ -1003,7 +739,6 @@ window.addEventListener("beforeunload", function (e) {
     }
 });
 
-// === НАСТРОЙКИ И ТЕМА ===
 let settings = JSON.parse(localStorage.getItem('tsd_settings')) || { theme: 'light', continuous: true, sound: true, vibro: true };
 
 function applyTheme(theme) {
@@ -1012,16 +747,11 @@ function applyTheme(theme) {
     document.getElementById('meta-theme-color').setAttribute('content', theme === 'dark' ? '#064e3b' : '#059669');
 }
 
-function toggleTheme() { 
-    settings.theme = settings.theme === 'dark' ? 'light' : 'dark'; 
-    saveSettings(); 
-    applyTheme(settings.theme); 
-}
+function toggleTheme() { settings.theme = settings.theme === 'dark' ? 'light' : 'dark'; saveSettings(); applyTheme(settings.theme); }
 applyTheme(settings.theme);
 
 function openInstruction() { document.getElementById('instructionModal').style.display = 'flex'; }
 function openAbout() { document.getElementById('aboutModal').style.display = 'flex'; }
-
 function openSettings() {
     document.getElementById('setContinuous').checked = settings.continuous;
     document.getElementById('setSound').checked = settings.sound;
@@ -1029,7 +759,6 @@ function openSettings() {
     document.getElementById('setSimpleMode').checked = localStorage.getItem('tsd_force_simple') === 'true';
     document.getElementById('settingsModal').style.display = 'flex';
 }
-
 function saveSettings() {
     settings.continuous = document.getElementById('setContinuous').checked;
     settings.sound = document.getElementById('setSound').checked;
@@ -1037,7 +766,6 @@ function saveSettings() {
     localStorage.setItem('tsd_settings', JSON.stringify(settings));
 }
 
-// === АДАПТИВНЫЙ ВИЗУАЛ: определение "тира" мощности устройства (переиспользуется после смены настройки) ===
 function computeFxTier() {
     if (localStorage.getItem('tsd_force_simple') === 'true') return 'low';
     const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1054,25 +782,27 @@ function toggleSimpleMode() {
     document.documentElement.setAttribute('data-fx', computeFxTier());
 }
 
-// === ЗВУКОВОЙ СИГНАЛ ===
 let audioCtx = null;
-function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+function initAudio() { 
+    if(!audioCtx) {
+        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } 
+        catch (e) { console.warn("Audio init error:", e); }
+    }
+}
 function playBeep() {
-    if (!settings.sound) return;
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    if (!settings.sound || !audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
     try {
         let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
         osc.type = 'sine'; osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
         gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
         osc.connect(gain); gain.connect(audioCtx.destination);
         osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-    } catch(e) {}
+    } catch(e) { console.warn("Beep play error:", e); }
 }
 
-// === КОПИРОВАНИЕ / УВЕЛИЧЕНИЕ ===
 let pressTimer;
 let isLongPress = false;
-
 window.startPress = function(e, text) {
     isLongPress = false;
     pressTimer = window.setTimeout(() => {
@@ -1081,25 +811,16 @@ window.startPress = function(e, text) {
         if (settings.vibro && navigator.vibrate) navigator.vibrate([50, 50, 50]);
     }, 500);
 };
+window.cancelPress = function() { if (pressTimer) clearTimeout(pressTimer); };
 
-window.cancelPress = function() {
-    if (pressTimer) clearTimeout(pressTimer);
-};
-
-// Единая функция отрисовки штрихкода с автоматическим fallback EAN13 -> CODE128 -> текст.
-// Раньше этот try/catch дублировался в трёх местах — теперь один helper.
 function renderBarcodeSafe(targetId, code, opts) {
     opts = opts || {};
     const el = document.getElementById(targetId);
     if (!el) return;
-    try {
-        JsBarcode(el, code, Object.assign({ format: "EAN13", lineColor: "#000", background: opts.background || "transparent" }, opts));
-    } catch (e) {
-        try {
-            JsBarcode(el, code, Object.assign({ format: "CODE128", lineColor: "#000", background: opts.background || "transparent" }, opts));
-        } catch (err) {
-            el.outerHTML = `<span style="font-family: monospace; font-weight: bold; font-size: 14px;">${code}</span>`;
-        }
+    try { JsBarcode(el, code, Object.assign({ format: "EAN13", lineColor: "#000", background: opts.background || "transparent" }, opts)); } 
+    catch (e) {
+        try { JsBarcode(el, code, Object.assign({ format: "CODE128", lineColor: "#000", background: opts.background || "transparent" }, opts)); } 
+        catch (err) { el.outerHTML = `<span style="font-family: monospace; font-weight: bold; font-size: 14px;">${code}</span>`; }
     }
 }
 
@@ -1112,103 +833,101 @@ window.handleBarcodeClick = function(code) {
 
 window.copyToClipboard = function(text) {
     if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => {
-            alert("Скопировано: " + text);
-        }).catch(err => fallbackCopyTextToClipboard(text));
-    } else {
-        fallbackCopyTextToClipboard(text);
-    }
+        navigator.clipboard.writeText(text).then(() => { alert("Скопировано: " + text); })
+        .catch(err => { console.warn("Clipboard API error:", err); fallbackCopyTextToClipboard(text); });
+    } else fallbackCopyTextToClipboard(text);
 };
 
 function fallbackCopyTextToClipboard(text) {
     var textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    try { document.execCommand('copy'); alert("Скопировано: " + text); } catch (err) {}
+    textArea.value = text; textArea.style.position = "fixed";
+    document.body.appendChild(textArea); textArea.focus(); textArea.select();
+    try { document.execCommand('copy'); alert("Скопировано: " + text); } 
+    catch (err) { console.warn("Fallback clipboard error:", err); }
     document.body.removeChild(textArea);
 }
 
-// === ОСНОВНАЯ ЛОГИКА КОРЗИНЫ ===
 const MASTER_CODES = { "14630557641291": { code: "4601501761856", qtyInBox: 50 } };
 let currentCart = [];
 let html5QrCode = null;
 let torchEnabled = false;
 
-// Кэш часто используемых DOM-узлов, чтобы не искать их по id в каждом рендере.
-const dom = {
-    cartTableBody: null,
-    cartStats: null
-};
-function cacheDom() {
-    dom.cartTableBody = document.getElementById('cartTableBody');
-    dom.cartStats = document.getElementById('cartStats');
-}
-
+const dom = { cartTableBody: null, cartStats: null };
+function cacheDom() { dom.cartTableBody = document.getElementById('cartTableBody'); dom.cartStats = document.getElementById('cartStats'); }
 window.onload = function() {
     cacheDom();
     const savedCart = localStorage.getItem('tsd_lite_cart');
-    if (savedCart) { try { currentCart = JSON.parse(savedCart); renderCart(); } catch(e) {} }
+    if (savedCart) { try { currentCart = JSON.parse(savedCart); renderCart(); } catch(e) { console.warn("Load cart error:", e); } }
 };
 function saveState() { localStorage.setItem('tsd_lite_cart', JSON.stringify(currentCart)); }
 
+function getSafeId(text) { return text.replace(/[^a-zA-Z0-9_-]/g, '_'); }
+
 function normalizeBarcode(text) {
     let cleanText = text.trim().replace(/[\x00-\x1F\x7F ]/g, '');
-    if (cleanText.startsWith("]d2") || cleanText.startsWith("]e0") || cleanText.startsWith("]C1")) {
-        cleanText = cleanText.substring(3);
-    }
-    if (cleanText.startsWith("01") && cleanText.length >= 16) {
-        let gtin = cleanText.substring(2, 16);
-        cleanText = gtin.startsWith("0") ? gtin.substring(1) : gtin;
-    }
-    if (cleanText.length === 14 && cleanText.startsWith("0")) {
-        cleanText = cleanText.substring(1);
-    }
-    if (cleanText.length === 13 && cleanText.startsWith("0")) {
-        cleanText = cleanText.substring(1);
-    }
+    if (cleanText.startsWith("]d2") || cleanText.startsWith("]e0") || cleanText.startsWith("]C1")) cleanText = cleanText.substring(3);
+    if (cleanText.startsWith("01") && cleanText.length >= 16) { let gtin = cleanText.substring(2, 16); cleanText = gtin.startsWith("0") ? gtin.substring(1) : gtin; }
+    if (cleanText.length === 14 && cleanText.startsWith("0")) cleanText = cleanText.substring(1);
+    if (cleanText.length === 13 && cleanText.startsWith("0")) cleanText = cleanText.substring(1);
     if (MASTER_CODES[cleanText]) cleanText = MASTER_CODES[cleanText].code;
     return cleanText;
 }
 
-// === УМНЫЙ РУЧНОЙ ВВОД (ПОДДЕРЖКА КЛАВИШИ ENTER) ===
 document.getElementById('codeInput').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        manualAdd();
-    }
+    if (e.key === 'Enter') { e.preventDefault(); manualAdd(); }
 });
-
-function focusManualInput() {
-    const card = document.querySelector('.input-card');
-    const input = document.getElementById('codeInput');
-    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setTimeout(() => { if (input) input.focus(); }, 250);
-}
 
 function manualAdd() {
     const input = document.getElementById('codeInput');
     const code = input.value;
     if (!code) return;
-    
-    let cleanCode = normalizeBarcode(code);
-    addOrUpdateItem(cleanCode, 1);
-    
+    addOrUpdateItem(normalizeBarcode(code), 1);
     playBeep();
     if (settings.vibro && navigator.vibrate) navigator.vibrate(50);
-    
-    input.value = '';
-    input.focus();
+    input.value = ''; input.focus();
 }
 
+function updateCartStats() {
+    let total = 0; currentCart.forEach(i => total += i.qty); 
+    const stats = dom.cartStats || document.getElementById('cartStats');
+    if (stats) stats.innerText = `${currentCart.length} строк (${total} шт.)`;
+}
+
+// === ОПТИМИЗИРОВАННОЕ ДОБАВЛЕНИЕ (Обновление DOM) ===
 function addOrUpdateItem(code, qty) {
+    const tbody = dom.cartTableBody || document.getElementById('cartTableBody');
     const existingIndex = currentCart.findIndex(item => item.code === code);
-    if (existingIndex !== -1) { currentCart[existingIndex].qty += qty; }
-    else { currentCart.unshift({ code: code, qty: qty }); }
-    saveState(); renderCart();
-    flashCartStats();
+    const safeId = getSafeId(code);
+    
+    if (existingIndex !== -1) { 
+        currentCart[existingIndex].qty += qty;
+        const qtyBox = document.getElementById(`qty-${safeId}`);
+        if (qtyBox) {
+            qtyBox.innerText = currentCart[existingIndex].qty;
+            qtyBox.style.transform = 'scale(1.15)';
+            qtyBox.style.borderColor = 'var(--btn-add)';
+            setTimeout(() => { qtyBox.style.transform = ''; qtyBox.style.borderColor = ''; }, 250);
+        }
+    } else { 
+        currentCart.unshift({ code: code, qty: qty }); 
+        const noData = tbody.querySelector('.no-data');
+        if (noData) noData.closest('tr').remove();
+        
+        const tr = document.createElement('tr');
+        tr.id = `tr-${safeId}`;
+        if (isHighFx()) tr.style.animation = 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+        
+        tr.innerHTML = `
+            <td class="inline-barcode-container" onmousedown="startPress(event, '${code}')" onmouseup="cancelPress()" onmouseleave="cancelPress()" ontouchstart="startPress(event, '${code}')" oncontextmenu="return false;" onclick="handleBarcodeClick('${code}')">
+                <div class="barcode-wrapper"><svg id="barcode-${safeId}"></svg></div>
+            </td>
+            <td><button class="qty-box" id="qty-${safeId}" onclick="showNumpadForEdit('${code}')">${qty}</button></td>
+            <td><button class="btn-remove" onclick="removeItemByCode('${code}')">✖</button></td>
+        `;
+        tbody.insertBefore(tr, tbody.firstChild);
+        renderBarcodeSafe(`barcode-${safeId}`, code, { width: 2, height: 45, displayValue: true, fontSize: 15, margin: 2 });
+    }
+    saveState(); updateCartStats(); flashCartStats();
 }
 
 function renderCart() {
@@ -1216,47 +935,48 @@ function renderCart() {
     tbody.innerHTML = '';
     if (currentCart.length === 0) {
         tbody.innerHTML = '<tr><td colspan="3" class="no-data">✨ Начните сканировать товары</td></tr>';
-    } else {
-        const fragment = document.createDocumentFragment();
-        const highFx = isHighFx();
-        currentCart.forEach((item, index) => {
-            const tr = document.createElement('tr');
-            if (highFx) tr.style.animationDelay = Math.min(index * 35, 280) + 'ms';
-            tr.innerHTML = `<td class="inline-barcode-container" onmousedown="startPress(event, '${item.code}')" onmouseup="cancelPress()" onmouseleave="cancelPress()" ontouchstart="startPress(event, '${item.code}')" oncontextmenu="return false;" onclick="handleBarcodeClick('${item.code}')">
-                <div class="barcode-wrapper">
-                    <svg id="barcode-${index}"></svg>
-                </div>
-            </td>
-            <td><button class="qty-box" onclick="showNumpadForEdit(${index})">${item.qty}</button></td>
-            <td><button class="btn-remove" onclick="removeItem(${index})">✖</button></td>`;
-            fragment.appendChild(tr);
-        });
-        tbody.appendChild(fragment);
-
-        currentCart.forEach((item, index) => {
-            renderBarcodeSafe('barcode-' + index, item.code, { width: 2, height: 45, displayValue: true, fontSize: 15, margin: 2 });
-        });
+        updateCartStats(); return;
     } 
-    let total = 0; 
-    currentCart.forEach(i => total += i.qty); 
-    (dom.cartStats || document.getElementById('cartStats')).innerText = `${currentCart.length} строк (${total} шт.)`;
+    const fragment = document.createDocumentFragment();
+    const highFx = isHighFx();
+    currentCart.forEach((item, index) => {
+        const safeId = getSafeId(item.code);
+        const tr = document.createElement('tr');
+        tr.id = `tr-${safeId}`;
+        if (highFx) tr.style.animationDelay = Math.min(index * 35, 280) + 'ms';
+        tr.innerHTML = `
+            <td class="inline-barcode-container" onmousedown="startPress(event, '${item.code}')" onmouseup="cancelPress()" onmouseleave="cancelPress()" ontouchstart="startPress(event, '${item.code}')" oncontextmenu="return false;" onclick="handleBarcodeClick('${item.code}')">
+                <div class="barcode-wrapper"><svg id="barcode-${safeId}"></svg></div>
+            </td>
+            <td><button class="qty-box" id="qty-${safeId}" onclick="showNumpadForEdit('${item.code}')">${item.qty}</button></td>
+            <td><button class="btn-remove" onclick="removeItemByCode('${item.code}')">✖</button></td>`;
+        fragment.appendChild(tr);
+    });
+    tbody.appendChild(fragment);
+    currentCart.forEach((item) => {
+        renderBarcodeSafe(`barcode-${getSafeId(item.code)}`, item.code, { width: 2, height: 45, displayValue: true, fontSize: 15, margin: 2 });
+    });
+    updateCartStats();
 }
 
-window.removeItem = function(index) { currentCart.splice(index, 1); saveState(); renderCart(); }
+window.removeItemByCode = function(code) { 
+    currentCart = currentCart.filter(item => item.code !== code); 
+    saveState(); 
+    const tr = document.getElementById(`tr-${getSafeId(code)}`);
+    if (tr) tr.remove();
+    if (currentCart.length === 0) {
+        const tbody = dom.cartTableBody || document.getElementById('cartTableBody');
+        tbody.innerHTML = '<tr><td colspan="3" class="no-data">✨ Начните сканировать товары</td></tr>';
+    }
+    updateCartStats(); 
+}
 
-// === ИСПРАВЛЕННАЯ ОЧИСТКА ===
 window.clearCart = function() { 
     if (currentCart.length === 0) return;
-    if (confirm("Очистить корзину?")) { 
-        currentCart = []; 
-        saveState(); 
-        renderCart(); 
-    } 
+    if (confirm("Очистить корзину?")) { currentCart = []; saveState(); renderCart(); } 
 }
 
-// === КЛАССИЧЕСКИЙ NUMPAD ===
-let numpadValue = "1"; let isNewNumpadEntry = true; let numpadMode = ""; let numpadTargetCode = ""; let numpadTargetIndex = -1; let numpadTargetBoxQty = 1;
-
+let numpadValue = "1"; let isNewNumpadEntry = true; let numpadMode = ""; let numpadTargetCode = ""; let numpadTargetBoxQty = 1;
 function updateNumpadDisplay() { document.getElementById('numpadDisplay').innerText = numpadValue === "" ? "0" : numpadValue; }
 
 function showNumpadForScan(code) {
@@ -1267,16 +987,17 @@ function showNumpadForScan(code) {
     updateNumpadDisplay(); document.getElementById('numpadModal').style.display = 'flex';
 }
 
-function showNumpadForEdit(index) {
-    numpadMode = 'edit'; numpadTargetIndex = index; numpadValue = currentCart[index].qty.toString(); isNewNumpadEntry = true;
-    document.getElementById('numpadTitle').innerText = "Изменить: " + currentCart[index].code;
+function showNumpadForEdit(code) {
+    const item = currentCart.find(i => i.code === code);
+    if (!item) return;
+    numpadMode = 'edit'; numpadTargetCode = code; numpadValue = item.qty.toString(); isNewNumpadEntry = true;
+    document.getElementById('numpadTitle').innerText = "Изменить: " + code;
     updateNumpadDisplay(); document.getElementById('numpadModal').style.display = 'flex';
 }
 
 function numPress(n) { if(isNewNumpadEntry || numpadValue === "0") { numpadValue = n.toString(); isNewNumpadEntry = false; } else { if(numpadValue.length < 4) numpadValue += n.toString(); } updateNumpadDisplay(); }
 function numClear() { numpadValue = "0"; isNewNumpadEntry = true; updateNumpadDisplay(); }
 function numBackspace() { if (isNewNumpadEntry) return; numpadValue = numpadValue.slice(0, -1); if (numpadValue === "") { numpadValue = "0"; isNewNumpadEntry = true; } updateNumpadDisplay(); }
-
 function numCancel() {
     document.getElementById('numpadModal').style.display = 'none';
     if (numpadMode === 'scan') { 
@@ -1294,25 +1015,19 @@ function numConfirm() {
         if (settings.continuous) { setTimeout(() => { isScannerPaused = false; if (isIOS) startRotateAssist(); }, 500); } 
         else { stopScanner(); }
     } else if(numpadMode === 'edit') {
-        currentCart[numpadTargetIndex].qty = finalQty;
-        saveState(); renderCart();
+        const item = currentCart.find(i => i.code === numpadTargetCode);
+        if (item) {
+            item.qty = finalQty;
+            saveState(); 
+            const qtyBox = document.getElementById(`qty-${getSafeId(numpadTargetCode)}`);
+            if (qtyBox) qtyBox.innerText = finalQty;
+            updateCartStats();
+        }
     }
 }
 
-// === СКАНЕР: адаптивный выбор объектива (основной/теле/макро) + зум + скан в любой ориентации ===
-let isScannerPaused = false;
-let cameraList = [];           // все задние камеры устройства
-let camerasByType = {};        // { main, ultrawide, telephoto, macro }
-let activeCameraId = null;     // id объектива, который сейчас используется потоком
-let currentZoomLevel = 1;      // 1 / 2 / 3 — то, что выбрал пользователь пилюлей
-let maxDigitalZoom = 1;        // максимум цифрового зума, который поддерживает активный сенсор
-let rotateAssistTimer = null;  // ассистент для чтения штрихкода в любом развороте (iOS)
-let scannerBusy = false;       // защита от повторного старта, пока идёт переключение камеры
+let isScannerPaused = false, cameraList = [], camerasByType = {}, activeCameraId = null, currentZoomLevel = 1, maxDigitalZoom = 1, rotateAssistTimer = null, scannerBusy = false;
 
-// Определяем тип объектива по его системному названию.
-// Названия камер не стандартизированы, поэтому это эвристика на ключевых словах (ru/en) —
-// она не обязана быть идеальной, важно лишь не спутать "основной" объектив с ultra-wide/macro,
-// с которых при сканировании вблизи всё будет размыто.
 function classifyLensLabel(label) {
     const l = (label || '').toLowerCase();
     if (/front|передн|user-facing|selfie/.test(l)) return 'front';
@@ -1322,35 +1037,23 @@ function classifyLensLabel(label) {
     return 'main';
 }
 
-// Собираем и классифицируем все задние камеры один раз при открытии сканера.
-// Работает одинаково на iOS и Android — раньше отдельная логика выбора объектива
-// была только для iOS, и Android часто доставался случайный объектив от браузера.
 async function detectCameras() {
-    camerasByType = {};
-    cameraList = [];
+    camerasByType = {}; cameraList = [];
     try {
         const devices = await Html5Qrcode.getCameras();
         if (!devices || !devices.length) return;
         const backCams = devices.filter(d => classifyLensLabel(d.label) !== 'front');
         cameraList = backCams.length ? backCams : devices;
-        // Если несколько устройств попали в одну и ту же категорию (типично для Android,
-        // где лейблы часто пустые/generic), сохраняем только первый найденный экземпляр.
         cameraList.forEach(d => {
             const type = classifyLensLabel(d.label);
             if (!camerasByType[type]) camerasByType[type] = d;
         });
-    } catch (e) { /* enumerateDevices недоступен без разрешения камеры — fallback на facingMode */ }
+    } catch (e) { console.warn("Camera detect error:", e); }
 }
 
-function pickDefaultCameraId() {
-    const preferred = camerasByType.main || camerasByType.telephoto || (cameraList[0] || null);
-    return preferred ? preferred.id : null;
-}
-
+function pickDefaultCameraId() { const preferred = camerasByType.main || camerasByType.telephoto || (cameraList[0] || null); return preferred ? preferred.id : null; }
 function updateZoomPillAvailability() {
     const btn3 = document.getElementById('zoomBtn3');
-    // Кнопку 3x показываем, только если реально есть отдельный телеобъектив
-    // или сенсор поддерживает достаточный цифровой зум — иначе она будет бесполезной.
     if (btn3) btn3.style.display = (camerasByType.telephoto || maxDigitalZoom >= 3) ? 'flex' : 'none';
 }
 
@@ -1364,7 +1067,7 @@ function readZoomCapabilities() {
             const caps = track.getCapabilities();
             if (caps && caps.zoom && caps.zoom.max) maxDigitalZoom = caps.zoom.max;
         }
-    } catch (e) {}
+    } catch (e) { console.warn("Read zoom capabilities error:", e); }
     updateZoomPillAvailability();
 }
 
@@ -1378,8 +1081,7 @@ function startScanner() {
 
     setTimeout(async () => {
         if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-        await detectCameras();
-        activeCameraId = pickDefaultCameraId();
+        await detectCameras(); activeCameraId = pickDefaultCameraId();
         const cameraSettings = activeCameraId ? { deviceId: { exact: activeCameraId } } : { facingMode: "environment" };
         await openCameraStream(cameraSettings);
     }, 300);
@@ -1387,48 +1089,39 @@ function startScanner() {
 
 const SCAN_CONFIG = {
     fps: 15,
-    // Рамка динамически подстраивается под размер видео и занимает почти весь кадр —
-    // это даёт декодеру больше пикселей на анализ и заметно повышает шанс поймать код.
     qrbox: function (viewfinderWidth, viewfinderHeight) {
         const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-        const size = Math.floor(minEdge * 0.9);
-        return { width: size, height: size };
+        return { width: Math.floor(minEdge * 0.9), height: Math.floor(minEdge * 0.9) };
     },
     disableFlip: false,
-    formatsToSupport: [
-        Html5QrcodeSupportedFormats.EAN_13,
-        Html5QrcodeSupportedFormats.EAN_8,
-        Html5QrcodeSupportedFormats.UPC_A,
-        Html5QrcodeSupportedFormats.DATA_MATRIX,
-        Html5QrcodeSupportedFormats.CODE_128,
-        Html5QrcodeSupportedFormats.QR_CODE
-    ],
-    // Там, где браузер поддерживает нативный Shape Detection API (BarcodeDetector — сейчас
-    // это Chrome/Android), отдаём декодирование ему: он заметно точнее и меньше зависит
-    // от разворота штрихкода, чем JS-декодер. На Safari/iOS этот API отсутствует (ограничение
-    // WebKit) — там разворот компенсирует отдельный "ассистент" (см. startRotateAssist).
+    formatsToSupport: [ Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.EAN_8, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.QR_CODE ],
     experimentalFeatures: { useBarCodeDetectorIfSupported: true }
 };
 
 function openCameraStream(cameraSettings) {
     scannerBusy = true;
     return html5QrCode.start(cameraSettings, SCAN_CONFIG, onScanFrameDecoded, undefined).then(() => {
-        scannerBusy = false;
-        setTimeout(readZoomCapabilities, 300);
-        // Небольшой стартовый зум на iPhone помогает камере сфокусироваться на мелких кодах вблизи.
+        scannerBusy = false; setTimeout(readZoomCapabilities, 300);
         if (isIOS) {
-            setTimeout(() => { try { html5QrCode.applyVideoConstraints({ advanced: [{ zoom: 1.5 }] }); } catch (e) {} }, 400);
+            setTimeout(() => { 
+                try { 
+                    const videoEl = document.querySelector('#reader video');
+                    const stream = videoEl && videoEl.srcObject;
+                    const track = stream && stream.getVideoTracks && stream.getVideoTracks()[0];
+                    if (track && track.getCapabilities) {
+                        const caps = track.getCapabilities();
+                        if (caps.zoom) track.applyConstraints({ advanced: [{ zoom: Math.min(1.5, caps.zoom.max) }] });
+                    }
+                } catch (e) { console.warn("Initial iOS Zoom error:", e); } 
+            }, 400);
             startRotateAssist();
         }
     }).catch((err) => {
-        scannerBusy = false;
-        document.getElementById('scannerModal').style.display = 'none';
+        scannerBusy = false; document.getElementById('scannerModal').style.display = 'none';
         alert("Ошибка камеры: " + err);
     });
 }
 
-// Единая точка обработки успешно распознанного текста — вызывается и из live-сканера,
-// и из "ассистента" для повёрнутых штрихкодов, чтобы логика не дублировалась.
 function handleDecodedText(rawTextIn) {
     if (isScannerPaused) return;
     let rawText = rawTextIn.trim();
@@ -1436,46 +1129,26 @@ function handleDecodedText(rawTextIn) {
     if (rawText.includes("-") && /\d-\d/.test(rawText)) {
         isScannerPaused = true; playBeep();
         if (settings.vibro && navigator.vibrate) navigator.vibrate(100);
-        let items = rawText.split(" ");
-        let addedCount = 0;
+        let items = rawText.split(" "); let addedCount = 0;
         items.forEach(function (itemStr) {
             let parts = itemStr.split("-");
             if (parts.length === 2) {
-                let barcode = normalizeBarcode(parts[0]);
-                let qty = parseInt(parts[1]);
-                if (barcode && barcode.length > 0 && !isNaN(qty) && qty > 0) {
-                    const existingIndex = currentCart.findIndex(item => item.code === barcode);
-                    if (existingIndex !== -1) { currentCart[existingIndex].qty += qty; }
-                    else { currentCart.unshift({ code: barcode, qty: qty }); }
-                    addedCount++;
-                }
+                let barcode = normalizeBarcode(parts[0]); let qty = parseInt(parts[1]);
+                if (barcode && barcode.length > 0 && !isNaN(qty) && qty > 0) { addOrUpdateItem(barcode, qty); addedCount++; }
             }
         });
-
-        if (addedCount > 0) {
-            saveState(); renderCart(); flashCartStats(); stopScanner();
-            setTimeout(() => alert("Успешно распаковано " + addedCount + " позиций из Excel!"), 200);
-        } else {
-            isScannerPaused = false;
-        }
+        if (addedCount > 0) { setTimeout(() => alert("Успешно распаковано " + addedCount + " позиций из Excel!"), 200); stopScanner(); } 
+        else isScannerPaused = false;
         return;
     }
 
     let cleanCode = normalizeBarcode(rawText);
     playBeep();
     if (settings.vibro && navigator.vibrate) navigator.vibrate(100);
-    isScannerPaused = true;
-    stopRotateAssist();
-    showNumpadForScan(cleanCode);
+    isScannerPaused = true; stopRotateAssist(); showNumpadForScan(cleanCode);
 }
-
 function onScanFrameDecoded(text) { handleDecodedText(text); }
 
-// === АССИСТЕНТ ЧТЕНИЯ ШТРИХКОДА В ЛЮБОМ РАЗВОРОТЕ (для iOS) ===
-// zxing (внутри html5-qrcode) для 1D-кодов уверенно читает код только близко к горизонтали.
-// На iOS нет нативного BarcodeDetector, который умеет это лучше, поэтому раз в ~900мс
-// берём кадр с камеры, поворачиваем его на 90° и прогоняем через отдельный разовый декодер.
-// Так вертикально поднесённый штрихкод тоже считывается — просто с небольшой задержкой.
 function startRotateAssist() {
     stopRotateAssist();
     rotateAssistTimer = setInterval(() => {
@@ -1483,13 +1156,8 @@ function startRotateAssist() {
         const videoEl = document.querySelector('#reader video');
         if (!videoEl || videoEl.readyState < 2 || !videoEl.videoWidth) return;
         try {
-            const canvas = document.createElement('canvas');
-            canvas.width = videoEl.videoHeight;
-            canvas.height = videoEl.videoWidth;
-            const ctx = canvas.getContext('2d');
-            ctx.translate(canvas.width / 2, canvas.height / 2);
-            ctx.rotate(Math.PI / 2);
-            ctx.drawImage(videoEl, -videoEl.videoWidth / 2, -videoEl.videoHeight / 2);
+            const canvas = document.createElement('canvas'); canvas.width = videoEl.videoHeight; canvas.height = videoEl.videoWidth;
+            const ctx = canvas.getContext('2d'); ctx.translate(canvas.width / 2, canvas.height / 2); ctx.rotate(Math.PI / 2); ctx.drawImage(videoEl, -videoEl.videoWidth / 2, -videoEl.videoHeight / 2);
             canvas.toBlob(async (blob) => {
                 if (!blob || isScannerPaused) return;
                 try {
@@ -1498,19 +1166,16 @@ function startRotateAssist() {
                     try {
                         const result = await tempScanner.scanFileV2(file, false);
                         if (result && result.decodedText && !isScannerPaused) handleDecodedText(result.decodedText);
-                    } catch (noCodeFound) { /* обычная ситуация — в повёрнутом кадре кода не нашлось */ }
+                    } catch (noCodeFound) { }
                     tempScanner.clear();
-                } catch (e) {}
+                } catch (e) { console.warn("Rotate assist processing error:", e); }
             }, 'image/png');
-        } catch (e) {}
+        } catch (e) { console.warn("Rotate assist canvas error:", e); }
     }, 900);
 }
-function stopRotateAssist() {
-    if (rotateAssistTimer) { clearInterval(rotateAssistTimer); rotateAssistTimer = null; }
-}
+function stopRotateAssist() { if (rotateAssistTimer) { clearInterval(rotateAssistTimer); rotateAssistTimer = null; } }
 
-// === ПЕРЕКЛЮЧЕНИЕ ЗУМА: используем оптику (отдельный телеобъектив), если она есть у устройства,
-// иначе — цифровой зум сенсора через applyVideoConstraints ===
+// === ОПТИМИЗИРОВАННЫЙ ЗУМ (работа напрямую через Video Track) ===
 async function setZoomLevel(level) {
     if (!html5QrCode || scannerBusy) return;
     currentZoomLevel = level;
@@ -1519,37 +1184,38 @@ async function setZoomLevel(level) {
     const wantsTelephoto = level >= 2 && camerasByType.telephoto;
     const usingTelephoto = activeCameraId === (camerasByType.telephoto && camerasByType.telephoto.id);
 
-    if (wantsTelephoto && !usingTelephoto) {
-        activeCameraId = camerasByType.telephoto.id;
-        await switchCameraDevice(activeCameraId);
-        return;
-    }
-    if (level === 1 && usingTelephoto) {
-        activeCameraId = pickDefaultCameraId();
-        await switchCameraDevice(activeCameraId);
-        return;
-    }
+    if (wantsTelephoto && !usingTelephoto) { activeCameraId = camerasByType.telephoto.id; await switchCameraDevice(activeCameraId); return; }
+    if (level === 1 && usingTelephoto) { activeCameraId = pickDefaultCameraId(); await switchCameraDevice(activeCameraId); return; }
+    
     try {
-        const zoomTarget = Math.min(level, Math.max(maxDigitalZoom, level));
-        await html5QrCode.applyVideoConstraints({ advanced: [{ zoom: zoomTarget }] });
-    } catch (e) { /* сенсор не поддерживает программный зум — оптического переключения тоже нет, оставляем 1x */ }
+        const videoEl = document.querySelector('#reader video');
+        const stream = videoEl && videoEl.srcObject;
+        const track = stream && stream.getVideoTracks && stream.getVideoTracks()[0];
+        
+        if (track) {
+            const caps = track.getCapabilities ? track.getCapabilities() : {};
+            if (caps.zoom) {
+                const zoomTarget = Math.min(level, caps.zoom.max);
+                await track.applyConstraints({ advanced: [{ zoom: zoomTarget }] });
+            } else {
+                // Fallback, если getCapabilities() вернул пустой объект (некоторые старые браузеры)
+                const zoomTarget = Math.min(level, Math.max(maxDigitalZoom, level));
+                await html5QrCode.applyVideoConstraints({ advanced: [{ zoom: zoomTarget }] });
+            }
+        }
+    } catch (e) { console.warn("Ошибка применения зума:", e); }
 }
 
 function switchCameraDevice(deviceId) {
     if (!deviceId || scannerBusy) return Promise.resolve();
     scannerBusy = true;
-    return html5QrCode.stop().then(() => {
-        return openCameraStream({ deviceId: { exact: deviceId } });
-    }).catch(() => { scannerBusy = false; });
+    return html5QrCode.stop().then(() => openCameraStream({ deviceId: { exact: deviceId } })).catch(() => { scannerBusy = false; });
 }
 
 function stopScanner() {
     stopRotateAssist();
     if (html5QrCode) {
-        html5QrCode.stop().then(() => {
-            html5QrCode.clear();
-            html5QrCode = null;
-        }).catch(err => {});
+        html5QrCode.stop().then(() => { html5QrCode.clear(); html5QrCode = null; }).catch(err => { console.warn("Stop scanner error:", err); });
     }
     document.getElementById('scannerModal').style.display = 'none';
 }
@@ -1557,9 +1223,7 @@ function stopScanner() {
 function toggleTorch() {
     if (!html5QrCode || html5QrCode.getState() !== 2) return;
     torchEnabled = !torchEnabled;
-    html5QrCode.applyVideoConstraints({
-        advanced: [{ torch: torchEnabled }]
-    }).then(() => {
+    html5QrCode.applyVideoConstraints({ advanced: [{ torch: torchEnabled }] }).then(() => {
         document.getElementById('torchBtn').innerText = torchEnabled ? '🔦 Выключить' : '🔦 Фонарик';
     }).catch(err => {
         alert("Фонарик не поддерживается на этом устройстве");
@@ -1567,152 +1231,76 @@ function toggleTorch() {
     });
 }
 
-// === ГЕНЕРАЦИЯ QR И АРХИВ С ИСПОЛЬЗОВАНИЕМ НОВОЙ БИБЛИОТЕКИ ===
 function showTransferQR() {
-    if (currentCart.length === 0) {
-        alert("Корзина пуста!"); return;
-    }
+    if (currentCart.length === 0) { alert("Корзина пуста!"); return; }
     let payload = currentCart.map(item => `${item.code}-${item.qty}`).join(" ");
-
-    // Сначала сохраняем в архив — так выгрузка не потеряется,
-    // даже если библиотека QR почему-то не подгрузится (например, нет сети).
     addToArchive(currentCart.length, currentCart.reduce((sum, item) => sum + item.qty, 0), payload);
 
-    if (typeof QRCode === 'undefined') {
-        alert("Не удалось загрузить библиотеку генерации QR-кода. Проверьте интернет-соединение и попробуйте снова. Данные уже сохранены в архив.");
-        return;
-    }
-
+    if (typeof QRCode === 'undefined') { alert("Не удалось загрузить библиотеку генерации QR-кода. Проверьте интернет-соединение и попробуйте снова. Данные уже сохранены в архив."); return; }
     document.getElementById('qrModal').style.display = 'flex';
-    
-    let canvas = document.getElementById('finalQrCanvas');
-    canvas.style.display = 'block';
-    
+    let canvas = document.getElementById('finalQrCanvas'); canvas.style.display = 'block';
     QRCode.toCanvas(canvas, payload, { width: 340, margin: 2, color: { dark: '#000000', light: '#ffffff' } }, function (error) {
-        if (error) {
-            console.error(error);
-            alert("Не удалось сгенерировать QR-код: " + error);
-        }
+        if (error) { console.error(error); alert("Не удалось сгенерировать QR-код: " + error); }
     });
 }
 
 function closeQRModal() { document.getElementById('qrModal').style.display = 'none'; }
-
 function downloadQR() {
-    let canvas = document.getElementById('finalQrCanvas');
-    let url = canvas.toDataURL("image/png");
-    let link = document.createElement('a');
-    link.download = 'Мой_ТСД_QR_' + new Date().getTime() + '.png';
-    link.href = url;
-    link.click();
+    let canvas = document.getElementById('finalQrCanvas'); let url = canvas.toDataURL("image/png");
+    let link = document.createElement('a'); link.download = 'Мой_ТСД_QR_' + new Date().getTime() + '.png';
+    link.href = url; link.click();
 }
-
 function shareToExcel() {
-    let payload = currentCart.map(item => `${item.code}-${item.qty}`).join(" ");
-    copyToClipboard(payload);
+    let payload = currentCart.map(item => `${item.code}-${item.qty}`).join(" "); copyToClipboard(payload);
 }
 
-// === АРХИВ И ВОССТАНОВЛЕНИЕ ДАННЫХ ===
 function addToArchive(lines, totalQty, payload) {
-    let archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
-    let now = new Date();
+    let archive = JSON.parse(localStorage.getItem('tsd_archive')) || []; let now = new Date();
     let dateStr = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU');
     archive.unshift({ date: dateStr, lines: lines, totalQty: totalQty, payload: payload });
-    if (archive.length > 15) archive.pop();
-    localStorage.setItem('tsd_archive', JSON.stringify(archive));
-    renderArchive();
+    if (archive.length > 15) archive.pop(); localStorage.setItem('tsd_archive', JSON.stringify(archive)); renderArchive();
 }
 
-function openArchive() {
-    renderArchive();
-    document.getElementById('archiveModal').style.display = 'flex';
-}
-
+function openArchive() { renderArchive(); document.getElementById('archiveModal').style.display = 'flex'; }
 function renderArchive() {
-    let archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
-    let container = document.getElementById('archiveList');
-    container.innerHTML = '';
-    if (archive.length === 0) {
-        container.innerHTML = '<div style="text-align:center; color:gray; padding:20px; font-weight:bold;">Архив пуст</div>';
-        return;
-    }
+    let archive = JSON.parse(localStorage.getItem('tsd_archive')) || []; let container = document.getElementById('archiveList'); container.innerHTML = '';
+    if (archive.length === 0) { container.innerHTML = '<div style="text-align:center; color:gray; padding:20px; font-weight:bold;">Архив пуст</div>'; return; }
     archive.forEach((item, index) => {
-        let div = document.createElement('div');
-        div.className = 'archive-item';
+        let div = document.createElement('div'); div.className = 'archive-item';
         div.innerHTML = `
-            <div class="archive-info-row">
-                <div class="archive-date">${item.date}</div>
-                <div class="archive-stats">Строк: ${item.lines} | Шт: ${item.totalQty}</div>
-            </div>
-            <div class="archive-actions">
-                <button class="archive-btn-secondary" onclick="restoreArchiveToTable(${index})">В таблицу</button>
-                <button class="archive-btn" onclick="restoreArchive(${index})">Открыть QR</button>
-            </div>
-        `;
+            <div class="archive-info-row"><div class="archive-date">${item.date}</div><div class="archive-stats">Строк: ${item.lines} | Шт: ${item.totalQty}</div></div>
+            <div class="archive-actions"><button class="archive-btn-secondary" onclick="restoreArchiveToTable(${index})">В таблицу</button><button class="archive-btn" onclick="restoreArchive(${index})">Открыть QR</button></div>`;
         container.appendChild(div);
     });
 }
 
-// Показать QR-код из архива
 window.restoreArchive = function(index) {
-    let archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
-    if (!archive[index]) return;
+    let archive = JSON.parse(localStorage.getItem('tsd_archive')) || []; if (!archive[index]) return;
     let payload = archive[index].payload;
-
-    if (typeof QRCode === 'undefined') {
-        alert("Не удалось загрузить библиотеку генерации QR-кода. Проверьте интернет-соединение и попробуйте снова.");
-        return;
-    }
-    
-    document.getElementById('archiveModal').style.display = 'none';
-    document.getElementById('qrModal').style.display = 'flex';
-    
-    let canvas = document.getElementById('finalQrCanvas');
-    canvas.style.display = 'block';
-    
-    QRCode.toCanvas(canvas, payload, { width: 340, margin: 2, color: { dark: '#000000', light: '#ffffff' } }, function (error) {
-        if (error) {
-            console.error(error);
-            alert("Не удалось сгенерировать QR-код: " + error);
-        }
-    });
+    if (typeof QRCode === 'undefined') { alert("Не удалось загрузить библиотеку генерации QR-кода. Проверьте интернет-соединение и попробуйте снова."); return; }
+    document.getElementById('archiveModal').style.display = 'none'; document.getElementById('qrModal').style.display = 'flex';
+    let canvas = document.getElementById('finalQrCanvas'); canvas.style.display = 'block';
+    QRCode.toCanvas(canvas, payload, { width: 340, margin: 2, color: { dark: '#000000', light: '#ffffff' } }, function (error) { if (error) { console.error(error); alert("Не удалось сгенерировать QR-код: " + error); } });
 };
 
-// Восстановить данные из архива в корзину
 window.restoreArchiveToTable = function(index) {
-    let archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
-    if (!archive[index]) return;
-    
-    if (currentCart.length > 0) {
-        if (!confirm("Внимание! Текущие данные в корзине будут стерты.\nВы точно хотите загрузить старые данные из архива?")) return;
-    }
-    
-    let payload = archive[index].payload;
-    currentCart = [];
-    
+    let archive = JSON.parse(localStorage.getItem('tsd_archive')) || []; if (!archive[index]) return;
+    if (currentCart.length > 0) { if (!confirm("Внимание! Текущие данные в корзине будут стерты.\nВы точно хотите загрузить старые данные из архива?")) return; }
+    let payload = archive[index].payload; currentCart = [];
     if (payload) {
         let items = payload.split(" ");
         items.forEach(itemStr => {
             let parts = itemStr.split("-");
-            if (parts.length === 2) {
-                currentCart.push({ code: parts[0], qty: parseInt(parts[1]) });
-            }
+            if (parts.length === 2) currentCart.push({ code: parts[0], qty: parseInt(parts[1]) });
         });
     }
-    
-    saveState();
-    renderCart();
-    document.getElementById('archiveModal').style.display = 'none';
+    saveState(); renderCart(); document.getElementById('archiveModal').style.display = 'none';
 };
 
-// === РЕГИСТРАЦИЯ SERVICE WORKER (ДЛЯ ОФФЛАЙН РАБОТЫ И PWA) ===
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('sw.js').then(function(registration) {
-      console.log('ServiceWorker успешно зарегистрирован');
-    }).catch(function(err) {
-      console.log('Регистрация ServiceWorker провалилась: ', err);
-    });
+    navigator.serviceWorker.register('sw.js').then(function(registration) { console.log('ServiceWorker успешно зарегистрирован'); })
+    .catch(function(err) { console.log('Регистрация ServiceWorker провалилась: ', err); });
   });
 }
 </script>
