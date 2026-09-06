@@ -285,11 +285,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .btn-numpad-ok { flex: 2; background: var(--btn-add); color: white; border: none; border-radius: 20px; font-size: 18px; font-weight: 800; padding: 18px 0; cursor: pointer; box-shadow: 0 8px 20px rgba(5, 150, 105, 0.32); transition: transform var(--t-fast);}
 .btn-numpad-cancel:active, .btn-numpad-ok:active { transform: scale(0.94); }
 
-/* ---------- НАСТРОЙКИ: ЕДИНЫЙ КРОССПЛАТФОРМЕННЫЙ ПЕРЕКЛЮЧАТЕЛЬ ----------
-   Реализован БЕЗ <input type=checkbox> — только div/JS.
-   На iOS Safari и Android Chrome выглядит и ведёт себя одинаково,
-   потому что нет никакого нативного контрола, который браузер
-   мог бы отрисовать по-своему. Это и убирает "кривые" переключатели. */
+/* ---------- НАСТРОЙКИ: ЕДИНЫЙ КРОССПЛАТФОРМЕННЫЙ ПЕРЕКЛЮЧАТЕЛЬ ---------- */
 .settings-section { text-align: left; margin-bottom: 4px; }
 .settings-section-title { font-size: 12.5px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; padding: 14px 2px 8px; }
 .settings-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 15px 2px; border-bottom: 1px solid var(--border-color); }
@@ -786,7 +782,7 @@ window.addEventListener("beforeunload", function (e) {
     }
 });
 
-/* ================= НАСТРОЙКИ (единый toggle-компонент) ================= */
+/* ================= НАСТРОЙКИ ================= */
 let settings = Object.assign({ theme: 'light', continuous: true, sound: true, vibro: true, autolens: true }, JSON.parse(localStorage.getItem('tsd_settings')) || {});
 
 function applyTheme(theme) {
@@ -1052,14 +1048,7 @@ function numConfirm() {
     }
 }
 
-/* ================= КАМЕРА: адаптивный выбор объектива + высокое разрешение =================
-   Логика:
-   1. Камеры классифицируются по названию лейбла: main / ultrawide / macro / telephoto / front.
-   2. Запрашиваем максимально доступное разрешение (до 1920x1080 / 30fps) — чёткость и скорость.
-   3. Если включён «Авто-объектив»: пока идёт непрерывный скан и код не находится дольше
-      SMART_SWITCH_MS — по кругу пробуем макро (для мелких DataMatrix в упор) и телевик
-      (для штрихкодов на удалении), затем возвращаемся на основной объектив.
-   4. Ручные кнопки 1x/2x/3x/🔬 всегда есть под рукой на всякий случай. */
+/* ================= КАМЕРА ================= */
 let isScannerPaused = false, cameraList = [], camerasByType = {}, activeCameraId = null, currentZoomLevel = 1, maxDigitalZoom = 1, rotateAssistTimer = null, scannerBusy = false;
 let smartLensTimer = null, lastFrameTime = 0, smartLensCycleIndex = 0;
 const SMART_SWITCH_MS = 3200;
@@ -1138,7 +1127,6 @@ function startScanner() {
     }, 300);
 }
 
-/* Требуем высокое разрешение (Full HD, до 30fps) для чёткости и скорости распознавания. */
 const SCAN_CONFIG = {
     fps: 20,
     qrbox: function (viewfinderWidth, viewfinderHeight) {
@@ -1146,24 +1134,30 @@ const SCAN_CONFIG = {
         return { width: Math.floor(minEdge * 0.9), height: Math.floor(minEdge * 0.9) };
     },
     disableFlip: false,
-    videoConstraints: undefined,
     formatsToSupport: [ Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.EAN_8, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.CODE_39, Html5QrcodeSupportedFormats.QR_CODE ],
     experimentalFeatures: { useBarCodeDetectorIfSupported: true }
 };
 
 function buildCameraConstraints(base) {
-    // Просим максимально доступное разрешение: до 1920x1080 @ 30fps.
+    // Безопасный запрос высокого разрешения ТОЛЬКО через ideal. 
+    // Без жестких min/max, чтобы избежать сбоев OverconstrainedError.
     return Object.assign({}, base, {
-        width: { min: 1280, ideal: 1920, max: 3840 },
-        height: { min: 720, ideal: 1080, max: 2160 },
-        frameRate: { ideal: 30, max: 30 }
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
     });
 }
 
 function openCameraStream(cameraSettings) {
     scannerBusy = true;
-    const constraints = buildCameraConstraints(cameraSettings);
-    return html5QrCode.start(constraints, SCAN_CONFIG, onScanFrameDecoded, undefined).then(() => {
+    let config = Object.assign({}, SCAN_CONFIG);
+    
+    // Передаем кастомные videoConstraints правильно, без сбоев:
+    let videoConstraints = buildCameraConstraints({});
+    if (cameraSettings.deviceId) videoConstraints.deviceId = cameraSettings.deviceId;
+    else if (cameraSettings.facingMode) videoConstraints.facingMode = cameraSettings.facingMode;
+    config.videoConstraints = videoConstraints;
+
+    return html5QrCode.start(cameraSettings, config, onScanFrameDecoded, undefined).then(() => {
         scannerBusy = false;
         setTimeout(() => { readZoomCapabilities(); applyContinuousFocus(); }, 300);
         if (isIOS) {
@@ -1182,8 +1176,11 @@ function openCameraStream(cameraSettings) {
         }
         startSmartLensWatcher();
     }).catch((err) => {
-        // Если запрос высокого разрешения не поддержан устройством — пробуем без него.
-        return html5QrCode.start(cameraSettings, SCAN_CONFIG, onScanFrameDecoded, undefined).then(() => {
+        // Надежный фолбэк: если кастомное разрешение всё же не поддерживается, запускаем без него.
+        let safeConfig = Object.assign({}, SCAN_CONFIG);
+        delete safeConfig.videoConstraints;
+
+        return html5QrCode.start(cameraSettings, safeConfig, onScanFrameDecoded, undefined).then(() => {
             scannerBusy = false;
             setTimeout(() => { readZoomCapabilities(); applyContinuousFocus(); }, 300);
             startSmartLensWatcher();
@@ -1194,7 +1191,6 @@ function openCameraStream(cameraSettings) {
     });
 }
 
-/* Авто-объектив: если долго нет распознавания в непрерывном режиме — пробуем другой объектив. */
 function startSmartLensWatcher() {
     stopSmartLensWatcher();
     if (!settings.autolens) return;
@@ -1310,11 +1306,17 @@ async function setZoomLevel(level) {
 function switchCameraDevice(deviceId) {
     if (!deviceId || scannerBusy) return Promise.resolve();
     scannerBusy = true;
-    const constraints = buildCameraConstraints({ deviceId: { exact: deviceId } });
-    return html5QrCode.stop().then(() => html5QrCode.start(constraints, SCAN_CONFIG, onScanFrameDecoded, undefined)).then(() => {
+    
+    let config = Object.assign({}, SCAN_CONFIG);
+    config.videoConstraints = buildCameraConstraints({ deviceId: { exact: deviceId } });
+
+    return html5QrCode.stop().then(() => html5QrCode.start(deviceId, config, onScanFrameDecoded, undefined)).then(() => {
         scannerBusy = false; setTimeout(() => { readZoomCapabilities(); applyContinuousFocus(); }, 250);
     }).catch(() => {
-        return html5QrCode.start({ deviceId: { exact: deviceId } }, SCAN_CONFIG, onScanFrameDecoded, undefined).then(() => {
+        let safeConfig = Object.assign({}, SCAN_CONFIG);
+        delete safeConfig.videoConstraints;
+
+        return html5QrCode.start(deviceId, safeConfig, onScanFrameDecoded, undefined).then(() => {
             scannerBusy = false; setTimeout(() => { readZoomCapabilities(); applyContinuousFocus(); }, 250);
         }).catch(() => { scannerBusy = false; });
     });
