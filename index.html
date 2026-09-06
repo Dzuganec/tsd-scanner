@@ -290,9 +290,17 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 #reader video { object-fit: cover !important; width: 100%; height: 100%; }
 
 .scan-orientation-hint { position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; pointer-events: none; z-index: 5; font-size: 13px; font-weight: 800; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); padding: 0 10px; }
-.lens-status { position: absolute; left: 12px; top: 14px; z-index: 6; background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); color: #fff; font-size: 11px; font-weight: 800; padding: 6px 10px; border-radius: 20px; display: flex; align-items: center; gap: 5px; transition: opacity var(--t-fast); }
-.lens-status .dot { width: 7px; height: 7px; border-radius: 50%; background: #34d399; animation: dotPulse 1.6s infinite ease-in-out; }
-@keyframes dotPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* НОВАЯ КНОПКА ФОНАРИКА ПОВЕРХ КАМЕРЫ */
+.btn-icon-torch {
+    position: absolute; right: 12px; top: 14px; z-index: 6;
+    background: rgba(0,0,0,0.48); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    color: #fff; font-size: 18px; width: 42px; height: 42px; border-radius: 50%;
+    border: none; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all var(--t-fast) var(--ease-spring);
+}
+.btn-icon-torch.active { background: #f59e0b; color: #111; box-shadow: 0 0 15px rgba(245, 158, 11, 0.6); }
+.btn-icon-torch:active { transform: scale(0.85); }
 
 .zoom-pill { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); display: flex; gap: 4px; background: rgba(0,0,0,0.48); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 22px; padding: 4px; z-index: 6; }
 .zoom-btn { border: none; background: transparent; color: rgba(255,255,255,0.75); font-weight: 800; font-size: 12.5px; padding: 8px 12px; border-radius: 17px; cursor: pointer; transition: all var(--t-fast) var(--ease-spring); }
@@ -303,8 +311,6 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 
 .btn-modal { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-weight: 800; font-size: 16px; margin-top: 10px; cursor: pointer; transition: transform var(--t-fast) var(--ease-spring);}
 .btn-modal:active { transform: scale(0.96); }
-.btn-torch { background: #374151; color: white; }
-.btn-torch.active { background: #f59e0b; color: #111; }
 .btn-close { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); }
 
 .instruction-content { padding: 10px 0; font-size: 15px; color: var(--text-muted); font-weight: 600; text-align: left;}
@@ -449,7 +455,6 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     </div>
 
     <div class="card input-card">
-        <!-- ИСПРАВЛЕНИЕ: Добавлен inputmode="numeric" для вызова цифровой клавиатуры -->
         <input type="text" inputmode="numeric" pattern="[0-9]*" id="codeInput" class="input-field" placeholder="Введите артикул...">
         <button class="btn-manual-add" onclick="manualAdd()">✚</button>
     </div>
@@ -520,7 +525,7 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
             </p>
             <div style="background: var(--input-bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color);">
                 <p style="margin: 0 0 8px 0; font-size: 16px; font-weight: 800; color: var(--text-main);">👨‍💻 Джугань Сергей</p>
-                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">Версия: 6.4 (Улучшенный UI Светлой темы + Нумпад)</p>
+                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">Версия: 6.5 (Обновленный интерфейс камеры)</p>
             </div>
         </div>
         <button class="btn-modal btn-close" onclick="document.getElementById('aboutModal').style.display='none'">Закрыть</button>
@@ -574,7 +579,9 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
 
         <div class="scanner-wrapper">
             <div id="reader"></div>
-            <div class="lens-status" id="lensStatus"><span class="dot"></span><span id="lensStatusText">Основная</span></div>
+            
+            <button class="btn-icon-torch" id="torchBtn" onclick="toggleTorch()">🔦</button>
+
             <div class="scan-orientation-hint" id="orientationHint">📦 Наведите на любой штрихкод</div>
             <div class="zoom-pill" id="zoomPill">
                 <button class="zoom-btn active" data-zoom="1" onclick="setZoomLevel(1)">1x</button>
@@ -586,7 +593,6 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
 
         <div id="rotate-assist-hidden" style="display:none;"></div>
         <div class="scanner-controls-row">
-            <button class="btn-modal btn-torch" id="torchBtn" onclick="toggleTorch()" style="margin-top:0;">🔦 Фонарик</button>
             <button class="btn-modal btn-close" onclick="stopScanner()" style="margin-top:0;">Завершить</button>
         </div>
     </div>
@@ -1232,7 +1238,6 @@ function numConfirm() {
 let isScannerPaused = false, cameraList = [], camerasByType = {}, activeCameraId = null, currentZoomLevel = 1, maxDigitalZoom = 1, rotateAssistTimer = null, scannerBusy = false;
 let smartLensTimer = null, lastFrameTime = 0, smartLensCycleIndex = 0;
 const SMART_SWITCH_MS = 3200;
-const LENS_LABELS = { main: 'Основная', macro: 'Макро', telephoto: 'Телевик', ultrawide: 'Широкий' };
 
 function classifyLensLabel(label) {
     const l = (label || '').toLowerCase();
@@ -1260,7 +1265,6 @@ function updateZoomPillAvailability() {
     const btnMacro = document.getElementById('zoomBtnMacro');
     if (btnMacro) btnMacro.style.display = camerasByType.macro ? 'flex' : 'none';
 }
-function setLensStatus(text) { const el = document.getElementById('lensStatusText'); if (el) el.innerText = text; }
 
 function readZoomCapabilities() {
     maxDigitalZoom = 1;
@@ -1297,7 +1301,6 @@ function startScanner() {
     document.getElementById('iosScanHint').style.display = isIOS ? 'block' : 'none';
     currentZoomLevel = 1;
     document.querySelectorAll('.zoom-btn').forEach(b => b.classList.toggle('active', b.dataset.zoom === '1'));
-    setLensStatus('Основная');
 
     setTimeout(async () => {
         if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
@@ -1377,10 +1380,9 @@ function startSmartLensWatcher() {
         const nextType = cycle[smartLensCycleIndex];
         if (nextType === 'main') {
             const id = pickDefaultCameraId();
-            if (id && id !== activeCameraId) { activeCameraId = id; setLensStatus(LENS_LABELS.main); await switchCameraDevice(id); }
+            if (id && id !== activeCameraId) { activeCameraId = id; await switchCameraDevice(id); }
         } else if (camerasByType[nextType] && camerasByType[nextType].id !== activeCameraId) {
             activeCameraId = camerasByType[nextType].id;
-            setLensStatus(LENS_LABELS[nextType] || 'Объектив');
             await switchCameraDevice(activeCameraId);
         }
     }, 1200);
@@ -1390,7 +1392,6 @@ function stopSmartLensWatcher() { if (smartLensTimer) { clearInterval(smartLensT
 function setLensMode(type) {
     if (!camerasByType[type] || scannerBusy) return;
     activeCameraId = camerasByType[type].id;
-    setLensStatus(LENS_LABELS[type] || 'Объектив');
     switchCameraDevice(activeCameraId);
 }
 
@@ -1456,8 +1457,8 @@ async function setZoomLevel(level) {
     const wantsTelephoto = level >= 2 && camerasByType.telephoto;
     const usingTelephoto = activeCameraId === (camerasByType.telephoto && camerasByType.telephoto.id);
 
-    if (wantsTelephoto && !usingTelephoto) { activeCameraId = camerasByType.telephoto.id; setLensStatus(LENS_LABELS.telephoto); await switchCameraDevice(activeCameraId); return; }
-    if (level === 1 && usingTelephoto) { activeCameraId = pickDefaultCameraId(); setLensStatus(LENS_LABELS.main); await switchCameraDevice(activeCameraId); return; }
+    if (wantsTelephoto && !usingTelephoto) { activeCameraId = camerasByType.telephoto.id; await switchCameraDevice(activeCameraId); return; }
+    if (level === 1 && usingTelephoto) { activeCameraId = pickDefaultCameraId(); await switchCameraDevice(activeCameraId); return; }
 
     try {
         const videoEl = document.querySelector('#reader video');
@@ -1506,7 +1507,6 @@ function toggleTorch() {
     torchEnabled = !torchEnabled;
     html5QrCode.applyVideoConstraints({ advanced: [{ torch: torchEnabled }] }).then(() => {
         const btn = document.getElementById('torchBtn');
-        btn.innerText = torchEnabled ? '🔦 Выключить' : '🔦 Фонарик';
         btn.classList.toggle('active', torchEnabled);
     }).catch(() => { alert("Фонарик не поддерживается на этом устройстве"); torchEnabled = false; });
 }
