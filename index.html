@@ -40,8 +40,7 @@
 
 <style>
 /* ============================================================
-   ДИЗАЙН-СИСТЕМА. Полностью кастомные контролы (без нативных
-   checkbox/radio), чтобы вид был ОДИНАКОВЫЙ на iOS и Android.
+   ДИЗАЙН-СИСТЕМА
    ============================================================ */
 :root {
     --bg-body: #f2f5f4;
@@ -233,20 +232,70 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .btn-install-yes:active, .btn-install-no:active { transform: scale(0.95); }
 .btn-install-no { background: var(--input-bg); color: var(--text-muted); border: 1px solid var(--border-color); }
 
-/* ---------- МОДАЛЬНЫЕ ОКНА ---------- */
+/* ---------- МОДАЛЬНЫЕ ОКНА (Базовые) ---------- */
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); backdrop-filter: var(--modal-backdrop); -webkit-backdrop-filter: var(--modal-backdrop); z-index: 9999; justify-content: center; align-items: flex-end; padding: 0; margin: 0; }
 .modal-content { background: var(--bg-card); color: var(--text-main); padding: 30px 20px 20px; border-radius: 34px 34px 0 0; width: 100%; max-width: 520px; text-align: center; box-shadow: 0 -22px 46px rgba(0,0,0,0.22); animation: slideInUp var(--t-med) var(--ease-smooth); position: relative; padding-bottom: calc(20px + var(--safe-b)); max-height: 88vh; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; -ms-overflow-style: none; scrollbar-width: none; }
 .modal-content::-webkit-scrollbar { display: none; }
 .modal-content::before { content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 42px; height: 5px; background: var(--border-color); border-radius: 10px; }
 .modal-title { margin-top:0; font-weight: 900; font-size: 19px; display:flex; align-items:center; gap:8px; justify-content:center; }
 
-/* ---------- СКАНЕР ---------- */
-.scanner-wrapper { position: relative; width: 100%; margin-bottom: 15px; border-radius: var(--radius-md); overflow: hidden; }
-#reader { width: 100%; min-height: 280px; background: #000; box-shadow: inset 0 0 24px rgba(0,0,0,0.55); }
-#reader video { object-fit: cover !important; width: 100%; height: 100%; }
+/* ============================================================
+   ПОЛНОЭКРАННЫЙ СКАНЕР
+   ============================================================ */
+#scannerModal {
+    align-items: center;
+}
+#scannerModal .modal-content {
+    height: 100dvh;
+    max-height: 100dvh;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    padding: calc(40px + var(--safe-t)) 16px calc(15px + var(--safe-b)) 16px;
+}
+#scannerModal .modal-content::before {
+    top: calc(16px + var(--safe-t));
+}
+#scannerModal .modal-title, 
+#iosScanHint, 
+.scanner-controls-row {
+    flex-shrink: 0; /* Эти элементы не должны сжиматься */
+}
 
-.scan-frame-hint { position: absolute; inset: 0; pointer-events: none; z-index: 4; display: flex; align-items: center; justify-content: center; }
-.scan-frame-hint svg { width: 68%; height: 68%; opacity: 0.85; }
+@media (min-width: 640px) {
+    #scannerModal .modal-content {
+        height: 90dvh;
+        max-width: 600px;
+        border-radius: 34px;
+        margin-bottom: 20px;
+    }
+}
+
+.scanner-wrapper { 
+    flex: 1; /* Растягивается на всю свободную высоту */
+    position: relative; 
+    width: 100%; 
+    margin-bottom: 15px; 
+    border-radius: var(--radius-lg); 
+    overflow: hidden; 
+    display: flex;
+    flex-direction: column;
+}
+#reader { 
+    flex: 1; /* Камера занимает всё место внутри обертки */
+    width: 100%; 
+    background: #000; 
+    box-shadow: inset 0 0 24px rgba(0,0,0,0.55); 
+    display: flex;
+    flex-direction: column;
+}
+#reader > div {
+    flex: 1;
+}
+#reader video { object-fit: cover !important; width: 100%; height: 100%; }
 
 .scan-orientation-hint { position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; pointer-events: none; z-index: 5; font-size: 13px; font-weight: 800; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); padding: 0 10px; }
 .lens-status { position: absolute; left: 12px; top: 14px; z-index: 6; background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); color: #fff; font-size: 11px; font-weight: 800; padding: 6px 10px; border-radius: 20px; display: flex; align-items: center; gap: 5px; transition: opacity var(--t-fast); }
@@ -372,11 +421,6 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
     .modal-content { max-width: 480px; border-radius: 34px; margin-bottom: 26px; }
     .modal-overlay { align-items: center; }
 }
-@media (min-width: 1200px) {
-    .main-container { max-width: 820px; }
-    .bottom-action-bar { max-width: 820px; }
-    header { max-width: 820px; }
-}
 @media (orientation: landscape) and (max-height: 480px) {
     #reader { min-height: 60vh; }
     .modal-content { max-height: 96vh; }
@@ -474,7 +518,7 @@ header h1 { font-size: clamp(17px, 4.4vw, 21px); }
             </p>
             <div style="background: var(--input-bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color);">
                 <p style="margin: 0 0 8px 0; font-size: 16px; font-weight: 800; color: var(--text-main);">👨‍💻 Джугань Сергей</p>
-                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">Версия: 6.0 (Новый дизайн + адаптивная камера)</p>
+                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">Версия: 6.1 (Полноэкранная камера)</p>
             </div>
         </div>
         <button class="btn-modal btn-close" onclick="document.getElementById('aboutModal').style.display='none'">Закрыть</button>
@@ -1139,19 +1183,13 @@ const SCAN_CONFIG = {
 };
 
 function buildCameraConstraints(base) {
-    // Безопасный запрос высокого разрешения ТОЛЬКО через ideal. 
-    // Без жестких min/max, чтобы избежать сбоев OverconstrainedError.
-    return Object.assign({}, base, {
-        width: { ideal: 1920 },
-        height: { ideal: 1080 }
-    });
+    return Object.assign({}, base, { width: { ideal: 1920 }, height: { ideal: 1080 } });
 }
 
 function openCameraStream(cameraSettings) {
     scannerBusy = true;
     let config = Object.assign({}, SCAN_CONFIG);
     
-    // Передаем кастомные videoConstraints правильно, без сбоев:
     let videoConstraints = buildCameraConstraints({});
     if (cameraSettings.deviceId) videoConstraints.deviceId = cameraSettings.deviceId;
     else if (cameraSettings.facingMode) videoConstraints.facingMode = cameraSettings.facingMode;
@@ -1176,7 +1214,6 @@ function openCameraStream(cameraSettings) {
         }
         startSmartLensWatcher();
     }).catch((err) => {
-        // Надежный фолбэк: если кастомное разрешение всё же не поддерживается, запускаем без него.
         let safeConfig = Object.assign({}, SCAN_CONFIG);
         delete safeConfig.videoConstraints;
 
