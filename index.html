@@ -776,6 +776,358 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 [data-fx="low"] .navbar-goo-layer { filter: none !important; }
 [data-fx="low"] .navbar-glow { box-shadow: none !important; }
 [data-fx="low"] .modal-overlay { backdrop-filter: none !important; background-color: rgba(0,0,0,0.95) !important; }
+
+/* ============================================================
+   ОБНОВЛЁННАЯ ВИЗУАЛЬНАЯ ИЕРАРХИЯ
+   Более спокойная поверхность, явные зоны действий и удобные touch-targets.
+   ============================================================ */
+:root {
+    --bg-body: #f6f9f7;
+    --bg-card: #ffffff;
+    --text-main: #10231b;
+    --text-muted: #647970;
+    --border-color: #dfe9e3;
+    --input-bg: #f3f7f4;
+    --btn-add: #087f5b;
+    --btn-add-dark: #066747;
+    --shadow-soft: 0 8px 24px rgba(16, 35, 27, 0.07);
+    --shadow-hover: 0 18px 44px rgba(16, 35, 27, 0.14);
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
+    --radius-xl: 28px;
+}
+
+[data-theme="dark"] {
+    --bg-body: #0b1511;
+    --bg-card: #14231c;
+    --text-main: #eef7f1;
+    --text-muted: #9aafa4;
+    --border-color: #263b30;
+    --input-bg: #102019;
+    --btn-add: #19b982;
+    --btn-add-dark: #0c9366;
+    --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.28);
+    --shadow-hover: 0 18px 44px rgba(0, 0, 0, 0.46);
+}
+
+body {
+    background-color: var(--bg-body);
+}
+
+body::before {
+    background: radial-gradient(circle at 50% -10%, #e4f2ea 0%, var(--bg-body) 58%);
+}
+
+[data-theme="dark"] body::after {
+    background: radial-gradient(circle at 50% -10%, #153326 0%, var(--bg-body) 62%);
+}
+
+header {
+    padding: calc(13px + var(--safe-t)) 16px 14px;
+    margin-bottom: 4px;
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+    box-shadow: 0 8px 24px rgba(4, 96, 69, 0.2);
+}
+
+.brand-wrapper {
+    gap: 11px;
+}
+
+.brand-logo-svg {
+    width: 42px;
+    height: 42px;
+}
+
+.brand-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.brand-title {
+    font-size: 20px;
+    letter-spacing: -0.35px;
+}
+
+.brand-subtitle {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.daynight-toggle {
+    --w: 58px;
+    --h: 30px;
+    --thumb: 24px;
+}
+
+.main-container {
+    max-width: 680px;
+    gap: 14px;
+    padding: 12px 16px calc(116px + var(--safe-b));
+}
+
+.pallet-bar {
+    min-height: 58px;
+    padding: 10px 12px;
+    border-radius: 18px;
+    box-shadow: 0 5px 16px rgba(16, 35, 27, 0.06);
+}
+
+.pallet-bar::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    margin-left: 8px;
+    border-top: 2px solid var(--text-muted);
+    border-right: 2px solid var(--text-muted);
+    transform: rotate(45deg);
+    opacity: 0.65;
+}
+
+.pallet-bar-left {
+    min-width: 0;
+}
+
+.pallet-bar-left > .app-icon {
+    width: 34px;
+    height: 34px;
+    padding: 8px;
+    border-radius: 11px;
+    background: var(--info-bg);
+}
+
+.pallet-bar-text {
+    font-size: 12px;
+    line-height: 1.15;
+}
+
+.pallet-badge {
+    max-width: 47%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 7px 11px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.cart-card {
+    min-height: 280px;
+    padding: 15px 13px 13px;
+    background: rgba(var(--bg-card-rgb), 0.92);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    box-shadow: var(--shadow-soft);
+}
+
+.cart-header {
+    padding: 0 2px 13px;
+}
+
+#cartStats {
+    padding: 7px 10px;
+    border-radius: 10px;
+    background: var(--input-bg);
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1;
+}
+
+.delete-btn {
+    height: 36px;
+    padding: 0 11px;
+    border: 1px solid rgba(220, 38, 38, 0.18);
+    border-radius: 10px;
+    background: var(--btn-remove-bg);
+    color: var(--btn-remove-text);
+    box-shadow: none;
+    font-size: 13px;
+}
+
+.delete-btn:hover {
+    box-shadow: 0 5px 14px rgba(239, 68, 68, 0.16);
+}
+
+table {
+    border-spacing: 0 8px;
+    margin-top: -4px;
+}
+
+tr {
+    background: var(--input-bg);
+    box-shadow: none;
+    border: 1px solid var(--border-color);
+}
+
+td {
+    padding: 10px 8px;
+}
+
+.pallet-header-content {
+    padding: 8px 4px 3px;
+}
+
+.pallet-name {
+    min-width: 0;
+    font-size: 15px;
+}
+
+.pallet-name .app-icon {
+    width: 18px;
+    height: 18px;
+    padding: 3px;
+    border-radius: 6px;
+    background: var(--info-bg);
+}
+
+.btn-pallet-qr {
+    padding: 8px 10px;
+    border-radius: 9px;
+    font-size: 12px;
+    box-shadow: none;
+}
+
+.barcode-wrapper {
+    width: 132px;
+    height: 58px;
+    padding: 5px;
+    border: 1px solid #e5ebe7;
+    box-shadow: 0 2px 8px rgba(16, 35, 27, 0.08);
+}
+
+.qty-box {
+    padding: 10px 0;
+    border: 1px solid var(--border-color);
+    border-radius: 11px;
+    background: var(--bg-card);
+    font-size: 16px;
+}
+
+.btn-remove {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(220, 38, 38, 0.14);
+    background: transparent;
+}
+
+.no-data-card {
+    min-height: 235px;
+    padding: 40px 18px;
+    border: 1px dashed #c7d9cf;
+    background: var(--input-bg);
+    box-shadow: none;
+    font-size: 15px;
+}
+
+.no-data-card .app-icon {
+    width: 44px !important;
+    height: 44px !important;
+    padding: 10px;
+    border-radius: 14px;
+    background: var(--info-bg);
+}
+
+.navbar-wrap {
+    padding: 0 12px calc(10px + var(--safe-b));
+}
+
+.navbar {
+    height: 64px;
+    max-width: 600px;
+}
+
+.navbar-pill {
+    border-radius: 22px;
+    box-shadow: 0 -6px 26px rgba(16, 35, 27, 0.1);
+}
+
+.navitem-label {
+    bottom: 6px;
+    font-size: 10px;
+}
+
+.navitem.active .navitem-icon {
+    transform: translateY(-21px);
+}
+
+.modal-overlay {
+    background: rgba(7, 19, 13, 0.62);
+}
+
+.modal-content {
+    padding: 30px 18px 18px;
+    border-radius: 28px 28px 0 0;
+    box-shadow: 0 -18px 42px rgba(0, 0, 0, 0.2);
+}
+
+.modal-title {
+    font-size: 18px;
+}
+
+.btn-modal {
+    padding: 14px;
+    border-radius: 14px;
+}
+
+.dropdown-item {
+    padding: 14px 12px;
+}
+
+.menu-icon-box {
+    width: 38px;
+    height: 38px;
+}
+
+.settings-row {
+    padding: 14px 2px;
+}
+
+.archive-item {
+    padding: 14px;
+    gap: 10px;
+}
+
+@media (min-width: 680px) {
+    header {
+        padding-left: max(24px, calc((100% - 648px) / 2));
+        padding-right: max(24px, calc((100% - 648px) / 2));
+    }
+}
+
+@media (max-width: 380px) {
+    .brand-subtitle {
+        display: none;
+    }
+
+    .delete-label {
+        display: none;
+    }
+
+    .delete-btn {
+        width: 36px;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .barcode-wrapper {
+        width: 118px;
+    }
+
+    td:first-child {
+        width: 55%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+    }
+}
 </style>
 </head>
 <body>
@@ -794,7 +1146,10 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
             <rect x="25" y="13" width="3" height="14" rx="1" fill="#ffffff"/>
             <line x1="5" y1="20" x2="35" y2="20" stroke="#fcd34d" stroke-width="2.5" stroke-linecap="round" class="logo-laser"/>
         </svg>
-        <span class="brand-title">Мой ТСД</span>
+        <div class="brand-copy">
+            <span class="brand-title">Мой ТСД</span>
+            <span class="brand-subtitle">Учёт и сканирование</span>
+        </div>
     </div>
 
     <div class="header-controls">
