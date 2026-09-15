@@ -1,38 +1,31 @@
-// sw.js — Service Worker для «Мой ТСД»
-// Задачи:
-// 1) Дать приложению открываться офлайн (после первого захода) — сама HTML-страница
-//    и манифест/иконка кэшируются как "app shell".
-// 2) Внешние библиотеки (html5-qrcode, JsBarcode, qrcode, шрифты) кэшируются
-//    по мере использования, чтобы повторный офлайн-запуск не требовал сети.
-// 3) При обновлении версии приложения — старые кэши подчищаются, новая версия
-//    подхватывается сразу после закрытия всех вкладок (skipWaiting + clients.claim).
-
-const CACHE_VERSION = 'v7';
+// sw.js — Оптимизированный Service Worker для «Мой ТСД»
+const CACHE_VERSION = 'v8';
 const CACHE_NAME = 'moy-tsd-cache-' + CACHE_VERSION;
 
-// Список файлов, которые браузер обязан загрузить и положить в кэш
+// Критически важные файлы для мгновенного офлайн-старта
 const APP_SHELL = [
     './',
     './index.html',
     './manifest.json',
     './icon.png',
-    // Принудительно кэшируем CDN-библиотеки для оффлайна:
+    // Версионированные библиотеки (фиксированные URL):
     'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js',
     'https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js',
     'https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js',
-    'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap'
+    // Точный URL шрифта со стилем 900:
+    'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap'
 ];
 
 self.addEventListener('install', (event) => {
     self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            // addAll не должен валить установку целиком, если один из файлов недоступен
-            // (например, иконки ещё нет на сервере) — поэтому кэшируем по одному.
             return Promise.all(
-                APP_SHELL.map((url) => cache.add(url).catch((e) => { 
-                    console.warn(`Не удалось закэшировать ресурс ${url} при установке SW:`, e); 
-                }))
+                APP_SHELL.map((url) => 
+                    cache.add(url).catch((err) => {
+                        console.warn(`[SW] Пропущен ресурс при предзагрузке: ${url}`, err);
+                    })
+                )
             );
         })
     );
@@ -52,39 +45,44 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
     const req = event.request;
-
-    // POST/PUT и т.п. не кэшируем — просто пропускаем в сеть как есть.
     if (req.method !== 'GET') return;
 
     const url = new URL(req.url);
 
-    // Внешние ресурсы (CDN-библиотеки, шрифты Google Fonts): "network first,
-    // затем кэш" — так пользователь всегда получает свежую версию библиотеки,
-    // когда есть сеть, а офлайн получает последнюю сохранённую копию.
+    // 1. ВНЕШНИЕ CDN И ШРИФТЫ: Cache-First
+    // Библиотеки жестко зафиксированы по версиям, отдаем мгновенно из кэша
     if (url.origin !== self.location.origin) {
         event.respondWith(
-            fetch(req)
-                .then((res) => {
+            caches.match(req).then((cached) => {
+                if (cached) return cached;
+
+                return fetch(req).then((res) => {
+                    if (!res || res.status !== 200 && res.type !== 'opaque') {
+                        return res;
+                    }
                     const resClone = res.clone();
-                    caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone)).catch(() => {});
+                    caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
                     return res;
-                })
-                .catch(() => caches.match(req))
+                });
+            })
         );
         return;
     }
 
-    // Собственные файлы приложения: "кэш, но обнови в фоне" (stale-while-revalidate) —
-    // мгновенная загрузка из кэша + подтягивание новой версии на следующий раз.
+    // 2. СОБСТВЕННЫЕ ФАЙЛЫ (HTML, манифест, иконка): Stale-While-Revalidate
+    // Отдаем мгновенно из кэша, но в фоне обновляем при наличии сети
     event.respondWith(
         caches.match(req).then((cached) => {
-            const fetchPromise = fetch(req)
-                .then((res) => {
-                    caches.open(CACHE_NAME).then((cache) => cache.put(req, res.clone())).catch(() => {});
-                    return res;
-                })
-                .catch(() => cached);
-            return cached || fetchPromise;
+            const networkFetch = fetch(req).then((res) => {
+                if (res && res.status === 200) {
+                    const resClone = res.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+                }
+                return res;
+            }).catch(() => cached);
+
+            return cached || networkFetch;
         })
     );
 });
+
