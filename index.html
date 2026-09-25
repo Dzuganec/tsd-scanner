@@ -35,7 +35,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <title>Мой ТСД</title>
 
-<!-- БИБЛИОТЕКИ (ExcelJS удален) -->
+<!-- БИБЛИОТЕКИ -->
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
@@ -135,8 +135,10 @@
 input, textarea { -webkit-user-select: text; user-select: text; }
 html { -webkit-text-size-adjust: 100%; }
 
+/* Базовые переходы для всей страницы */
 body {
-    background-color: var(--bg-body); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; transition: color var(--t-theme), background-color var(--t-theme); position: relative; z-index: 0;
+    background-color: var(--bg-body); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden;
+    transition: color var(--t-theme), background-color var(--t-theme); position: relative; z-index: 0;
 }
 body::before, body::after { content: ''; position: fixed; inset: 0; z-index: -2; pointer-events: none; background-attachment: fixed; transition: opacity var(--t-theme); }
 body::before { background: radial-gradient(circle at 50% 0%, #d8ece2 0%, #f1f5f3 70%); opacity: 1; }
@@ -166,7 +168,7 @@ body::after { background: radial-gradient(circle at 50% 0%, #10261c 0%, #09130f 
 .cart-stats-flash { animation: statsFlash 0.65s var(--ease-spring); }
 @keyframes statsFlash { 0% { color: var(--btn-add); transform: scale(1.14); } 100% { color: var(--text-main); transform: scale(1); } }
 
-.app-icon { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex-shrink: 0; transition: transform var(--t-fast) var(--ease-spring); }
+.app-icon { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex-shrink: 0; transition: transform var(--t-fast) var(--ease-spring), color var(--t-theme); }
 .app-icon svg { width: 100%; height: 100%; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* ---------- HEADER ---------- */
@@ -188,47 +190,76 @@ header {
 .brand-title { font-size: 21px; font-weight: 900; letter-spacing: -0.2px; line-height: 1; color: #ffffff; }
 .brand-subtitle { color: rgba(255, 255, 255, 0.72); font-size: 11px; font-weight: 700; letter-spacing: 0.2px; }
 
-/* Day/Night Toggle */
+/* ---------- УЛУЧШЕННЫЙ ПЕРЕКЛЮЧАТЕЛЬ ДЕНЬ/НОЧЬ ---------- */
 .header-controls { display: flex; gap: 8px; align-items: center; position: relative; }
 .daynight-input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.daynight-toggle { --w: 64px; --h: 32px; --pad: 3px; --thumb: 26px; position: relative; display: inline-block; width: var(--w); height: var(--h); border-radius: 999px; cursor: pointer; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.22); }
+.daynight-toggle { 
+    --w: 64px; --h: 32px; --pad: 3px; --thumb: 26px; 
+    position: relative; display: inline-block; width: var(--w); height: var(--h); 
+    border-radius: 999px; cursor: pointer; overflow: hidden; 
+    box-shadow: 0 3px 12px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.22);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.2s var(--ease-spring); /* Тактильное нажатие */
+}
+.daynight-toggle:active { transform: scale(0.92); }
+
 .sky-day, .sky-night { position: absolute; inset: 0; transition: opacity 0.7s var(--ease-smooth); }
 .sky-day { background: linear-gradient(180deg, #38bdf8 0%, #7dd3fc 60%, #bae6fd 100%); opacity: 1; }
 .sky-night { background: linear-gradient(180deg, #091326 0%, #132247 60%, #1a2f61 100%); opacity: 0; }
 .daynight-input:checked ~ .daynight-toggle .sky-day { opacity: 0; }
 .daynight-input:checked ~ .daynight-toggle .sky-night { opacity: 1; }
-.sun { position: absolute; top: 50%; right: 6px; width: 16px; height: 16px; border-radius: 50%; transform: translateY(-50%); background: radial-gradient(circle at 35% 35%, #fff7cc, #ffd23f 60%, #ffb400 100%); box-shadow: 0 0 8px 1px rgba(255, 200, 0, 0.55); transition: 0.6s var(--ease-smooth); }
-.daynight-input:checked ~ .daynight-toggle .sun { opacity: 0; transform: translateY(-50%) translateX(10px) scale(0.6); }
-.moon { position: absolute; top: 50%; left: 6px; width: 14px; height: 14px; border-radius: 50%; transform: translateY(-50%) translateX(-10px) scale(0.6); background: #fdf0cd; box-shadow: 4px -2px 0 0 #091326; opacity: 0; transition: 0.6s var(--ease-smooth); }
-.daynight-input:checked ~ .daynight-toggle .moon { opacity: 1; transform: translateY(-50%) translateX(0) scale(1); }
-.stars { position: absolute; inset: 0; opacity: 0; transition: opacity 0.6s var(--ease-smooth); }
-.daynight-input:checked ~ .daynight-toggle .stars { opacity: 1; }
+
+.sun { 
+    position: absolute; top: 50%; right: 6px; width: 16px; height: 16px; border-radius: 50%; 
+    background: radial-gradient(circle at 35% 35%, #fff7cc, #ffd23f 60%, #ffb400 100%); 
+    box-shadow: 0 0 8px 1px rgba(255, 200, 0, 0.55); 
+    transform: translateY(-50%) rotate(0deg);
+    transition: transform 0.65s var(--ease-spring), opacity 0.5s ease;
+}
+.daynight-input:checked ~ .daynight-toggle .sun { 
+    opacity: 0; 
+    transform: translateY(20px) translateX(15px) scale(0.5) rotate(60deg); 
+}
+
+.moon { 
+    position: absolute; top: 50%; left: 6px; width: 14px; height: 14px; border-radius: 50%; 
+    background: #fdf0cd; box-shadow: 4px -2px 0 0 #091326; 
+    opacity: 0; 
+    transform: translateY(20px) translateX(-15px) scale(0.5) rotate(-60deg);
+    transition: transform 0.65s var(--ease-spring), opacity 0.5s ease;
+}
+.daynight-input:checked ~ .daynight-toggle .moon { 
+    opacity: 1; 
+    transform: translateY(-50%) translateX(0) scale(1) rotate(0deg); 
+}
+
+.stars { position: absolute; inset: 0; opacity: 0; transform: translateY(10px); transition: opacity 0.6s var(--ease-smooth), transform 0.65s var(--ease-spring); }
+.daynight-input:checked ~ .daynight-toggle .stars { opacity: 1; transform: translateY(0); }
 .star { position: absolute; top: var(--y); left: var(--x); width: 2px; height: 2px; background: #fff; border-radius: 50%; animation: twinkle 1.8s ease-in-out infinite; animation-delay: var(--d); }
 @keyframes twinkle { 0%, 100% { opacity: 0.25; transform: scale(1); } 50% { opacity: 1; transform: scale(1.4); } }
-.clouds { position: absolute; left: 0; right: 0; bottom: -4px; height: 16px; }
-.cloud { position: absolute; bottom: 0; background: #ffffff; border-radius: 50%; opacity: 0.95; transition: 0.6s var(--ease-smooth); }
+
+.clouds { position: absolute; left: 0; right: 0; bottom: -4px; height: 16px; transition: transform 0.6s var(--ease-spring); }
+.daynight-input:checked ~ .daynight-toggle .clouds { transform: translateY(20px); } /* Облака прячутся вниз */
+.cloud { position: absolute; bottom: 0; background: #ffffff; border-radius: 50%; opacity: 0.95; }
 .cloud1 { left: -2px; width: 16px; height: 8px; box-shadow: 6px 2px 0 -1px #fff, 11px 0 0 -2px #fff; }
 .cloud2 { left: 20px; width: 12px; height: 7px; box-shadow: 5px 1px 0 -1px #fff; }
 .cloud3 { left: 38px; width: 14px; height: 8px; box-shadow: 5px 2px 0 -1px #fff, 10px 0 0 -2px #fff; }
-.daynight-input:checked ~ .daynight-toggle .cloud { background: #c9d3ea; opacity: 0.85; }
-.daynight-input:checked ~ .daynight-toggle .cloud1 { box-shadow: 6px 2px 0 -1px #c9d3ea, 11px 0 0 -2px #c9d3ea; }
-.daynight-input:checked ~ .daynight-toggle .cloud2 { box-shadow: 5px 1px 0 -1px #c9d3ea; }
-.daynight-input:checked ~ .daynight-toggle .cloud3 { box-shadow: 5px 1px 0 -1px #c9d3ea, 10px 0 0 -2px #c9d3ea; }
+
 .toggle-thumb { position: absolute; top: var(--pad); left: var(--pad); width: var(--thumb); height: var(--thumb); border-radius: 50%; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.25); transition: transform 0.5s var(--ease-spring); z-index: 2; }
 .daynight-input:checked ~ .daynight-toggle .toggle-thumb { transform: translateX(calc(var(--w) - var(--thumb) - (var(--pad) * 2))); }
 
-/* ---------- ОСНОВНОЙ КОНТЕЙНЕР ---------- */
+/* ---------- ОСНОВНОЙ КОНТЕЙНЕР И КАРТОЧКИ ---------- */
 .main-container { padding: 0 10px calc(115px + var(--safe-b)) 10px; max-width: 640px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 14px; flex: 1; }
 
 .pallet-bar {
-    background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); padding: 13px 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid var(--border-color); position: relative; overflow: hidden; transition: background-color var(--t-theme), border-color var(--t-theme), transform var(--t-fast);
+    background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); padding: 13px 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid var(--border-color); position: relative; overflow: hidden; 
+    transition: background-color var(--t-theme), border-color var(--t-theme), transform var(--t-fast);
 }
 .pallet-bar:active { transform: scale(0.985); }
 .pallet-bar-left { display: flex; align-items: center; gap: 10px; }
-.pallet-bar-text { font-weight: 800; font-size: 15px; color: var(--text-muted); }
-.pallet-badge { background: var(--btn-add); color: white; padding: 5px 14px; border-radius: 12px; font-weight: 800; font-size: 13.5px; box-shadow: 0 3px 10px rgba(5,150,105,0.28); display: flex; align-items: center; gap: 6px; }
+.pallet-bar-text { font-weight: 800; font-size: 15px; color: var(--text-muted); transition: color var(--t-theme); }
+.pallet-badge { background: var(--btn-add); color: white; padding: 5px 14px; border-radius: 12px; font-weight: 800; font-size: 13.5px; box-shadow: 0 3px 10px rgba(5,150,105,0.28); display: flex; align-items: center; gap: 6px; transition: background-color var(--t-theme); }
 
-/* Кнопка Очистить с анимацией */
 .delete-btn { --del-color: #ef4444; --del-dark: #dc2626; position: relative; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 15px 0 13px; border: none; border-radius: 13px; background: linear-gradient(135deg, var(--del-color), var(--del-dark)); color: #fff; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35); transition: transform 0.2s var(--ease-spring), box-shadow 0.2s var(--ease-smooth); }
 .delete-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(239, 68, 68, 0.45); }
 .delete-btn:active { transform: translateY(0) scale(0.94); }
@@ -242,14 +273,14 @@ header {
 @keyframes flyIntoBinActive { 0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; } 35% { transform: translate(calc(var(--dx) * 0.4), calc(var(--dy) * 0.3 - 40px)) rotate(calc(var(--rot) * 0.5)) scale(1.3); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.15); opacity: 0; } }
 .letter.flying { animation: flyIntoBinActive 0.45s var(--ease-smooth) forwards; animation-delay: var(--delay, 0s); }
 
-/* ---------- СТРУКТУРА КОРЗИНЫ И ТАБЛИЦЫ ---------- */
-.cart-card { display: flex; flex-direction: column; flex: 1; background: rgba(var(--bg-card-rgb), 0.94); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 14px 10px; box-shadow: var(--shadow-soft); }
+/* Корзина */
+.cart-card { display: flex; flex-direction: column; flex: 1; background: rgba(var(--bg-card-rgb), 0.94); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 14px 10px; box-shadow: var(--shadow-soft); transition: background-color var(--t-theme), border-color var(--t-theme), box-shadow var(--t-theme); }
 .cart-header { padding: 0 4px 12px; display: flex; justify-content: space-between; align-items: center; }
-#cartStats { padding: 6px 11px; border-radius: 10px; background: var(--input-bg); color: var(--text-muted); font-size: 13px; font-weight: 800; }
+#cartStats { padding: 6px 11px; border-radius: 10px; background: var(--input-bg); color: var(--text-muted); font-size: 13px; font-weight: 800; transition: background-color var(--t-theme), color var(--t-theme); }
 
 .table-responsive { width: 100%; border-radius: 14px; margin-top: 2px; overflow-x: hidden; }
 table { width: 100%; border-collapse: separate; border-spacing: 0 8px; table-layout: auto; }
-thead th { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); padding: 4px 3px 8px; text-align: center; border: none; white-space: nowrap; }
+thead th { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); padding: 4px 3px 8px; text-align: center; border: none; white-space: nowrap; transition: color var(--t-theme); }
 tr { background: var(--input-bg); border-radius: var(--radius-md); box-shadow: 0 2px 6px rgba(0,0,0,0.03); transition: background-color var(--t-theme), border-color var(--t-theme); }
 [data-theme="dark"] tr { background: #13201a; }
 td { padding: 8px 6px; vertical-align: middle; text-align: center; border: none; }
@@ -262,56 +293,56 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .barcode-wrapper { background-color: #ffffff; padding: 5px; border-radius: 9px; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 150px; height: 50px; pointer-events: none; margin: 0 auto; border: 1px solid #e5ebe7; box-sizing: border-box; }
 .barcode-wrapper svg { max-width: 100%; max-height: 100%; display: block; }
 
-.qty-box { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); font-weight: 900; font-size: 16px; border-radius: 10px; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--t-fast) var(--ease-spring); }
+.qty-box { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); font-weight: 900; font-size: 16px; border-radius: 10px; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color var(--t-theme), color var(--t-theme), border-color var(--t-theme), transform var(--t-fast) var(--ease-spring); }
 .qty-box:active { background: var(--border-color); transform: scale(0.9); }
 
-.btn-remove { background: transparent; color: var(--btn-remove-text); border: 1px solid rgba(220, 38, 38, 0.16); width: 38px; height: 38px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto; transition: transform var(--t-fast) var(--ease-spring); }
+.btn-remove { background: transparent; color: var(--btn-remove-text); border: 1px solid rgba(220, 38, 38, 0.16); width: 38px; height: 38px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto; transition: background-color var(--t-theme), color var(--t-theme), transform var(--t-fast) var(--ease-spring); }
 .btn-remove:active { transform: scale(0.78) rotate(14deg); }
 
 .pallet-header-row { background: transparent !important; box-shadow: none !important; border: none !important; }
 .pallet-header-content { display: flex; justify-content: space-between; align-items: center; padding: 6px 4px 2px; }
-.pallet-name { font-weight: 900; font-size: 16px; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+.pallet-name { font-weight: 900; font-size: 16px; color: var(--text-main); display: flex; align-items: center; gap: 8px; transition: color var(--t-theme); }
 .btn-pallet-qr { background: var(--btn-blue); color: white; border: none; padding: 8px 14px; border-radius: 9px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: transform var(--t-fast) var(--ease-spring); box-shadow: 0 4px 12px rgba(37,99,235,0.28); }
 .btn-pallet-qr:active { transform: scale(0.92); }
 
-.no-data-card { padding: 56px 20px; color: var(--text-muted); font-weight: 800; text-align: center; background: var(--bg-card); border-radius: var(--radius-lg); font-size: 16px; border: 2px dashed var(--border-color); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; width: 100%; box-shadow: var(--shadow-soft); box-sizing: border-box; }
+.no-data-card { padding: 56px 20px; color: var(--text-muted); font-weight: 800; text-align: center; background: var(--bg-card); border-radius: var(--radius-lg); font-size: 16px; border: 2px dashed var(--border-color); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; width: 100%; box-shadow: var(--shadow-soft); box-sizing: border-box; transition: background-color var(--t-theme), color var(--t-theme), border-color var(--t-theme); }
 
-/* ---------- SNACKBAR ---------- */
-#snackbar { visibility: hidden; min-width: 270px; background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 22px; padding: 12px 14px 12px 18px; position: fixed; z-index: 10000; left: 50%; bottom: 95px; transform: translate(-50%, 36px) scale(0.88); font-weight: 800; font-size: 14.5px; display: flex; justify-content: space-between; align-items: center; gap: 14px; box-shadow: var(--shadow-hover); opacity: 0; pointer-events: none; transition: visibility 0s 0.35s, transform 0.35s var(--ease-spring), opacity 0.3s ease; }
-#snackbar.show { visibility: visible; opacity: 1; transform: translate(-50%, 0) scale(1); pointer-events: auto; transition: visibility 0s 0s, transform 0.35s var(--ease-spring), opacity 0.3s ease; }
+/* ---------- СНАКБАР ---------- */
+#snackbar { visibility: hidden; min-width: 270px; background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 22px; padding: 12px 14px 12px 18px; position: fixed; z-index: 10000; left: 50%; bottom: 95px; transform: translate(-50%, 36px) scale(0.88); font-weight: 800; font-size: 14.5px; display: flex; justify-content: space-between; align-items: center; gap: 14px; box-shadow: var(--shadow-hover); opacity: 0; pointer-events: none; transition: background-color var(--t-theme), color var(--t-theme), border-color var(--t-theme), visibility 0s 0.35s, transform 0.35s var(--ease-spring), opacity 0.3s ease; }
+#snackbar.show { visibility: visible; opacity: 1; transform: translate(-50%, 0) scale(1); pointer-events: auto; transition: background-color var(--t-theme), color var(--t-theme), border-color var(--t-theme), visibility 0s 0s, transform 0.35s var(--ease-spring), opacity 0.3s ease; }
 .snackbar-btn { background: var(--btn-add); color: white; border: none; padding: 9px 18px; border-radius: 13px; font-weight: 800; font-size: 13.5px; cursor: pointer; display: none; }
 
 /* ---------- МОДАЛЬНЫЕ ОКНА ---------- */
-.modal-overlay { display: none; position: fixed; inset: 0; background: var(--modal-bg); backdrop-filter: var(--modal-backdrop); -webkit-backdrop-filter: var(--modal-backdrop); z-index: 9999; justify-content: center; align-items: flex-end; }
-.modal-content { background: var(--bg-card); color: var(--text-main); padding: 28px 20px 20px; border-radius: 34px 34px 0 0; width: 100%; max-width: 520px; text-align: center; box-shadow: 0 -22px 46px rgba(0,0,0,0.22); animation: slideInUp 0.35s var(--ease-smooth); position: relative; padding-bottom: calc(95px + var(--safe-b)); max-height: 94vh; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+.modal-overlay { display: none; position: fixed; inset: 0; background: var(--modal-bg); backdrop-filter: var(--modal-backdrop); -webkit-backdrop-filter: var(--modal-backdrop); z-index: 9999; justify-content: center; align-items: flex-end; transition: background-color var(--t-theme); }
+.modal-content { background: var(--bg-card); color: var(--text-main); padding: 28px 20px 20px; border-radius: 34px 34px 0 0; width: 100%; max-width: 520px; text-align: center; box-shadow: 0 -22px 46px rgba(0,0,0,0.22); animation: slideInUp 0.35s var(--ease-smooth); position: relative; padding-bottom: calc(95px + var(--safe-b)); max-height: 94vh; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; transition: background-color var(--t-theme), color var(--t-theme); }
 .modal-content::-webkit-scrollbar { display: none; }
-.modal-content::before { content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 42px; height: 5px; background: var(--border-color); border-radius: 10px; }
-.modal-title { font-weight: 900; font-size: 19px; display: flex; align-items: center; gap: 8px; justify-content: center; margin-bottom: 12px; }
+.modal-content::before { content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 42px; height: 5px; background: var(--border-color); border-radius: 10px; transition: background-color var(--t-theme); }
+.modal-title { font-weight: 900; font-size: 19px; display: flex; align-items: center; gap: 8px; justify-content: center; margin-bottom: 12px; transition: color var(--t-theme); }
 
-.btn-modal { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-weight: 800; font-size: 16px; margin-top: 10px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: transform var(--t-fast) var(--ease-spring); }
+.btn-modal { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-weight: 800; font-size: 16px; margin-top: 10px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: transform var(--t-fast) var(--ease-spring), background-color var(--t-theme), color var(--t-theme); }
 .btn-modal:active { transform: scale(0.96); }
 .btn-close { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); }
 .btn-modal:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-.dropdown-item { padding: 15px 18px; font-weight: 800; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background-color var(--t-fast); }
+.dropdown-item { padding: 15px 18px; font-weight: 800; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background-color var(--t-theme), color var(--t-theme), border-color var(--t-theme); }
 .dropdown-item:last-child { border-bottom: none; }
 .dropdown-item:active { background: var(--input-bg); }
-.menu-icon-box { width: 34px; height: 34px; border-radius: 11px; background: var(--input-bg); display: flex; align-items: center; justify-content: center; color: var(--btn-add); }
+.menu-icon-box { width: 34px; height: 34px; border-radius: 11px; background: var(--input-bg); display: flex; align-items: center; justify-content: center; color: var(--btn-add); transition: background-color var(--t-theme); }
 
 /* ВЫПАДАЮЩЕЕ МЕНЮ КАМЕР ПОВЕРХ ВИДОИСКАТЕЛЯ */
-.cam-overlay-menu { position: absolute; inset: 0; z-index: 50; background: rgba(var(--bg-card-rgb), 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: var(--radius-lg); padding: 16px 14px 18px; display: flex; flex-direction: column; text-align: left; animation: slideInUp 0.25s var(--ease-smooth); border: 1px solid var(--border-color); box-shadow: 0 12px 36px rgba(0,0,0,0.15); }
-.cam-overlay-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
-.cam-overlay-title { font-size: 16px; font-weight: 900; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
-.cam-overlay-close { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform var(--t-fast); }
+.cam-overlay-menu { position: absolute; inset: 0; z-index: 50; background: rgba(var(--bg-card-rgb), 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: var(--radius-lg); padding: 16px 14px 18px; display: flex; flex-direction: column; text-align: left; animation: slideInUp 0.25s var(--ease-smooth); border: 1px solid var(--border-color); box-shadow: 0 12px 36px rgba(0,0,0,0.15); transition: background-color var(--t-theme), border-color var(--t-theme); }
+.cam-overlay-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); transition: border-color var(--t-theme); }
+.cam-overlay-title { font-size: 16px; font-weight: 900; color: var(--text-main); display: flex; align-items: center; gap: 8px; transition: color var(--t-theme); }
+.cam-overlay-close { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform var(--t-fast), background-color var(--t-theme), border-color var(--t-theme), color var(--t-theme); }
 .cam-overlay-close:active { transform: scale(0.9); }
 .cam-overlay-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 2px; }
-.cam-choice-card { background: var(--input-bg); border: 1.5px solid var(--border-color); border-radius: 14px; padding: 12px 14px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; transition: transform 0.18s, background-color 0.18s, border-color 0.18s; }
+.cam-choice-card { background: var(--input-bg); border: 1.5px solid var(--border-color); border-radius: 14px; padding: 12px 14px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; transition: transform 0.18s, background-color var(--t-theme), border-color var(--t-theme); }
 .cam-choice-card:active { transform: scale(0.97); }
 .cam-choice-card.active { background: var(--info-bg); border-color: var(--btn-add); }
 .cam-card-info { display: flex; flex-direction: column; gap: 2px; }
-.cam-card-name { font-size: 14.5px; font-weight: 900; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
-.cam-badge-tag { font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 6px; background: rgba(5, 150, 105, 0.12); color: var(--btn-add); margin-left: 6px; display: inline-block; vertical-align: middle; }
-.cam-card-desc { font-size: 11.5px; font-weight: 600; color: var(--text-muted); line-height: 1.25; }
+.cam-card-name { font-size: 14.5px; font-weight: 900; color: var(--text-main); display: flex; align-items: center; gap: 6px; transition: color var(--t-theme); }
+.cam-badge-tag { font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 6px; background: rgba(5, 150, 105, 0.12); color: var(--btn-add); margin-left: 6px; display: inline-block; vertical-align: middle; transition: background-color var(--t-theme), color var(--t-theme); }
+.cam-card-desc { font-size: 11.5px; font-weight: 600; color: var(--text-muted); line-height: 1.25; transition: color var(--t-theme); }
 
 [data-theme="dark"] .cam-overlay-menu { background: rgba(10, 24, 18, 0.96); border-color: rgba(255, 255, 255, 0.14); }
 [data-theme="dark"] .cam-overlay-header { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
@@ -323,20 +354,20 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 [data-theme="dark"] .cam-badge-tag { background: rgba(16, 185, 129, 0.22); color: #34d399; }
 [data-theme="dark"] .cam-card-desc { color: rgba(255, 255, 255, 0.65); }
 
-.instruction-content { padding: 10px 0; font-size: 15px; color: var(--text-muted); font-weight: 600; text-align: left; }
+.instruction-content { padding: 10px 0; font-size: 15px; color: var(--text-muted); font-weight: 600; text-align: left; transition: color var(--t-theme); }
 .instruction-content ol { margin: 10px 0 0 0; padding-left: 20px; }
-.instruction-content li { margin-bottom: 12px; line-height: 1.5; color: var(--text-main); }
-.browser-note { padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; text-align: left; background: var(--warn-bg); color: var(--warn-text); margin-top: 15px; }
+.instruction-content li { margin-bottom: 12px; line-height: 1.5; color: var(--text-main); transition: color var(--t-theme); }
+.browser-note { padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; text-align: left; background: var(--warn-bg); color: var(--warn-text); margin-top: 15px; transition: background-color var(--t-theme), color var(--t-theme); }
 
 /* НАСТРОЙКИ */
 .settings-section { text-align: left; margin-bottom: 6px; }
-.settings-section-title { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; padding: 14px 4px 6px; }
-.settings-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 13px 4px; border-bottom: 1px solid var(--border-color); }
+.settings-section-title { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; padding: 14px 4px 6px; transition: color var(--t-theme); }
+.settings-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 13px 4px; border-bottom: 1px solid var(--border-color); transition: border-color var(--t-theme); }
 .settings-row:last-child { border-bottom: none; }
 .settings-row-label { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 800; }
-.settings-row-text small { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 2px; }
+.settings-row-text small { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 2px; transition: color var(--t-theme); }
 
-.toggle { width: 54px; height: 32px; border-radius: 20px; background: var(--border-color); position: relative; cursor: pointer; transition: background-color var(--t-fast); flex-shrink: 0; }
+.toggle { width: 54px; height: 32px; border-radius: 20px; background: var(--border-color); position: relative; cursor: pointer; transition: background-color var(--t-theme); flex-shrink: 0; }
 .toggle .toggle-thumb { position: absolute; top: 3px; left: 3px; width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.25); transition: transform var(--t-fast) var(--ease-spring); }
 .toggle.active { background: var(--btn-add); }
 .toggle.active .toggle-thumb { transform: translateX(22px); }
@@ -377,23 +408,23 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .zoom-btn.active { background: #fff; color: #111827; }
 
 /* ---------- NUMPAD ---------- */
-.numpad-content { background: var(--numpad-bg); padding-top: 20px; }
-.numpad-title { font-size: 15px; font-weight: 800; color: var(--text-muted); margin-bottom: 10px; }
-.numpad-input-group { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: transparent; border: 2px solid transparent; border-radius: 16px; padding: 0 4px; min-height: 60px; transition: all var(--t-fast); }
+.numpad-content { background: var(--numpad-bg); padding-top: 20px; transition: background-color var(--t-theme); }
+.numpad-title { font-size: 15px; font-weight: 800; color: var(--text-muted); margin-bottom: 10px; transition: color var(--t-theme); }
+.numpad-input-group { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: transparent; border: 2px solid transparent; border-radius: 16px; padding: 0 4px; min-height: 60px; transition: background-color var(--t-theme), border-color var(--t-theme), box-shadow var(--t-theme); }
 .numpad-input-group.manual-mode { background: var(--bg-card); border-color: var(--btn-add); box-shadow: 0 0 0 4px var(--glow-soft); }
-.numpad-display { flex: 1; font-size: clamp(28px, 8vw, 34px); font-weight: 900; padding: 10px; text-align: left; color: var(--text-main); letter-spacing: 1px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+.numpad-display { flex: 1; font-size: clamp(28px, 8vw, 34px); font-weight: 900; padding: 10px; text-align: left; color: var(--text-main); letter-spacing: 1px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; transition: color var(--t-theme); }
 .numpad-display::-webkit-scrollbar { display: none; }
 .numpad-cursor { display: inline-block; width: 2.5px; height: 0.9em; background-color: var(--btn-add); vertical-align: text-bottom; margin-left: 4px; margin-bottom: 2px; border-radius: 2px; animation: blinkCursor 1.1s step-end infinite; }
 @keyframes blinkCursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-.numpad-placeholder { color: var(--text-muted); opacity: 0.6; font-size: 16px; font-weight: 700; }
-.numpad-paste-btn { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 13px; width: 46px; height: 46px; display: flex; justify-content: center; align-items: center; cursor: pointer; flex-shrink: 0; }
+.numpad-placeholder { color: var(--text-muted); opacity: 0.6; font-size: 16px; font-weight: 700; transition: color var(--t-theme); }
+.numpad-paste-btn { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 13px; width: 46px; height: 46px; display: flex; justify-content: center; align-items: center; cursor: pointer; flex-shrink: 0; transition: background-color var(--t-theme), color var(--t-theme), border-color var(--t-theme); }
 .numpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.num-btn { background: var(--numpad-btn); color: var(--text-main); border: none; border-radius: 20px; font-size: 26px; font-weight: 900; padding: 18px 0; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; transition: transform 0.18s var(--ease-spring); }
-.num-btn:active { background: var(--border-color); transform: scale(0.88) translateY(3px); }
+.num-btn { background: var(--numpad-btn); color: var(--text-main); border: none; border-radius: 20px; font-size: 26px; font-weight: 900; padding: 18px 0; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; transition: background-color var(--t-theme), color var(--t-theme), transform 0.18s var(--ease-spring), box-shadow 0.18s; }
+.num-btn:active { background: var(--border-color); transform: scale(0.88) translateY(3px); box-shadow: none; }
 .num-btn.action-c { color: #dc2626; font-size: 22px; }
 .num-btn.action-back { color: #d97706; }
 .numpad-actions { display: flex; gap: 12px; margin-top: 18px; }
-.btn-numpad-cancel { flex: 1; background: var(--border-color); color: var(--text-main); border: none; border-radius: 20px; font-size: 16px; font-weight: 800; cursor: pointer; padding: 18px 0; }
+.btn-numpad-cancel { flex: 1; background: var(--border-color); color: var(--text-main); border: none; border-radius: 20px; font-size: 16px; font-weight: 800; cursor: pointer; padding: 18px 0; transition: background-color var(--t-theme), color var(--t-theme); }
 .btn-numpad-ok { flex: 2; background: var(--btn-add); color: white; border: none; border-radius: 20px; font-size: 18px; font-weight: 800; padding: 18px 0; box-shadow: 0 8px 20px rgba(5, 150, 105, 0.32); }
 
 /* ---------- GOOEY BOTTOM NAVBAR ---------- */
@@ -446,7 +477,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .navitem.active .dot-r { animation: dotPulse 1.1s ease-in-out infinite 0.3s; }
 
 /* Карточка разработчика (Аватар) */
-.dev-card { background: var(--input-bg); padding: 20px; border-radius: 20px; margin-top: 15px; margin-bottom: 12px; border: 1px solid var(--border-color); text-align: center; display: flex; flex-direction: column; align-items: center; }
+.dev-card { background: var(--input-bg); padding: 20px; border-radius: 20px; margin-top: 15px; margin-bottom: 12px; border: 1px solid var(--border-color); text-align: center; display: flex; flex-direction: column; align-items: center; transition: background-color var(--t-theme), border-color var(--t-theme); }
 .dev-avatar-svg { width: 100px; height: 100px; margin-bottom: 12px; overflow: visible; }
 .character .head { transform-origin: 115px 70px; animation: headBob 3s ease-in-out infinite; }
 .arms .arm-l-group { animation: typeLeft 0.18s ease-in-out infinite alternate; }
@@ -467,10 +498,10 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 @keyframes flyAway { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 30% { transform: translate(25px, -25px) scale(0.8); opacity: 0; } 31% { transform: translate(-25px, 25px) scale(0.8); opacity: 0; } 100% { transform: translate(0, 0) scale(1); opacity: 1; } }
 
 .archive-list { display: flex; flex-direction: column; gap: 12px; padding: 4px; text-align: left; }
-.archive-item { background: var(--input-bg); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--border-color); }
+.archive-item { background: var(--input-bg); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--border-color); transition: background-color var(--t-theme), border-color var(--t-theme); }
 .archive-info-row { display: flex; justify-content: space-between; align-items: center; }
-.archive-date { color: var(--text-main); font-weight: 800; font-size: 15px; }
-.archive-stats { color: var(--text-muted); font-size: 13.5px; font-weight: 700; }
+.archive-date { color: var(--text-main); font-weight: 800; font-size: 15px; transition: color var(--t-theme); }
+.archive-stats { color: var(--text-muted); font-size: 13.5px; font-weight: 700; transition: color var(--t-theme); }
 .archive-actions { display: flex; gap: 10px; width: 100%; }
 .archive-btn { flex: 1; background: var(--btn-add); color: white; border: none; padding: 11px 5px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 13px; transition: transform var(--t-fast); box-shadow: 0 4px 12px rgba(5, 150, 105, 0.22); white-space: nowrap; }
 .archive-btn-secondary { flex: 1; background: var(--border-color); color: var(--text-main); border: none; padding: 11px 5px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 13px; transition: background-color var(--t-theme), color var(--t-theme), transform var(--t-fast); white-space: nowrap; }
@@ -481,20 +512,15 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .zoom-touch-target:active { transform: scale(0.97); opacity: 0.85; }
 
 /* УПРОЩЕННЫЙ РЕЖИМ (БЕЗОПАСНАЯ И БЫСТРАЯ ОПТИМИЗАЦИЯ) */
+[data-fx="low"] .sun, [data-fx="low"] .moon, [data-fx="low"] .clouds, [data-fx="low"] .stars { transition: none !important; animation: none !important; }
 [data-fx="low"] .bg-blob { display: none !important; }
-[data-fx="low"] .stars { display: none !important; }
-[data-fx="low"] .clouds { display: none !important; }
 [data-fx="low"] .logo-laser { animation: none !important; }
 [data-fx="low"] header { animation: none !important; }
 [data-fx="low"] .navbar-goo-layer { filter: none !important; }
 [data-fx="low"] .navbar-glow { box-shadow: none !important; }
 [data-fx="low"] .modal-overlay { backdrop-filter: none !important; background: rgba(7, 19, 13, 0.92) !important; }
 [data-fx="low"] .cam-overlay-menu { backdrop-filter: none !important; }
-[data-fx="low"] .character .head,
-[data-fx="low"] .arms .arm-l-group,
-[data-fx="low"] .arms .arm-r-group,
-[data-fx="low"] .code-lines rect,
-[data-fx="low"] .tg-icon-fly { animation: none !important; }
+[data-fx="low"] .character .head, [data-fx="low"] .arms .arm-l-group, [data-fx="low"] .arms .arm-r-group, [data-fx="low"] .code-lines rect, [data-fx="low"] .tg-icon-fly { animation: none !important; }
 [data-fx="low"] .custom-scanner-target { animation: none !important; }
 [data-fx="low"] .corner { animation: none !important; }
 </style>
@@ -631,7 +657,6 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
         <span class="navitem-label">Скан</span>
       </button>
 
-      <!-- Кнопка изменена с "В Excel" на "Выгрузить", т.к. экспорт теперь в QR -->
       <button class="navitem" data-action="onNavExport" onclick="switchNav(this)">
         <span class="navitem-icon"><span class="icon-inner">
           <svg viewBox="0 0 24 24" fill="none">
@@ -762,7 +787,6 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
                 <div class="scan-hint"><span>Артикул или ШК в рамку</span></div>
             </div>
             
-            <!-- КНОПКА ВЫБОРА КАМЕРЫ (СЛЕВА) -->
             <button class="btn-icon-camera" id="cameraBtn" onclick="toggleCameraOverlayMenu()" title="Выбрать камеру">
                 <span class="app-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -772,19 +796,16 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
                 </span>
             </button>
 
-            <!-- ПЛАШКА ЗУМА (ПО ЦЕНТРУ) -->
             <div class="zoom-pill" id="zoomPill">
                 <button class="zoom-btn active" data-zoom="1" onclick="setZoomLevel(1)">1x</button>
                 <button class="zoom-btn" data-zoom="2" onclick="setZoomLevel(2)">2x</button>
                 <button class="zoom-btn" data-zoom="3" onclick="setZoomLevel(3)">3x</button>
             </div>
 
-            <!-- КНОПКА ФОНАРИКА (СПРАВА) -->
             <button class="btn-icon-torch" id="torchBtn" onclick="toggleTorch()" title="Включить фонарик">
                 <span class="app-icon"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
             </button>
 
-            <!-- ВЫПАДАЮЩЕЕ МЕНЮ КАМЕР ПРЯМО ПОВЕРХ ВИДОИСКАТЕЛЯ -->
             <div class="cam-overlay-menu" id="camOverlayMenu" style="display:none;">
                 <div class="cam-overlay-header">
                     <span class="cam-overlay-title">
@@ -837,7 +858,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 <div class="modal-overlay" id="palletModal">
     <div class="modal-content">
         <h3 class="modal-title">Выбор паллета</h3>
-        <input type="text" id="palletInput" style="background:var(--input-bg); width:100%; border-radius:14px; padding:14px; margin-bottom: 14px; border:1px solid var(--border-color); text-align:center; font-size:18px; font-weight:800; color:var(--text-main);" placeholder="Введите название...">
+        <input type="text" id="palletInput" style="background:var(--input-bg); width:100%; border-radius:14px; padding:14px; margin-bottom: 14px; border:1px solid var(--border-color); text-align:center; font-size:18px; font-weight:800; color:var(--text-main); transition: background-color var(--t-theme), color var(--t-theme), border-color var(--t-theme);" placeholder="Введите название...">
         <div id="existingPallets" style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:15px;"></div>
         <div style="display:flex; gap:10px;">
             <button class="btn-modal btn-close" onclick="document.getElementById('palletModal').style.display='none'">Отмена</button>
@@ -856,10 +877,9 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
     </div>
 </div>
 
-<!-- ЗУМ С КОПИРОВАНИЕМ ПО УДЕРЖАНИЮ (0.5 сек) -->
 <div class="modal-overlay" id="zoomModal" style="align-items: center;" onclick="handleZoomClick(event)">
     <div class="modal-content" style="background:var(--bg-card); max-width:460px; padding:26px; border-radius:var(--radius-lg); text-align:center; position: relative;">
-        <p style="font-weight:800; font-size:13.5px; color:var(--btn-add); margin-top:-8px; margin-bottom:12px;">Зажмите код пальцем, чтобы скопировать</p>
+        <p style="font-weight:800; font-size:13.5px; color:var(--btn-add); margin-top:-8px; margin-bottom:12px; transition: color var(--t-theme);">Зажмите код пальцем, чтобы скопировать</p>
         
         <div class="zoom-touch-target" id="zoomedCodeContainer"
              onmousedown="startCopyTimer(event)" 
@@ -874,7 +894,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
             </div>
         </div>
         
-        <p id="zoomTextLabel" style="font-weight:900; font-size:16px; color:var(--text-main); margin-top:8px; font-family: monospace;"></p>
+        <p id="zoomTextLabel" style="font-weight:900; font-size:16px; color:var(--text-main); margin-top:8px; font-family: monospace; transition: color var(--t-theme);"></p>
         <button class="btn-modal btn-close" onclick="document.getElementById('zoomModal').style.display='none'" style="margin-top: 15px;">Закрыть окно</button>
     </div>
 </div>
@@ -903,7 +923,6 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
     </div>
 </div>
 
-<!-- АВАТАР РАЗРАБОТЧИКА -->
 <div class="modal-overlay" id="aboutModal">
     <div class="modal-content">
         <h3 class="modal-title">О приложении</h3>
@@ -921,14 +940,11 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
                 </linearGradient>
                 <clipPath id="screen-clip"><rect x="23" y="68" width="39" height="44" /></clipPath>
               </defs>
-
               <circle cx="80" cy="80" r="75" fill="var(--header-icon-bg)" />
-
               <path d="M 15 115 L 60 115 L 75 125 L 5 125 Z" fill="#94a3b8" />
               <path d="M 15 115 L 60 115 L 60 65 L 15 65 Z" fill="#334155" />
               <rect x="18" y="68" width="39" height="44" fill="#0f172a" />
               <rect x="18" y="68" width="39" height="44" fill="url(#screen-glow)" />
-              
               <g clip-path="url(#screen-clip)" class="code-lines">
                 <rect class="code-1" x="22" y="75" width="15" height="3.5" rx="1.5" fill="#10b981" />
                 <rect class="code-2" x="22" y="83" width="28" height="3.5" rx="1.5" fill="#3b82f6" />
@@ -937,12 +953,10 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
                 <rect class="code-5" x="38" y="99" width="14" height="3.5" rx="1.5" fill="#e2e8f0" />
                 <rect class="code-6" x="22" y="107" width="22" height="3.5" rx="1.5" fill="#3b82f6" />
               </g>
-
               <g class="character">
                  <path d="M 60 160 C 60 110, 80 105, 115 105 C 150 105, 160 110, 160 160 Z" fill="#64748b" />
                  <text x="113" y="142" font-family="Nunito, sans-serif" font-weight="900" font-size="11" fill="#cbd5e1" text-anchor="middle" opacity="0.65" letter-spacing="0.5">HELLO WORLD</text>
                  <rect x="107" y="85" width="16" height="25" fill="#fde0c6" />
-                 
                  <g class="head">
                      <rect x="91" y="40" width="48" height="56" rx="24" ry="24" fill="#fde0c6" />
                      <path d="M 89 54 Q 93 30 115 30 Q 137 30 141 54 Q 138 36 115 34 Q 92 36 89 54 Z" fill="#a68a68" />
@@ -954,27 +968,17 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
                      <circle cx="126" cy="61" r="11" fill="url(#glass-refl)" stroke="#cbd5e1" stroke-width="2.5" />
                      <line x1="114" y1="59" x2="116" y2="59" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"/>
                  </g>
-
                  <g class="arms">
-                    <g class="arm-l-group">
-                        <path class="arm-left" d="M 75 115 Q 65 130 45 120" fill="none" stroke="#475569" stroke-width="12" stroke-linecap="round" />
-                        <circle class="hand-left" cx="45" cy="120" r="6.5" fill="#fde0c6" />
-                    </g>
-                    <g class="arm-r-group">
-                        <path class="arm-right" d="M 140 115 Q 110 140 60 124" fill="none" stroke="#475569" stroke-width="12" stroke-linecap="round" />
-                        <circle class="hand-right" cx="60" cy="124" r="6.5" fill="#fde0c6" />
-                    </g>
+                    <g class="arm-l-group"><path class="arm-left" d="M 75 115 Q 65 130 45 120" fill="none" stroke="#475569" stroke-width="12" stroke-linecap="round" /><circle class="hand-left" cx="45" cy="120" r="6.5" fill="#fde0c6" /></g>
+                    <g class="arm-r-group"><path class="arm-right" d="M 140 115 Q 110 140 60 124" fill="none" stroke="#475569" stroke-width="12" stroke-linecap="round" /><circle class="hand-right" cx="60" cy="124" r="6.5" fill="#fde0c6" /></g>
                  </g>
               </g>
               <line x1="0" y1="125" x2="160" y2="125" stroke="var(--border-color)" stroke-width="4" stroke-linecap="round" />
             </svg>
-            <p style="font-size: 19px; font-weight: 900; color: var(--text-main);">Сергей Джугань</p>
-            <p style="font-size: 13.5px; color: var(--text-muted); font-weight: 700; margin-top: 2px;">Версия: 17.0 (Fast Payload)</p>
+            <p style="font-size: 19px; font-weight: 900; color: var(--text-main); transition: color var(--t-theme);">Сергей Джугань</p>
+            <p style="font-size: 13.5px; color: var(--text-muted); font-weight: 700; margin-top: 2px; transition: color var(--t-theme);">Версия: 17.5 (Smooth Edition)</p>
             <a href="https://t.me/segarey" target="_blank" class="tg-dev-btn">
-                <svg class="tg-icon-fly" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
-                Написать в Telegram
+                <svg class="tg-icon-fly" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Написать в Telegram
             </a>
         </div>
         <button class="btn-modal btn-close" onclick="closeAllModals()">Закрыть</button>
@@ -982,7 +986,6 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 </div>
 
 <script>
-/* ================= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ & АНИМАЦИИ ================= */
 function isLowFx() { return document.documentElement.getAttribute('data-fx') === 'low'; }
 
 document.addEventListener('pointerdown', function(e) {
@@ -1035,87 +1038,50 @@ function flashCartStats() {
 const SoundFX = {
     ctx: null,
     init() {
-        if (!this.ctx) {
-            const AC = window.AudioContext || window.webkitAudioContext;
-            if (AC) this.ctx = new AC();
-        }
+        if (!this.ctx) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) this.ctx = new AC(); }
         if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
     },
     tap() {
-        if (!settings.uiSound) return;
-        this.init();
-        if (!this.ctx) return;
+        if (!settings.uiSound) return; this.init(); if (!this.ctx) return;
         try {
-            const t = this.ctx.currentTime;
-            const osc = this.ctx.createOscillator();
-            const gain = this.ctx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(800, t);
-            osc.frequency.exponentialRampToValueAtTime(320, t + 0.035);
-            gain.gain.setValueAtTime(0.06, t);
-            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.035);
-            osc.connect(gain);
-            gain.connect(this.ctx.destination);
-            osc.start(t);
-            osc.stop(t + 0.035);
+            const t = this.ctx.currentTime, osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, t); osc.frequency.exponentialRampToValueAtTime(320, t + 0.035);
+            gain.gain.setValueAtTime(0.06, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.035);
+            osc.connect(gain); gain.connect(this.ctx.destination); osc.start(t); osc.stop(t + 0.035);
         } catch(e) {}
     },
     success() {
-        if (!settings.sound) return;
-        this.init();
-        if (!this.ctx) return;
+        if (!settings.sound) return; this.init(); if (!this.ctx) return;
         try {
             const t = this.ctx.currentTime;
             [1046.50, 1318.51].forEach((freq, idx) => {
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, t + idx * 0.025);
-                gain.gain.setValueAtTime(0, t + idx * 0.025);
-                gain.gain.linearRampToValueAtTime(0.14, t + idx * 0.025 + 0.015);
-                gain.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.025 + 0.16);
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-                osc.start(t + idx * 0.025);
-                osc.stop(t + idx * 0.025 + 0.16);
+                const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(freq, t + idx * 0.025);
+                gain.gain.setValueAtTime(0, t + idx * 0.025); gain.gain.linearRampToValueAtTime(0.14, t + idx * 0.025 + 0.015); gain.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.025 + 0.16);
+                osc.connect(gain); gain.connect(this.ctx.destination); osc.start(t + idx * 0.025); osc.stop(t + idx * 0.025 + 0.16);
             });
         } catch(e) {}
     },
     trash() {
-        if (!settings.uiSound) return;
-        this.init();
-        if (!this.ctx) return;
+        if (!settings.uiSound) return; this.init(); if (!this.ctx) return;
         try {
-            const t = this.ctx.currentTime;
-            const osc = this.ctx.createOscillator();
-            const gain = this.ctx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(480, t);
-            osc.frequency.exponentialRampToValueAtTime(120, t + 0.22);
-            gain.gain.setValueAtTime(0.1, t);
-            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
-            osc.connect(gain);
-            gain.connect(this.ctx.destination);
-            osc.start(t);
-            osc.stop(t + 0.22);
+            const t = this.ctx.currentTime, osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(480, t); osc.frequency.exponentialRampToValueAtTime(120, t + 0.22);
+            gain.gain.setValueAtTime(0.1, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+            osc.connect(gain); gain.connect(this.ctx.destination); osc.start(t); osc.stop(t + 0.22);
         } catch(e) {}
     }
 };
 
-function triggerVibrate(pattern = 12) {
-    if (settings.vibro && navigator.vibrate) { try { navigator.vibrate(pattern); } catch(e) {} }
-}
+function triggerVibrate(pattern = 12) { if (settings.vibro && navigator.vibrate) try { navigator.vibrate(pattern); } catch(e) {} }
 
 document.addEventListener('pointerdown', (e) => {
-    const interactive = e.target.closest('button, .navitem, .toggle, .pallet-bar, .dropdown-item, .qty-box, .numpad-paste-btn, .num-btn, .zoom-touch-target, .cam-choice-card');
+    const interactive = e.target.closest('button, .navitem, .toggle, .pallet-bar, .dropdown-item, .qty-box, .numpad-paste-btn, .num-btn, .zoom-touch-target, .cam-choice-card, .daynight-toggle');
     if (interactive) { SoundFX.tap(); triggerVibrate(12); }
 });
 
 /* ================= НАСТРОЙКИ & ТЕМА ================= */
-let settings = Object.assign({
-    theme: 'light', continuous: true, autolens: true, sound: true, uiSound: true, vibro: true
-}, JSON.parse(localStorage.getItem('tsd_settings')) || {});
-
+let settings = Object.assign({ theme: 'light', continuous: true, autolens: true, sound: true, uiSound: true, vibro: true }, JSON.parse(localStorage.getItem('tsd_settings')) || {});
 function saveSettings() { localStorage.setItem('tsd_settings', JSON.stringify(settings)); }
 function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
@@ -1140,11 +1106,7 @@ function openSettings() {
     document.getElementById('settingsModal').style.display = 'flex';
 }
 
-function toggleSetting(key) {
-    settings[key] = !settings[key];
-    paintToggle('toggle-' + key, settings[key]);
-    saveSettings();
-}
+function toggleSetting(key) { settings[key] = !settings[key]; paintToggle('toggle-' + key, settings[key]); saveSettings(); }
 
 function toggleSimpleMode() {
     const willBeLow = !isLowFx();
@@ -1162,14 +1124,10 @@ let isDeleteAnimating = false;
 function initDeleteButton() {
     const deleteLabel = document.getElementById('deleteLabel');
     if (!deleteLabel) return;
-    const text = 'Очистить';
     deleteLabel.innerHTML = '';
-    deleteLetters = [...text].map(char => {
-        const span = document.createElement('span');
-        span.className = 'letter';
-        span.textContent = char;
-        deleteLabel.appendChild(span);
-        return span;
+    deleteLetters = [...'Очистить'].map(char => {
+        const span = document.createElement('span'); span.className = 'letter'; span.textContent = char;
+        deleteLabel.appendChild(span); return span;
     });
 }
 
@@ -1179,31 +1137,20 @@ function playDeleteAnimation(callback) {
     const binIcon = deleteBtn ? deleteBtn.querySelector('.bin-icon') : null;
     if (!deleteBtn || !binIcon || isLowFx()) { if (callback) callback(); return; }
 
-    isDeleteAnimating = true;
-    SoundFX.trash();
-    triggerVibrate([30, 50, 30]);
+    isDeleteAnimating = true; SoundFX.trash(); triggerVibrate([30, 50, 30]);
 
     const binRect = binIcon.getBoundingClientRect();
-    const targetX = binRect.left + binRect.width * 0.5;
-    const targetY = binRect.top + binRect.height * 0.6; 
+    const targetX = binRect.left + binRect.width * 0.5, targetY = binRect.top + binRect.height * 0.6; 
 
     deleteBtn.classList.add('lid-open');
-    const staggerMs = 35;
-    const flightMs = 450; 
+    const staggerMs = 35, flightMs = 450; 
 
     deleteLetters.forEach((letter, index) => {
-        const rect = letter.getBoundingClientRect();
-        const startX = rect.left + rect.width / 2;
-        const startY = rect.top + rect.height / 2;
-        const dx = targetX - startX;
-        const dy = targetY - startY;
-        const rot = (Math.random() > 0.5 ? 1 : -1) * (360 + Math.random() * 500);
-
-        letter.style.setProperty('--dx', dx.toFixed(1) + 'px');
-        letter.style.setProperty('--dy', dy.toFixed(1) + 'px');
-        letter.style.setProperty('--rot', rot.toFixed(0) + 'deg');
+        const rect = letter.getBoundingClientRect(), startX = rect.left + rect.width / 2, startY = rect.top + rect.height / 2;
+        letter.style.setProperty('--dx', (targetX - startX).toFixed(1) + 'px');
+        letter.style.setProperty('--dy', (targetY - startY).toFixed(1) + 'px');
+        letter.style.setProperty('--rot', ((Math.random() > 0.5 ? 1 : -1) * (360 + Math.random() * 500)).toFixed(0) + 'deg');
         letter.style.setProperty('--delay', (index * staggerMs) + 'ms');
-
         requestAnimationFrame(() => letter.classList.add('flying'));
     });
 
@@ -1216,420 +1163,147 @@ function playDeleteAnimation(callback) {
     }, totalTime + 200);
 }
 
-function clearCart() {
-    if (currentCart.length === 0) return;
-    if (confirm("Очистить таблицу целиком?")) {
-        playDeleteAnimation(() => {
-            currentCart = [];
-            saveState();
-            renderCart();
-        });
-    }
-}
+function clearCart() { if (currentCart.length === 0) return; if (confirm("Очистить таблицу целиком?")) { playDeleteAnimation(() => { currentCart = []; saveState(); renderCart(); }); } }
 
 /* ================= УМНЫЙ ЗУМ И КОПИРОВАНИЕ ================= */
 window.copyToClipboard = function(text) {
     if (!text) return;
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => showToast("Скопировано: " + text)).catch(() => fallbackCopy(text));
-    } else {
-        fallbackCopy(text);
-    }
+    if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(() => showToast("Скопировано: " + text)).catch(() => fallbackCopy(text)); } else { fallbackCopy(text); }
 };
 
 function fallbackCopy(text) {
-    var ta = document.createElement("textarea");
-    ta.value = text;
-    ta.style.position = "fixed"; ta.style.top = "0"; ta.style.left = "0"; ta.style.opacity = "0";
-    document.body.appendChild(ta);
-    ta.focus(); ta.select();
-    try { document.execCommand('copy'); showToast("Скопировано: " + text); } catch(e){}
-    document.body.removeChild(ta);
+    var ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.top = "0"; ta.style.left = "0"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.focus(); ta.select(); try { document.execCommand('copy'); showToast("Скопировано: " + text); } catch(e){} document.body.removeChild(ta);
 }
 
 let zoomCopyTimer = null;
-
 window.zoomBarcode = function(code) {
     triggerVibrate([25, 45, 25]);
     const bSvg = document.getElementById('zoomedBarcodeSvg');
-    document.getElementById('zoomTextLabel').innerText = code;
-    window.currentZoomCode = code; 
+    document.getElementById('zoomTextLabel').innerText = code; window.currentZoomCode = code; 
     document.getElementById('zoomModal').style.display = 'flex';
     renderBarcodeSafe('zoomedBarcodeSvg', code, { width: 2.2, height: 85, displayValue: false, margin: 8 });
 };
+window.startCopyTimer = function(e) { if (zoomCopyTimer) clearTimeout(zoomCopyTimer); zoomCopyTimer = setTimeout(() => { copyToClipboard(window.currentZoomCode); triggerVibrate([30, 50, 30]); }, 500); };
+window.cancelCopyTimer = function(e) { if (zoomCopyTimer) { clearTimeout(zoomCopyTimer); zoomCopyTimer = null; } };
+window.handleZoomClick = function(e) { if (e.target.id === 'zoomModal') { document.getElementById('zoomModal').style.display = 'none'; } };
 
-window.startCopyTimer = function(e) {
-    if (zoomCopyTimer) clearTimeout(zoomCopyTimer);
-    zoomCopyTimer = setTimeout(() => {
-        copyToClipboard(window.currentZoomCode);
-        triggerVibrate([30, 50, 30]);
-    }, 500);
-};
-
-window.cancelCopyTimer = function(e) {
-    if (zoomCopyTimer) {
-        clearTimeout(zoomCopyTimer);
-        zoomCopyTimer = null;
-    }
-};
-
-window.handleZoomClick = function(e) {
-    if (e.target.id === 'zoomModal') {
-        document.getElementById('zoomModal').style.display = 'none';
-    }
-};
-
-/* ================= БАЗОВАЯ ЛОГИКА ТСД (БЕЗ ПАРСИНГА ЦЕН) ================= */
+/* ================= БАЗОВАЯ ЛОГИКА ТСД ================= */
 const MASTER_CODES = { "14630557641291": { code: "4607075900196", qtyInBox: 50 } };
-let currentCart = [];
-let activePallet = "Основной";
+let currentCart = [], activePallet = "Основной";
 
 function normalizeBarcode(text) {
-    if (!text) return "";
-    let clean = String(text).trim().replace(/[\x00-\x1F\x7F ]/g, '');
+    if (!text) return ""; let clean = String(text).trim().replace(/[\x00-\x1F\x7F ]/g, '');
     if (clean.startsWith("]d2") || clean.startsWith("]e0") || clean.startsWith("]C1")) clean = clean.substring(3);
-    if (clean.startsWith("01") && clean.length >= 16) {
-        let gtin = clean.substring(2, 16);
-        clean = gtin.startsWith("0") ? gtin.substring(1) : gtin;
-    }
+    if (clean.startsWith("01") && clean.length >= 16) { let gtin = clean.substring(2, 16); clean = gtin.startsWith("0") ? gtin.substring(1) : gtin; }
     if (clean.length === 14 && clean.startsWith("0")) clean = clean.substring(1);
-    if (MASTER_CODES[clean]) clean = MASTER_CODES[clean].code;
-    return clean;
+    if (MASTER_CODES[clean]) clean = MASTER_CODES[clean].code; return clean;
 }
 
 function updateCartStats() {
-    const total = currentCart.reduce((acc, i) => acc + i.qty, 0);
-    const stats = document.getElementById('cartStats');
+    const total = currentCart.reduce((acc, i) => acc + i.qty, 0), stats = document.getElementById('cartStats');
     if (stats) stats.innerText = `${currentCart.length} строк (${total} шт.)`;
 }
-
-function saveState() {
-    localStorage.setItem('tsd_lite_cart', JSON.stringify(currentCart));
-}
+function saveState() { localStorage.setItem('tsd_lite_cart', JSON.stringify(currentCart)); }
 
 function renderBarcodeSafe(targetId, code, opts = {}) {
-    const el = document.getElementById(targetId);
-    if (!el) return;
-    try {
-        JsBarcode(el, code, Object.assign({ format: "EAN13", lineColor: "#000", background: "transparent" }, opts));
-    } catch (e) {
-        try {
-            JsBarcode(el, code, Object.assign({ format: "CODE128", lineColor: "#000", background: "transparent" }, opts));
-        } catch (err) {
-            el.outerHTML = `<span style="font-family:monospace;font-weight:900;font-size:13px;">${code}</span>`;
-        }
-    }
+    const el = document.getElementById(targetId); if (!el) return;
+    try { JsBarcode(el, code, Object.assign({ format: "EAN13", lineColor: "#000", background: "transparent" }, opts)); } 
+    catch (e) { try { JsBarcode(el, code, Object.assign({ format: "CODE128", lineColor: "#000", background: "transparent" }, opts)); } 
+    catch (err) { el.outerHTML = `<span style="font-family:monospace;font-weight:900;font-size:13px;transition:color var(--t-theme);">${code}</span>`; } }
 }
 
 function addOrUpdateItem(code, qty = 1) {
-    const pallet = activePallet;
-    const barcode = normalizeBarcode(code);
-    
-    const existing = currentCart.find(i => i.code === barcode && i.pallet === pallet);
-    if (existing) {
-        existing.qty += qty;
-    } else {
-        const newItem = {
-            id: 'item_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
-            code: barcode,
-            qty: qty,
-            pallet: pallet
-        };
-        currentCart.unshift(newItem);
-    }
-
-    saveState();
-    renderCart();
-    SoundFX.success();
-    triggerVibrate([20, 35, 20]);
-    flashCartStats();
+    const pallet = activePallet, barcode = normalizeBarcode(code), existing = currentCart.find(i => i.code === barcode && i.pallet === pallet);
+    if (existing) existing.qty += qty; else currentCart.unshift({ id: 'item_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6), code: barcode, qty: qty, pallet: pallet });
+    saveState(); renderCart(); SoundFX.success(); triggerVibrate([20, 35, 20]); flashCartStats();
 }
 
 function renderCart() {
-    const area = document.getElementById('cartContentArea');
-    if (!area) return;
-    
+    const area = document.getElementById('cartContentArea'); if (!area) return;
     if (currentCart.length === 0) {
-        area.innerHTML = `
-            <div class="no-data-card">
-                <span class="app-icon" style="width:44px;height:44px;color:var(--btn-add);"><svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg></span>
-                <span>Наведите камеру на штрихкод</span>
-            </div>`;
-        updateCartStats();
-        return;
+        area.innerHTML = `<div class="no-data-card"><span class="app-icon" style="width:44px;height:44px;color:var(--btn-add);"><svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg></span><span>Наведите камеру на штрихкод</span></div>`;
+        updateCartStats(); return;
     }
 
-    const pallets = {};
-    currentCart.forEach(item => {
-        if (!pallets[item.pallet]) pallets[item.pallet] = [];
-        pallets[item.pallet].push(item);
-    });
-
-    let html = `<div class="table-responsive"><table>
-        <thead>
-            <tr>
-                <th>Штрихкод</th>
-                <th style="width:54px;">Кол</th>
-                <th style="width:50px;"></th>
-            </tr>
-        </thead>`;
+    const pallets = {}; currentCart.forEach(item => { if (!pallets[item.pallet]) pallets[item.pallet] = []; pallets[item.pallet].push(item); });
+    let html = `<div class="table-responsive"><table><thead><tr><th>Штрихкод</th><th style="width:54px;">Кол</th><th style="width:50px;"></th></tr></thead>`;
 
     for (const [palletName, items] of Object.entries(pallets)) {
-        html += `
-            <tbody>
-                <tr class="pallet-header-row">
-                    <td colspan="3">
-                        <div class="pallet-header-content">
-                            <span class="pallet-name">
-                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span>
-                                ${palletName}
-                            </span>
-                            <button class="btn-pallet-qr" onclick="showPalletQR('${palletName}')">
-                                <span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
-                                Показать QR
-                            </button>
-                        </div>
-                    </td>
-                </tr>`;
-
+        html += `<tbody><tr class="pallet-header-row"><td colspan="3"><div class="pallet-header-content"><span class="pallet-name"><span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span>${palletName}</span><button class="btn-pallet-qr" onclick="showPalletQR('${palletName}')"><span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Показать QR</button></div></td></tr>`;
         items.forEach((item, idx) => {
-            const delay = Math.min(idx * 40, 240);
-            const rowStyle = !isLowFx() ? `style="animation: popIn 0.4s var(--ease-spring) ${delay}ms forwards; opacity: 0;"` : '';
-
-            html += `
-                <tr ${rowStyle}>
-                    <td class="inline-barcode-container" onclick="zoomBarcode('${item.code}')">
-                        <div class="barcode-wrapper"><svg id="bc-${item.id}"></svg></div>
-                    </td>
-                    <td>
-                        <button class="qty-box" onclick="showNumpadForEdit('${item.id}')">${item.qty}</button>
-                    </td>
-                    <td>
-                        <button class="btn-remove" onclick="removeItem('${item.id}')">
-                            <span class="app-icon" style="width:18px;height:18px;"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
-                        </button>
-                    </td>
-                </tr>`;
+            const delay = Math.min(idx * 40, 240); const rowStyle = !isLowFx() ? `style="animation: popIn 0.4s var(--ease-spring) ${delay}ms forwards; opacity: 0;"` : '';
+            html += `<tr ${rowStyle}><td class="inline-barcode-container" onclick="zoomBarcode('${item.code}')"><div class="barcode-wrapper"><svg id="bc-${item.id}"></svg></div></td><td><button class="qty-box" onclick="showNumpadForEdit('${item.id}')">${item.qty}</button></td><td><button class="btn-remove" onclick="removeItem('${item.id}')"><span class="app-icon" style="width:18px;height:18px;"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></button></td></tr>`;
         });
         html += `</tbody>`;
     }
-    html += `</table></div>`;
-    area.innerHTML = html;
-
-    currentCart.forEach(item => {
-        renderBarcodeSafe(`bc-${item.id}`, item.code, { width: 1.5, height: 36, displayValue: true, fontSize: 13, margin: 1 });
-    });
-
+    html += `</table></div>`; area.innerHTML = html;
+    currentCart.forEach(item => { renderBarcodeSafe(`bc-${item.id}`, item.code, { width: 1.5, height: 36, displayValue: true, fontSize: 13, margin: 1 }); });
     updateCartStats();
 }
 
 function showToast(msg) {
-    const sb = document.getElementById('snackbar');
-    document.getElementById('snackbarText').innerText = msg;
-    document.getElementById('snackbarUndoBtn').style.display = 'none';
-    sb.classList.add('show');
-    setTimeout(() => sb.classList.remove('show'), 3000);
+    const sb = document.getElementById('snackbar'); document.getElementById('snackbarText').innerText = msg; document.getElementById('snackbarUndoBtn').style.display = 'none';
+    sb.classList.add('show'); setTimeout(() => sb.classList.remove('show'), 3000);
 }
 
 let lastDeletedItem = null;
-
 function removeItem(itemId) {
     const idx = currentCart.findIndex(i => i.id === itemId);
     if (idx !== -1) {
-        lastDeletedItem = currentCart.splice(idx, 1)[0];
-        saveState();
-        renderCart();
-        SoundFX.trash();
-        triggerVibrate([20, 30]);
-        const sb = document.getElementById('snackbar');
-        document.getElementById('snackbarText').innerText = 'Товар удалён';
-        document.getElementById('snackbarUndoBtn').style.display = 'block';
-        sb.classList.add('show');
-        setTimeout(() => sb.classList.remove('show'), 3800);
+        lastDeletedItem = currentCart.splice(idx, 1)[0]; saveState(); renderCart(); SoundFX.trash(); triggerVibrate([20, 30]);
+        const sb = document.getElementById('snackbar'); document.getElementById('snackbarText').innerText = 'Товар удалён'; document.getElementById('snackbarUndoBtn').style.display = 'block'; sb.classList.add('show'); setTimeout(() => sb.classList.remove('show'), 3800);
     }
 }
-
-function undoDelete() {
-    if (lastDeletedItem) {
-        currentCart.unshift(lastDeletedItem);
-        lastDeletedItem = null;
-        saveState();
-        renderCart();
-        document.getElementById('snackbar').classList.remove('show');
-    }
-}
+function undoDelete() { if (lastDeletedItem) { currentCart.unshift(lastDeletedItem); lastDeletedItem = null; saveState(); renderCart(); document.getElementById('snackbar').classList.remove('show'); } }
 
 /* ================= NUMPAD МОДАЛ ================= */
-let numpadVal = "1";
-let numpadMode = "";
-let targetCode = "";
-let editingItemId = null;
-
+let numpadVal = "1", numpadMode = "", targetCode = "", editingItemId = null;
 function updateNumpadUI() {
-    const display = document.getElementById('numpadDisplay');
-    const group = document.getElementById('numpadInputGroup');
-    const pasteBtn = document.getElementById('numpadPasteBtn');
-
-    if (numpadMode === 'manual') {
-        group.classList.add('manual-mode');
-        pasteBtn.style.display = 'flex';
-        display.innerHTML = numpadVal ? `${numpadVal}<span class="numpad-cursor"></span>` : `<span class="numpad-placeholder">Ввод ШК или Артикула...</span><span class="numpad-cursor"></span>`;
-    } else {
-        group.classList.remove('manual-mode');
-        pasteBtn.style.display = 'none';
-        display.innerHTML = `${numpadVal || 0}<span class="numpad-cursor"></span>`;
-    }
+    const display = document.getElementById('numpadDisplay'), group = document.getElementById('numpadInputGroup'), pasteBtn = document.getElementById('numpadPasteBtn');
+    if (numpadMode === 'manual') { group.classList.add('manual-mode'); pasteBtn.style.display = 'flex'; display.innerHTML = numpadVal ? `${numpadVal}<span class="numpad-cursor"></span>` : `<span class="numpad-placeholder">Ввод ШК...</span><span class="numpad-cursor"></span>`; } 
+    else { group.classList.remove('manual-mode'); pasteBtn.style.display = 'none'; display.innerHTML = `${numpadVal || 0}<span class="numpad-cursor"></span>`; }
     display.scrollLeft = display.scrollWidth;
 }
-
-function showNumpadForManual() {
-    numpadMode = 'manual';
-    numpadVal = "";
-    document.getElementById('numpadTitle').style.display = "none";
-    updateNumpadUI();
-    document.getElementById('numpadModal').style.display = 'flex';
-}
-
-function showNumpadForScan(code) {
-    numpadMode = 'scan';
-    targetCode = code;
-    let defQty = 1;
-    if (MASTER_CODES[code] && MASTER_CODES[code].qtyInBox) {
-        defQty = MASTER_CODES[code].qtyInBox;
-    }
-    numpadVal = String(defQty);
-    const titleEl = document.getElementById('numpadTitle');
-    titleEl.style.display = "block";
-    titleEl.innerText = `ШК: ${code}`;
-    updateNumpadUI();
-    document.getElementById('numpadModal').style.display = 'flex';
-}
-
-function showNumpadForEdit(itemId) {
-    const item = currentCart.find(i => i.id === itemId);
-    if (!item) return;
-    numpadMode = 'edit';
-    editingItemId = itemId;
-    numpadVal = String(item.qty);
-    const titleEl = document.getElementById('numpadTitle');
-    titleEl.style.display = "block";
-    titleEl.innerText = `Изменить кол-во: ${item.code}`;
-    updateNumpadUI();
-    document.getElementById('numpadModal').style.display = 'flex';
-}
-
-function numPress(n) {
-    if (numpadVal === "0" && numpadMode !== 'manual') numpadVal = "";
-    if (numpadVal.length < 28) numpadVal += String(n);
-    updateNumpadUI();
-}
+function showNumpadForManual() { numpadMode = 'manual'; numpadVal = ""; document.getElementById('numpadTitle').style.display = "none"; updateNumpadUI(); document.getElementById('numpadModal').style.display = 'flex'; }
+function showNumpadForScan(code) { numpadMode = 'scan'; targetCode = code; let defQty = 1; if (MASTER_CODES[code] && MASTER_CODES[code].qtyInBox) { defQty = MASTER_CODES[code].qtyInBox; } numpadVal = String(defQty); const titleEl = document.getElementById('numpadTitle'); titleEl.style.display = "block"; titleEl.innerText = `ШК: ${code}`; updateNumpadUI(); document.getElementById('numpadModal').style.display = 'flex'; }
+function showNumpadForEdit(itemId) { const item = currentCart.find(i => i.id === itemId); if (!item) return; numpadMode = 'edit'; editingItemId = itemId; numpadVal = String(item.qty); const titleEl = document.getElementById('numpadTitle'); titleEl.style.display = "block"; titleEl.innerText = `Изменить кол-во: ${item.code}`; updateNumpadUI(); document.getElementById('numpadModal').style.display = 'flex'; }
+function numPress(n) { if (numpadVal === "0" && numpadMode !== 'manual') numpadVal = ""; if (numpadVal.length < 28) numpadVal += String(n); updateNumpadUI(); }
 function numClear() { numpadVal = ""; updateNumpadUI(); }
 function numBackspace() { numpadVal = numpadVal.slice(0, -1); updateNumpadUI(); }
-
-function numCancel() {
-    document.getElementById('numpadModal').style.display = 'none';
-    if (numpadMode === 'scan' && settings.continuous) isScannerPaused = false;
-    else updateNavState('onNavHome');
-}
-
+function numCancel() { document.getElementById('numpadModal').style.display = 'none'; if (numpadMode === 'scan' && settings.continuous) isScannerPaused = false; else updateNavState('onNavHome'); }
 function numConfirm() {
     document.getElementById('numpadModal').style.display = 'none';
-    if (numpadMode === 'manual') {
-        const c = numpadVal.trim();
-        if (c) {
-            addOrUpdateItem(c, 1);
-        }
-        updateNavState('onNavHome');
-    } else if (numpadMode === 'scan') {
-        const q = parseInt(numpadVal) || 1;
-        if (targetCode) addOrUpdateItem(targetCode, Math.max(1, q));
-        if (settings.continuous) isScannerPaused = false;
-        else stopScanner(true);
-    } else if (numpadMode === 'edit') {
-        const item = currentCart.find(i => i.id === editingItemId);
-        if (item) {
-            item.qty = Math.max(1, parseInt(numpadVal) || 1);
-            saveState();
-            renderCart();
-        }
-    }
+    if (numpadMode === 'manual') { const c = numpadVal.trim(); if (c) { addOrUpdateItem(c, 1); } updateNavState('onNavHome'); } 
+    else if (numpadMode === 'scan') { const q = parseInt(numpadVal) || 1; if (targetCode) addOrUpdateItem(targetCode, Math.max(1, q)); if (settings.continuous) isScannerPaused = false; else stopScanner(true); } 
+    else if (numpadMode === 'edit') { const item = currentCart.find(i => i.id === editingItemId); if (item) { item.qty = Math.max(1, parseInt(numpadVal) || 1); saveState(); renderCart(); } }
 }
-
-async function pasteToNumpad() {
-    try {
-        const text = await navigator.clipboard.readText();
-        if (text) { numpadVal = text.trim(); updateNumpadUI(); }
-    } catch(e) {}
-}
+async function pasteToNumpad() { try { const text = await navigator.clipboard.readText(); if (text) { numpadVal = text.trim(); updateNumpadUI(); } } catch(e) {} }
 
 /* ================= ПАЛЛЕТЫ ================= */
 function openPalletModal() {
     document.getElementById('palletInput').value = activePallet;
-    const pallets = [...new Set(currentCart.map(i => i.pallet))];
-    const container = document.getElementById('existingPallets');
-    container.innerHTML = pallets.map(p => `
-        <button style="background:var(--input-bg); border:1px solid var(--border-color); border-radius:11px; padding:8px 14px; font-weight:800; font-size:14px; color:var(--text-main); cursor:pointer;" onclick="document.getElementById('palletInput').value='${p}'">${p}</button>
-    `).join('');
+    const pallets = [...new Set(currentCart.map(i => i.pallet))], container = document.getElementById('existingPallets');
+    container.innerHTML = pallets.map(p => `<button style="background:var(--input-bg); border:1px solid var(--border-color); border-radius:11px; padding:8px 14px; font-weight:800; font-size:14px; color:var(--text-main); cursor:pointer; transition: background-color var(--t-theme), color var(--t-theme), border-color var(--t-theme);" onclick="document.getElementById('palletInput').value='${p}'">${p}</button>`).join('');
     document.getElementById('palletModal').style.display = 'flex';
 }
-
-function confirmPallet() {
-    activePallet = document.getElementById('palletInput').value.trim() || "Основной";
-    document.getElementById('currentPalletBadge').innerHTML = `
-        <span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
-        ${activePallet}
-    `;
-    document.getElementById('palletModal').style.display = 'none';
-}
+function confirmPallet() { activePallet = document.getElementById('palletInput').value.trim() || "Основной"; document.getElementById('currentPalletBadge').innerHTML = `<span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>${activePallet}`; document.getElementById('palletModal').style.display = 'none'; }
 
 /* ================= СИСТЕМА УПРАВЛЕНИЯ КАМЕРАМИ ================= */
-let html5QrCode = null;
-let isScannerPaused = false;
-let torchEnabled = false;
-let allCamerasList = [];
-let selectedCameraId = null;
-let isSwitchingCamera = false;
+let html5QrCode = null, isScannerPaused = false, torchEnabled = false, allCamerasList = [], selectedCameraId = null, isSwitchingCamera = false;
 
 function parseRussianCameraLabel(cam, index) {
-    const l = (cam.label || '').toLowerCase();
-    const isFront = l.includes('front') || l.includes('user') || l.includes('передн') || l.includes('selfie') || l.includes('facing front');
-
-    let title = "";
-    let desc = "";
-    let badge = "";
-
-    if (isFront) {
-        title = l.includes('1') ? "Фронтальная (основная)" : "Фронтальная (широкая)";
-        desc = "Передняя селфи-камера";
-        badge = "Селфи";
-    } else {
-        if (l.includes('camera2 0') || l.includes('camera 0') || l.includes('0, facing back') || (index === 0 && !l.includes('2') && !l.includes('3'))) {
-            title = "Основная камера (1x)";
-            desc = "Автофокус и высокая чёткость";
-            badge = "Основная";
-        } else if (l.includes('camera2 2') || l.includes('ultra') || l.includes('wide') || l.includes('0.5') || l.includes('широк')) {
-            title = "Сверхширокоугольная (0.5x)";
-            desc = "Широкий обзор, фиксированный фокус";
-            badge = "Ширик";
-        } else if (l.includes('camera2 3') || l.includes('macro') || l.includes('макро')) {
-            title = "Макро-объектив";
-            desc = "Для съёмки с очень близкого расстояния";
-            badge = "Макро";
-        } else if (l.includes('tele') || l.includes('zoom') || l.includes('теле')) {
-            title = "Телеобъектив (зум)";
-            desc = "Оптическое увеличение";
-            badge = "Зум";
-        } else if (l.includes('depth') || l.includes('глубин')) {
-            title = "Датчик глубины";
-            desc = "Вспомогательный сенсор резкости";
-            badge = "Сенсор";
-        } else {
-            title = `Задняя камера #${index + 1}`;
-            desc = cam.label || "Тыловой датчик изображения";
-            badge = "Задняя";
-        }
+    const l = (cam.label || '').toLowerCase(), isFront = l.includes('front') || l.includes('user') || l.includes('передн') || l.includes('selfie') || l.includes('facing front');
+    let title = "", desc = "", badge = "";
+    if (isFront) { title = l.includes('1') ? "Фронтальная (основная)" : "Фронтальная (широкая)"; desc = "Передняя селфи-камера"; badge = "Селфи"; } 
+    else {
+        if (l.includes('camera2 0') || l.includes('camera 0') || l.includes('0, facing back') || (index === 0 && !l.includes('2') && !l.includes('3'))) { title = "Основная камера (1x)"; desc = "Автофокус и высокая чёткость"; badge = "Основная"; } 
+        else if (l.includes('camera2 2') || l.includes('ultra') || l.includes('wide') || l.includes('0.5') || l.includes('широк')) { title = "Сверхширокоугольная (0.5x)"; desc = "Широкий обзор, фиксированный фокус"; badge = "Ширик"; } 
+        else if (l.includes('camera2 3') || l.includes('macro') || l.includes('макро')) { title = "Макро-объектив"; desc = "Для съёмки с очень близкого расстояния"; badge = "Макро"; } 
+        else if (l.includes('tele') || l.includes('zoom') || l.includes('теле')) { title = "Телеобъектив (зум)"; desc = "Оптическое увеличение"; badge = "Зум"; } 
+        else if (l.includes('depth') || l.includes('глубин')) { title = "Датчик глубины"; desc = "Вспомогательный сенсор резкости"; badge = "Сенсор"; } 
+        else { title = `Задняя камера #${index + 1}`; desc = cam.label || "Тыловой датчик изображения"; badge = "Задняя"; }
     }
-
     return { title, desc, badge };
 }
 
@@ -1637,404 +1311,140 @@ async function detectAllCameras() {
     if (allCamerasList && allCamerasList.length > 0) return allCamerasList;
     try {
         if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-            const devs = await navigator.mediaDevices.enumerateDevices();
-            const vDevs = devs.filter(d => d.kind === 'videoinput');
-            if (vDevs.length > 0 && vDevs.some(d => d.label)) {
-                allCamerasList = vDevs.map((d, i) => ({ id: d.deviceId, label: d.label || `Камера ${i + 1}` }));
-                return allCamerasList;
-            }
+            const devs = await navigator.mediaDevices.enumerateDevices(), vDevs = devs.filter(d => d.kind === 'videoinput');
+            if (vDevs.length > 0 && vDevs.some(d => d.label)) { allCamerasList = vDevs.map((d, i) => ({ id: d.deviceId, label: d.label || `Камера ${i + 1}` })); return allCamerasList; }
         }
-        const cameras = await Html5Qrcode.getCameras();
-        if (cameras && cameras.length) {
-            allCamerasList = cameras;
-        }
-    } catch(e) { console.warn("Detect cameras error:", e); }
-    return allCamerasList;
+        const cameras = await Html5Qrcode.getCameras(); if (cameras && cameras.length) { allCamerasList = cameras; }
+    } catch(e) {} return allCamerasList;
 }
 
 function getBestDefaultCameraId() {
     if (!allCamerasList || !allCamerasList.length) return null;
-    let best = allCamerasList.find(c => {
-        const l = (c.label || '').toLowerCase();
-        const isNotFront = !l.includes('front') && !l.includes('user') && !l.includes('передн') && !l.includes('selfie');
-        const isNotAux = !l.includes('ultra') && !l.includes('0.5') && !l.includes('macro') && !l.includes('depth') && !l.includes('широк');
-        return isNotFront && isNotAux && (l.includes('camera2 0') || l.includes('camera 0') || l.includes('0, facing back') || l.includes('main'));
-    });
-    if (best) return best.id;
-
-    best = allCamerasList.find(c => {
-        const l = (c.label || '').toLowerCase();
-        const isNotFront = !l.includes('front') && !l.includes('user') && !l.includes('передн') && !l.includes('selfie');
-        return isNotFront && !l.includes('ultra') && !l.includes('0.5') && !l.includes('macro') && !l.includes('depth') && !l.includes('широк');
-    });
-    if (best) return best.id;
-
+    let best = allCamerasList.find(c => { const l = (c.label || '').toLowerCase(), isNotFront = !l.includes('front') && !l.includes('user') && !l.includes('передн') && !l.includes('selfie'), isNotAux = !l.includes('ultra') && !l.includes('0.5') && !l.includes('macro') && !l.includes('depth') && !l.includes('широк'); return isNotFront && isNotAux && (l.includes('camera2 0') || l.includes('camera 0') || l.includes('0, facing back') || l.includes('main')); }); if (best) return best.id;
+    best = allCamerasList.find(c => { const l = (c.label || '').toLowerCase(), isNotFront = !l.includes('front') && !l.includes('user') && !l.includes('передн') && !l.includes('selfie'); return isNotFront && !l.includes('ultra') && !l.includes('0.5') && !l.includes('macro') && !l.includes('depth') && !l.includes('широк'); }); if (best) return best.id;
     return allCamerasList.find(c => !c.label.toLowerCase().includes('front'))?.id || allCamerasList[0].id;
 }
 
 async function startScanner() {
-    isScannerPaused = false;
-    document.getElementById('scannerModal').style.display = 'flex';
-    closeCameraMenu();
-
-    if (html5QrCode) {
-        try { await html5QrCode.stop(); } catch(e) {}
-        try { html5QrCode.clear(); } catch(e) {}
-        html5QrCode = null;
-    }
-
-    html5QrCode = new Html5Qrcode("reader", {
-        formatsToSupport: [ Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.EAN_8, Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.QR_CODE ],
-        experimentalFeatures: { useBarCodeDetectorIfSupported: true },
-        verbose: false
-    });
-
-    const config = { fps: 22 };
-    await detectAllCameras();
-    if (!selectedCameraId) selectedCameraId = getBestDefaultCameraId();
-
+    isScannerPaused = false; document.getElementById('scannerModal').style.display = 'flex'; closeCameraMenu();
+    if (html5QrCode) { try { await html5QrCode.stop(); } catch(e) {} try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; }
+    html5QrCode = new Html5Qrcode("reader", { formatsToSupport: [ Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.EAN_8, Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.QR_CODE ], experimentalFeatures: { useBarCodeDetectorIfSupported: true }, verbose: false });
+    const config = { fps: 22 }; await detectAllCameras(); if (!selectedCameraId) selectedCameraId = getBestDefaultCameraId();
     try {
-        if (selectedCameraId) {
-            await html5QrCode.start(selectedCameraId, config, onCodeDetected);
-        } else {
-            await html5QrCode.start({ facingMode: "environment" }, config, onCodeDetected);
-        }
+        if (selectedCameraId) await html5QrCode.start(selectedCameraId, config, onCodeDetected); else await html5QrCode.start({ facingMode: "environment" }, config, onCodeDetected);
         updateZoomButtonsUI(1);
     } catch(err) {
-        try {
-            await html5QrCode.start({ facingMode: "environment" }, config, onCodeDetected);
-            updateZoomButtonsUI(1);
-        } catch(err2) {
-            document.getElementById('scannerModal').style.display = 'none';
-            if (html5QrCode) { try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; }
-            alert("Не удалось запустить камеру. Проверьте разрешения в браузере.");
-            updateNavState('onNavHome');
-        }
+        try { await html5QrCode.start({ facingMode: "environment" }, config, onCodeDetected); updateZoomButtonsUI(1); } 
+        catch(err2) { document.getElementById('scannerModal').style.display = 'none'; if (html5QrCode) { try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; } alert("Не удалось запустить камеру. Проверьте разрешения в браузере."); updateNavState('onNavHome'); }
     }
 }
 
 async function toggleCameraOverlayMenu() {
-    const overlay = document.getElementById('camOverlayMenu');
-    if (overlay && overlay.style.display === 'flex') { closeCameraMenu(); return; }
-    if (!allCamerasList || !allCamerasList.length) await detectAllCameras();
-    if (!allCamerasList || !allCamerasList.length) { showToast("Камеры не найдены"); return; }
-
+    const overlay = document.getElementById('camOverlayMenu'); if (overlay && overlay.style.display === 'flex') { closeCameraMenu(); return; }
+    if (!allCamerasList || !allCamerasList.length) await detectAllCameras(); if (!allCamerasList || !allCamerasList.length) { showToast("Камеры не найдены"); return; }
     const listContainer = document.getElementById('camOverlayList');
     listContainer.innerHTML = allCamerasList.map((cam, idx) => {
-        const info = parseRussianCameraLabel(cam, idx);
-        const isActive = (cam.id === selectedCameraId) || (!selectedCameraId && idx === 0);
-        return `
-            <div class="cam-choice-card ${isActive ? 'active' : ''}" onclick="selectCameraById('${cam.id}')">
-                <div class="cam-card-info">
-                    <div class="cam-card-name">
-                        <span>${info.title}</span>
-                        <span class="cam-badge-tag">${info.badge}</span>
-                    </div>
-                    <div class="cam-card-desc">${info.desc}</div>
-                </div>
-                ${isActive ? '<span class="app-icon" style="color:var(--btn-add); width:20px; height:20px;"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>' : ''}
-            </div>
-        `;
-    }).join('');
-
-    overlay.style.display = 'flex';
+        const info = parseRussianCameraLabel(cam, idx), isActive = (cam.id === selectedCameraId) || (!selectedCameraId && idx === 0);
+        return `<div class="cam-choice-card ${isActive ? 'active' : ''}" onclick="selectCameraById('${cam.id}')"><div class="cam-card-info"><div class="cam-card-name"><span>${info.title}</span><span class="cam-badge-tag">${info.badge}</span></div><div class="cam-card-desc">${info.desc}</div></div>${isActive ? '<span class="app-icon" style="color:var(--btn-add); width:20px; height:20px;"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>' : ''}</div>`;
+    }).join(''); overlay.style.display = 'flex';
 }
 
-function closeCameraMenu(e) {
-    if (e) e.stopPropagation();
-    const overlay = document.getElementById('camOverlayMenu');
-    if (overlay) overlay.style.display = 'none';
-}
+function closeCameraMenu(e) { if (e) e.stopPropagation(); const overlay = document.getElementById('camOverlayMenu'); if (overlay) overlay.style.display = 'none'; }
 
 async function selectCameraById(camId) {
-    closeCameraMenu();
-    if (isSwitchingCamera) return;
-    if (selectedCameraId === camId && html5QrCode && html5QrCode.isScanning) return;
-
-    isSwitchingCamera = true;
-    selectedCameraId = camId;
-    triggerVibrate(20);
-
+    closeCameraMenu(); if (isSwitchingCamera) return; if (selectedCameraId === camId && html5QrCode && html5QrCode.isScanning) return;
+    isSwitchingCamera = true; selectedCameraId = camId; triggerVibrate(20);
     try {
-        torchEnabled = false;
-        const torchBtn = document.getElementById('torchBtn');
-        if (torchBtn) torchBtn.classList.remove('active');
-        updateZoomButtonsUI(1);
-
-        if (html5QrCode) {
-            try { if (html5QrCode.isScanning) await html5QrCode.stop(); } catch(e) {}
-            try { await html5QrCode.clear(); } catch(e) {}
-            html5QrCode = null;
-        }
-
+        torchEnabled = false; const torchBtn = document.getElementById('torchBtn'); if (torchBtn) torchBtn.classList.remove('active'); updateZoomButtonsUI(1);
+        if (html5QrCode) { try { if (html5QrCode.isScanning) await html5QrCode.stop(); } catch(e) {} try { await html5QrCode.clear(); } catch(e) {} html5QrCode = null; }
         await new Promise(r => setTimeout(r, 250));
-
         html5QrCode = new Html5Qrcode("reader", { experimentalFeatures: { useBarCodeDetectorIfSupported: true }, verbose: false });
-        await html5QrCode.start(camId, { fps: 22 }, onCodeDetected);
-        showToast("Камера переключена");
+        await html5QrCode.start(camId, { fps: 22 }, onCodeDetected); showToast("Камера переключена");
     } catch(err) {
         showToast("Ошибка запуска сенсора");
-        try {
-            if (!html5QrCode) html5QrCode = new Html5Qrcode("reader", { experimentalFeatures: { useBarCodeDetectorIfSupported: true } });
-            await html5QrCode.start({ facingMode: "environment" }, { fps: 22 }, onCodeDetected);
-        } catch(e2) {}
-    } finally {
-        isSwitchingCamera = false;
-    }
+        try { if (!html5QrCode) html5QrCode = new Html5Qrcode("reader", { experimentalFeatures: { useBarCodeDetectorIfSupported: true } }); await html5QrCode.start({ facingMode: "environment" }, { fps: 22 }, onCodeDetected); } catch(e2) {}
+    } finally { isSwitchingCamera = false; }
 }
 
 async function toggleTorch() {
-    if (!html5QrCode) return;
-    const nextTorchState = !torchEnabled;
-    let applied = false;
-
-    try {
-        const videoEl = document.querySelector("#reader video");
-        if (videoEl && videoEl.srcObject) {
-            const track = videoEl.srcObject.getVideoTracks()[0];
-            if (track) {
-                const caps = track.getCapabilities ? track.getCapabilities() : {};
-                if ('torch' in caps || caps.fillLightMode) {
-                    await track.applyConstraints({ advanced: [{ torch: nextTorchState }] });
-                    applied = true;
-                }
-            }
-        }
-    } catch(e) {}
-
-    if (!applied) {
-        try {
-            await html5QrCode.applyVideoConstraints({ advanced: [{ torch: nextTorchState }] });
-            applied = true;
-        } catch(e) {}
-    }
-
-    if (applied) {
-        torchEnabled = nextTorchState;
-        document.getElementById('torchBtn').classList.toggle('active', torchEnabled);
-        triggerVibrate(15);
-    } else {
-        showToast("Вспышка недоступна на этой камере");
-    }
+    if (!html5QrCode) return; const nextTorchState = !torchEnabled; let applied = false;
+    try { const videoEl = document.querySelector("#reader video"); if (videoEl && videoEl.srcObject) { const track = videoEl.srcObject.getVideoTracks()[0]; if (track) { const caps = track.getCapabilities ? track.getCapabilities() : {}; if ('torch' in caps || caps.fillLightMode) { await track.applyConstraints({ advanced: [{ torch: nextTorchState }] }); applied = true; } } } } catch(e) {}
+    if (!applied) { try { await html5QrCode.applyVideoConstraints({ advanced: [{ torch: nextTorchState }] }); applied = true; } catch(e) {} }
+    if (applied) { torchEnabled = nextTorchState; document.getElementById('torchBtn').classList.toggle('active', torchEnabled); triggerVibrate(15); } else { showToast("Вспышка недоступна на этой камере"); }
 }
 
-function updateZoomButtonsUI(lvl) {
-    document.querySelectorAll('.zoom-btn').forEach(b => {
-        b.classList.toggle('active', Number(b.dataset.zoom) === lvl);
-    });
-}
+function updateZoomButtonsUI(lvl) { document.querySelectorAll('.zoom-btn').forEach(b => { b.classList.toggle('active', Number(b.dataset.zoom) === lvl); }); }
 
 function setZoomLevel(lvl) {
-    updateZoomButtonsUI(lvl);
-    triggerVibrate(15);
-    
-    try {
-        const videoEl = document.querySelector("#reader video");
-        if (videoEl && videoEl.srcObject) {
-            const track = videoEl.srcObject.getVideoTracks()[0];
-            if (track) {
-                const caps = track.getCapabilities ? track.getCapabilities() : {};
-                if (caps.zoom) {
-                    const target = Math.min(Math.max(lvl, caps.zoom.min || 1), caps.zoom.max || 10);
-                    track.applyConstraints({ advanced: [{ zoom: target }] }).catch(() => {});
-                    return;
-                }
-            }
-        }
-    } catch(e) {}
-
-    if (html5QrCode) {
-        html5QrCode.applyVideoConstraints({ advanced: [{ zoom: lvl }] }).catch(() => {});
-    }
+    updateZoomButtonsUI(lvl); triggerVibrate(15);
+    try { const videoEl = document.querySelector("#reader video"); if (videoEl && videoEl.srcObject) { const track = videoEl.srcObject.getVideoTracks()[0]; if (track) { const caps = track.getCapabilities ? track.getCapabilities() : {}; if (caps.zoom) { const target = Math.min(Math.max(lvl, caps.zoom.min || 1), caps.zoom.max || 10); track.applyConstraints({ advanced: [{ zoom: target }] }).catch(() => {}); return; } } } } catch(e) {}
+    if (html5QrCode) { html5QrCode.applyVideoConstraints({ advanced: [{ zoom: lvl }] }).catch(() => {}); }
 }
 
-function onCodeDetected(decodedText) {
-    if (isScannerPaused) return;
-    isScannerPaused = true;
-    const cleanCode = normalizeBarcode(decodedText);
-    showNumpadForScan(cleanCode);
-}
+function onCodeDetected(decodedText) { if (isScannerPaused) return; isScannerPaused = true; const cleanCode = normalizeBarcode(decodedText); showNumpadForScan(cleanCode); }
 
 function stopScanner(resetNav = true) {
     closeCameraMenu();
-    if (html5QrCode) {
-        html5QrCode.stop().then(() => {
-            try { html5QrCode.clear(); } catch(e) {}
-            html5QrCode = null;
-        }).catch(() => {
-            try { html5QrCode.clear(); } catch(e) {}
-            html5QrCode = null;
-        });
-    }
-    torchEnabled = false;
-    const torchBtn = document.getElementById('torchBtn');
-    if (torchBtn) torchBtn.classList.remove('active');
-    document.getElementById('scannerModal').style.display = 'none';
-    if (resetNav) updateNavState('onNavHome');
+    if (html5QrCode) { html5QrCode.stop().then(() => { try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; }).catch(() => { try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; }); }
+    torchEnabled = false; const torchBtn = document.getElementById('torchBtn'); if (torchBtn) torchBtn.classList.remove('active'); document.getElementById('scannerModal').style.display = 'none'; if (resetNav) updateNavState('onNavHome');
 }
 
 /* ================= ВЫГРУЗКА PAYLOAD ================= */
 function showTransferQR() {
-    if (currentCart.length === 0) {
-        alert("Корзина пуста!");
-        updateNavState('onNavHome');
-        return;
-    }
-    const payload = currentCart.map(i => `${i.code}-${i.qty}`).join(" ");
-    const totalQty = currentCart.reduce((a, b) => a + b.qty, 0);
-    saveToArchivePayload(currentCart, totalQty);
-    renderQRModal(payload);
+    if (currentCart.length === 0) { alert("Корзина пуста!"); updateNavState('onNavHome'); return; }
+    const payload = currentCart.map(i => `${i.code}-${i.qty}`).join(" "); const totalQty = currentCart.reduce((a, b) => a + b.qty, 0); saveToArchivePayload(currentCart, totalQty); renderQRModal(payload);
 }
-
 function showPalletQR(palletName) {
-    const items = currentCart.filter(i => i.pallet === palletName);
-    if (!items.length) return;
-    const payload = items.map(i => `${i.code}-${i.qty}`).join(" ");
-    renderQRModal(payload);
+    const items = currentCart.filter(i => i.pallet === palletName); if (!items.length) return; const payload = items.map(i => `${i.code}-${i.qty}`).join(" "); renderQRModal(payload);
 }
-
 function renderQRModal(payload) {
-    document.getElementById('qrModal').style.display = 'flex';
-    const canvas = document.getElementById('finalQrCanvas');
-    canvas.style.display = 'block';
-    window.currentPayload = payload;
-    QRCode.toCanvas(canvas, payload, { width: 320, margin: 2 });
+    document.getElementById('qrModal').style.display = 'flex'; const canvas = document.getElementById('finalQrCanvas'); canvas.style.display = 'block'; window.currentPayload = payload; QRCode.toCanvas(canvas, payload, { width: 320, margin: 2 });
 }
-
-function closeQRModal() {
-    document.getElementById('qrModal').style.display = 'none';
-    updateNavState('onNavHome');
-}
-
-function downloadQR() {
-    const canvas = document.getElementById('finalQrCanvas');
-    const a = document.createElement('a');
-    a.download = `TSD_QR_${Date.now()}.png`;
-    a.href = canvas.toDataURL("image/png");
-    a.click();
-}
-
-function shareToExcel() {
-    if (navigator.clipboard && window.currentPayload) {
-        navigator.clipboard.writeText(window.currentPayload);
-        showToast("Данные скопированы в буфер!");
-    }
-}
+function closeQRModal() { document.getElementById('qrModal').style.display = 'none'; updateNavState('onNavHome'); }
+function downloadQR() { const canvas = document.getElementById('finalQrCanvas'), a = document.createElement('a'); a.download = `TSD_QR_${Date.now()}.png`; a.href = canvas.toDataURL("image/png"); a.click(); }
+function shareToExcel() { if (navigator.clipboard && window.currentPayload) { navigator.clipboard.writeText(window.currentPayload); showToast("Данные скопированы в буфер!"); } }
 
 function saveToArchivePayload(cartItems, totalQty) {
-    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
-    const now = new Date();
-    const payload = cartItems.map(i => `${i.code}-${i.qty}`).join(" ");
-    
-    archive.unshift({
-        date: now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
-        lines: cartItems.length,
-        totalQty: totalQty || cartItems.reduce((a, b) => a + b.qty, 0),
-        payload: payload,
-        cartData: JSON.parse(JSON.stringify(cartItems))
-    });
-    if (archive.length > 15) archive.pop();
-    localStorage.setItem('tsd_archive', JSON.stringify(archive));
+    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [], now = new Date(), payload = cartItems.map(i => `${i.code}-${i.qty}`).join(" ");
+    archive.unshift({ date: now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }), lines: cartItems.length, totalQty: totalQty || cartItems.reduce((a, b) => a + b.qty, 0), payload: payload, cartData: JSON.parse(JSON.stringify(cartItems)) });
+    if (archive.length > 15) archive.pop(); localStorage.setItem('tsd_archive', JSON.stringify(archive));
 }
 
 function renderArchive() {
-    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
-    const container = document.getElementById('archiveList');
-    if (!archive.length) {
-        container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);font-weight:700;">Архив пуст</div>';
-    } else {
-        container.innerHTML = archive.map((item, idx) => `
-            <div class="archive-item">
-                <div class="archive-info-row">
-                    <div class="archive-date">${item.date}</div>
-                    <div class="archive-stats">${item.lines} строк | ${item.totalQty} шт.</div>
-                </div>
-                <div class="archive-actions">
-                    <button class="archive-btn-secondary" onclick="restoreArchiveToTable(${idx})">Вернуть в таблицу</button>
-                    <button class="archive-btn" onclick="openArchiveQR(${idx})">Показать QR</button>
-                </div>
-            </div>`).join('');
-    }
+    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [], container = document.getElementById('archiveList');
+    if (!archive.length) { container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);font-weight:700;">Архив пуст</div>'; } 
+    else { container.innerHTML = archive.map((item, idx) => `<div class="archive-item"><div class="archive-info-row"><div class="archive-date">${item.date}</div><div class="archive-stats">${item.lines} строк | ${item.totalQty} шт.</div></div><div class="archive-actions"><button class="archive-btn-secondary" onclick="restoreArchiveToTable(${idx})">Вернуть в таблицу</button><button class="archive-btn" onclick="openArchiveQR(${idx})">Показать QR</button></div></div>`).join(''); }
 }
 
-function openArchive() {
-    document.getElementById('mainMenuModal').style.display = 'none';
-    renderArchive();
-    document.getElementById('archiveModal').style.display = 'flex';
-}
-
-function restoreArchiveToTable(idx) {
-    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
-    if (!archive[idx]) return;
-    if (confirm("Заменить текущие строки данными из архива?")) {
-        if (archive[idx].cartData) {
-            currentCart = JSON.parse(JSON.stringify(archive[idx].cartData));
-        }
-        saveState();
-        renderCart();
-        closeAllModals(true);
-    }
-}
-
-function openArchiveQR(idx) {
-    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
-    if (archive[idx] && archive[idx].payload) {
-        document.getElementById('archiveModal').style.display = 'none';
-        renderQRModal(archive[idx].payload);
-    } else {
-        showToast("Ошибка: нет данных payload");
-    }
-}
+function openArchive() { document.getElementById('mainMenuModal').style.display = 'none'; renderArchive(); document.getElementById('archiveModal').style.display = 'flex'; }
+function restoreArchiveToTable(idx) { const archive = JSON.parse(localStorage.getItem('tsd_archive')) || []; if (!archive[idx]) return; if (confirm("Заменить текущие строки данными из архива?")) { if (archive[idx].cartData) { currentCart = JSON.parse(JSON.stringify(archive[idx].cartData)); } saveState(); renderCart(); closeAllModals(true); } }
+function openArchiveQR(idx) { const archive = JSON.parse(localStorage.getItem('tsd_archive')) || []; if (archive[idx] && archive[idx].payload) { document.getElementById('archiveModal').style.display = 'none'; renderQRModal(archive[idx].payload); } else { showToast("Ошибка: нет данных payload"); } }
 
 function openInstruction() { document.getElementById('mainMenuModal').style.display = 'none'; document.getElementById('instructionModal').style.display = 'flex'; }
 function openAbout() { document.getElementById('mainMenuModal').style.display = 'none'; document.getElementById('aboutModal').style.display = 'flex'; }
 
 /* ================= НАВИГАЦИЯ ================= */
-const navbarEl = document.getElementById('navbar');
-const beadEl = document.getElementById('navBead');
-const glowEl = document.getElementById('navGlow');
+const navbarEl = document.getElementById('navbar'), beadEl = document.getElementById('navBead'), glowEl = document.getElementById('navGlow');
 
 function moveBeadTo(targetBtn, animate = true) {
     if (!targetBtn || !navbarEl || !beadEl || !glowEl) return;
-    const navRect = navbarEl.getBoundingClientRect();
-    const btnRect = targetBtn.getBoundingClientRect();
-    const x = (btnRect.left - navRect.left) + (btnRect.width / 2) - 24;
-    
+    const navRect = navbarEl.getBoundingClientRect(), btnRect = targetBtn.getBoundingClientRect(), x = (btnRect.left - navRect.left) + (btnRect.width / 2) - 24;
     if (!animate || isLowFx()) { beadEl.style.transition = 'none'; glowEl.style.transition = 'none'; }
     beadEl.style.transform = `translateX(${x}px)`; glowEl.style.transform = `translateX(${x}px)`;
     if (!animate || isLowFx()) { void beadEl.offsetWidth; beadEl.style.transition = ''; glowEl.style.transition = ''; }
 }
 
-function playBeadSquash() {
-    if (isLowFx()) return;
-    const beadInner = document.getElementById('beadInner');
-    if (!beadInner) return;
-    beadInner.classList.remove('squash');
-    void beadInner.offsetWidth;
-    beadInner.classList.add('squash');
-}
+function playBeadSquash() { if (isLowFx()) return; const beadInner = document.getElementById('beadInner'); if (!beadInner) return; beadInner.classList.remove('squash'); void beadInner.offsetWidth; beadInner.classList.add('squash'); }
 
 function switchNav(btn, executeAction = true) {
-    if (btn.classList.contains('active')) return;
-    document.querySelectorAll('.navitem').forEach(el => el.classList.remove('active'));
-    btn.classList.add('active');
-    moveBeadTo(btn, true);
+    if (btn.classList.contains('active')) return; document.querySelectorAll('.navitem').forEach(el => el.classList.remove('active')); btn.classList.add('active'); moveBeadTo(btn, true);
     if (!isLowFx()) setTimeout(playBeadSquash, 360);
-    
-    if (executeAction) {
-        const action = btn.dataset.action;
-        if (typeof window[action] === 'function') window[action]();
-    }
+    if (executeAction) { const action = btn.dataset.action; if (typeof window[action] === 'function') window[action](); }
 }
 
 function updateNavState(actionName) {
     const btn = document.querySelector(`[data-action="${actionName}"]`);
-    if (btn) {
-        document.querySelectorAll('.navitem').forEach(el => el.classList.remove('active'));
-        btn.classList.add('active');
-        moveBeadTo(btn, true);
-        if (!isLowFx()) setTimeout(playBeadSquash, 360);
-    }
+    if (btn) { document.querySelectorAll('.navitem').forEach(el => el.classList.remove('active')); btn.classList.add('active'); moveBeadTo(btn, true); if (!isLowFx()) setTimeout(playBeadSquash, 360); }
 }
 
 function onNavHome() { closeAllModals(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }
@@ -2044,56 +1454,30 @@ function onNavExport() { closeAllModals(false); showTransferQR(); }
 function onNavMenu() { closeAllModals(false); document.getElementById('mainMenuModal').style.display = 'flex'; }
 
 function closeAllModals(resetNavToHome = true) {
-    document.querySelectorAll('.modal-overlay').forEach(m => {
-        if (m.id === 'scannerModal' && m.style.display !== 'none') stopScanner(false);
-        else m.style.display = 'none';
-    });
+    document.querySelectorAll('.modal-overlay').forEach(m => { if (m.id === 'scannerModal' && m.style.display !== 'none') stopScanner(false); else m.style.display = 'none'; });
     if (resetNavToHome) updateNavState('onNavHome');
 }
 
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', function(e) {
-        if (e.target === this) {
-            if (this.id === 'numpadModal') numCancel();
-            else closeAllModals();
-        }
-    });
-});
+document.querySelectorAll('.modal-overlay').forEach(overlay => { overlay.addEventListener('click', function(e) { if (e.target === this) { if (this.id === 'numpadModal') numCancel(); else closeAllModals(); } }); });
 
 window.onload = function() {
     initDeleteButton();
-    const saved = localStorage.getItem('tsd_lite_cart');
-    if (saved) {
-        try { currentCart = JSON.parse(saved); } catch(e) {}
-    }
-    renderCart();
-    const home = document.querySelector('[data-action="onNavHome"]');
-    if (home) moveBeadTo(home, false);
+    const saved = localStorage.getItem('tsd_lite_cart'); if (saved) { try { currentCart = JSON.parse(saved); } catch(e) {} }
+    renderCart(); const home = document.querySelector('[data-action="onNavHome"]'); if (home) moveBeadTo(home, false);
 };
 
-window.addEventListener('resize', () => {
-    const active = document.querySelector('.navitem.active');
-    if (active) moveBeadTo(active, false);
-});
+window.addEventListener('resize', () => { const active = document.querySelector('.navitem.active'); if (active) moveBeadTo(active, false); });
 
 (function createStars(){
-  const layer = document.getElementById('starsLayer');
-  if(!layer) return;
+  const layer = document.getElementById('starsLayer'); if(!layer) return;
   for (let i = 0; i < 8; i++){
-    const star = document.createElement('span');
-    star.className = 'star';
-    star.style.setProperty('--x', Math.random() * 60 + 6 + '%');
-    star.style.setProperty('--y', Math.random() * 55 + 15 + '%');
-    star.style.setProperty('--d', (Math.random() * 1.6).toFixed(2) + 's');
+    const star = document.createElement('span'); star.className = 'star';
+    star.style.setProperty('--x', Math.random() * 60 + 6 + '%'); star.style.setProperty('--y', Math.random() * 55 + 15 + '%'); star.style.setProperty('--d', (Math.random() * 1.6).toFixed(2) + 's');
     layer.appendChild(star);
   }
 })();
 
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
-    });
-}
+if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); }); }
 </script>
 </body>
 </html>
