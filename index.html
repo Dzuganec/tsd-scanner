@@ -8,16 +8,15 @@
         var tier = 'high';
         if (forced === 'true') {
             tier = 'low';
+        } else if (forced === 'false') {
+            tier = 'high';
         } else {
             var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            var cores = navigator.hardwareConcurrency || 4;
-            var mem = navigator.deviceMemory || 4;
-            var saveData = navigator.connection && navigator.connection.saveData;
-            if (reduced || saveData || cores <= 4 || mem <= 4) tier = 'low';
+            tier = reduced ? 'low' : 'high';
         }
         document.documentElement.setAttribute('data-fx', tier);
     } catch(e) {
-        document.documentElement.setAttribute('data-fx', 'low');
+        document.documentElement.setAttribute('data-fx', 'high');
     }
 })();
 </script>
@@ -27,20 +26,23 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#10b981" id="meta-theme-color">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23059669'/><path d='M25 35h50M25 50h50M25 65h30' stroke='%23fff' stroke-width='8' stroke-linecap='round'/></svg>">
-<link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='28' fill='%23059669'/><rect x='22' y='22' width='56' height='56' rx='12' stroke='%23ffffff' stroke-width='6'/><rect x='31' y='33' width='5' height='34' rx='2.5' fill='%23ffffff'/><rect x='40' y='33' width='7' height='34' rx='2.5' fill='%23ffffff'/><rect x='51' y='33' width='5' height='34' rx='2.5' fill='%23ffffff'/><rect x='60' y='33' width='7' height='34' rx='2.5' fill='%23ffffff'/></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='28' fill='%23059669'/><rect x='22' y='22' width='56' height='56' rx='12' stroke='%23ffffff' stroke-width='6'/><rect x='31' y='33' width='5' height='34' rx='2.5' fill='%23ffffff'/><rect x='40' y='33' width='7' height='34' rx='2.5' fill='%23ffffff'/><rect x='51' y='33' width='5' height='34' rx='2.5' fill='%23ffffff'/><rect x='60' y='33' width='7' height='34' rx='2.5' fill='%23ffffff'/></svg>">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <title>Мой ТСД</title>
+
+<!-- БИБЛИОТЕКИ (ExcelJS удален) -->
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
 <style>
 /* ============================================================
-   ДИЗАЙН-СИСТЕМА, ПЕРЕМЕННЫЕ И МНОГОСЛОЙНЫЕ ГРАДИЕНТЫ
+   ДИЗАЙН-СИСТЕМА И ПЕРЕМЕННЫЕ
    ============================================================ */
 :root {
     --bg-body: #f1f5f3;
@@ -57,11 +59,9 @@
     --border-color: #e2e8e5;
     --input-bg: #f4f7f5;
     --btn-add: #059669;
-    --btn-add-dark: #047857;
     --btn-remove-bg: #fee2e2;
     --btn-remove-text: #dc2626;
     --btn-blue: #2563eb;
-    --btn-blue-dark: #1d4ed8;
 
     --shadow-soft: 0 4px 14px -3px rgba(12, 30, 22, 0.08), 0 2px 6px -1px rgba(12, 30, 22, 0.04);
     --shadow-hover: 0 14px 30px -8px rgba(12, 30, 22, 0.16);
@@ -74,7 +74,7 @@
     --info-bg: #ecfdf5; --info-text: #047857;
     --warn-bg: #fffbeb; --warn-text: #b45309;
 
-    --radius-sm: 14px; --radius-md: 18px; --radius-lg: 26px; --radius-xl: 32px;
+    --radius-sm: 14px; --radius-md: 18px; --radius-lg: 26px;
 
     --accent-a: #10b981; --accent-b: #0ea5e9;
     --accent-fun-a: #8b5cf6; --accent-fun-b: #ec4899;
@@ -109,12 +109,10 @@
 
     --header-bg: linear-gradient(135deg, #023325 0%, #064e3b 45%, #059669 85%, #10b981 100%);
     --header-icon-bg: rgba(255, 255, 255, 0.12);
-    --header-icon-hover: rgba(255, 255, 255, 0.22);
 
     --border-color: #21342b;
     --input-bg: #0c1713;
     --btn-add: #10b981;
-    --btn-add-dark: #34d399;
     --btn-remove-bg: #451a1a;
     --btn-remove-text: #fca5a5;
 
@@ -125,10 +123,6 @@
     --numpad-bg: #0e1814;
     --numpad-btn: #182720;
 
-    --info-bg: #064e3b; --info-text: #34d399;
-    --warn-bg: #38240b; --warn-text: #fbbf24;
-    --glow-soft: rgba(52, 211, 153, 0.4);
-    
     --nav-bg: #13201a;
     --nav-border: #21342b;
     --nav-shadow: 0 -8px 30px rgba(0,0,0,0.55);
@@ -137,21 +131,14 @@
     --nav-icon-inactive: #758e82;
 }
 
-* { box-sizing: border-box; font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; outline: none; margin: 0; padding: 0; -webkit-user-select: none; user-select: none; }
+* { box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; outline: none; margin: 0; padding: 0; -webkit-user-select: none; user-select: none; }
 input, textarea { -webkit-user-select: text; user-select: text; }
 html { -webkit-text-size-adjust: 100%; }
 
 body {
-    background-color: var(--bg-body);
-    color: var(--text-main);
-    min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden;
-    transition: color var(--t-theme), background-color var(--t-theme);
-    position: relative; z-index: 0;
+    background-color: var(--bg-body); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; transition: color var(--t-theme), background-color var(--t-theme); position: relative; z-index: 0;
 }
-body::before, body::after {
-    content: ''; position: fixed; inset: 0; z-index: -2; pointer-events: none;
-    background-attachment: fixed; transition: opacity var(--t-theme);
-}
+body::before, body::after { content: ''; position: fixed; inset: 0; z-index: -2; pointer-events: none; background-attachment: fixed; transition: opacity var(--t-theme); }
 body::before { background: radial-gradient(circle at 50% 0%, #d8ece2 0%, #f1f5f3 70%); opacity: 1; }
 body::after { background: radial-gradient(circle at 50% 0%, #10261c 0%, #09130f 70%); opacity: 0; }
 [data-theme="dark"] body::before { opacity: 0; }
@@ -167,11 +154,8 @@ body::after { background: radial-gradient(circle at 50% 0%, #10261c 0%, #09130f 
 
 @keyframes slideInUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes popIn { 0% { opacity: 0; transform: scale(0.92) translateY(8px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
-@keyframes glowBrightness {
-    0% { color: #f59e0b; text-shadow: 0 0 6px rgba(245, 158, 11, 0.35); transform: scale(1); }
-    50% { color: #ffffff; text-shadow: 0 0 18px #fbbf24, 0 0 32px #fbbf24, 0 0 45px #ffffff; transform: scale(1.05); }
-    100% { color: #f59e0b; text-shadow: 0 0 6px rgba(245, 158, 11, 0.35); transform: scale(1); }
-}
+
+@keyframes glowBrightness { 0% { color: #f59e0b; text-shadow: 0 0 6px rgba(245, 158, 11, 0.35); transform: scale(1); } 50% { color: #ffffff; text-shadow: 0 0 18px #fbbf24, 0 0 32px #fbbf24, 0 0 45px #ffffff; transform: scale(1.05); } 100% { color: #f59e0b; text-shadow: 0 0 6px rgba(245, 158, 11, 0.35); transform: scale(1); } }
 .brightness-text { font-weight: 900; font-size: 18px; margin-bottom: 20px; display: inline-block; animation: glowBrightness 3.2s infinite ease-in-out; padding-top: max(16px, var(--safe-t)); }
 
 .ripple { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.5); transform: scale(0); opacity: 1; pointer-events: none; animation: rippleAnim 0.7s ease-out forwards; }
@@ -185,56 +169,37 @@ body::after { background: radial-gradient(circle at 50% 0%, #10261c 0%, #09130f 
 .app-icon { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex-shrink: 0; transition: transform var(--t-fast) var(--ease-spring); }
 .app-icon svg { width: 100%; height: 100%; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-/* ---------- HEADER & ЦЕНТРИРОВАНИЕ ШАПКИ ---------- */
+/* ---------- HEADER ---------- */
 header {
     position: sticky; top: 0; background: var(--header-bg); background-size: 240% 240%; color: var(--header-text);
-    padding: calc(14px + var(--safe-t)) 18px 16px;
-    box-shadow: 0 8px 26px rgba(4, 120, 87, 0.25); display: flex; justify-content: space-between;
-    align-items: center; z-index: 100; border-bottom-left-radius: 28px; border-bottom-right-radius: 28px;
-    margin-bottom: 18px;
+    padding: calc(14px + var(--safe-t)) 18px 16px; box-shadow: 0 8px 26px rgba(4, 120, 87, 0.25); display: flex; justify-content: space-between;
+    align-items: center; z-index: 100; border-bottom-left-radius: 28px; border-bottom-right-radius: 28px; margin-bottom: 18px;
 }
 [data-fx="high"] header { animation: headerGradientShift 14s ease infinite; }
 @keyframes headerGradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
 .brand-wrapper { display: flex; align-items: center; gap: 12px; cursor: default; }
-.brand-logo-svg {
-    width: 38px; height: 38px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.22));
-    transition: transform var(--t-fast) var(--ease-spring);
-}
+.brand-logo-svg { width: 38px; height: 38px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.22)); transition: transform var(--t-fast) var(--ease-spring); }
 .brand-wrapper:active .brand-logo-svg { transform: scale(0.92) rotate(-5deg); }
 .logo-laser { animation: logoLaserPulse 2.4s ease-in-out infinite alternate; }
 @keyframes logoLaserPulse { 0% { opacity: 0.3; transform: scaleX(0.85); } 100% { opacity: 1; transform: scaleX(1.05); } }
 
-.brand-title {
-    font-size: 21px; font-weight: 900; letter-spacing: -0.2px; line-height: 1;
-    color: #ffffff; display: flex; align-items: center; margin: 0; padding: 0;
-}
-.header-controls { display: flex; gap: 8px; align-items: center; position: relative; }
+.brand-copy { display: flex; flex-direction: column; gap: 3px; }
+.brand-title { font-size: 21px; font-weight: 900; letter-spacing: -0.2px; line-height: 1; color: #ffffff; }
+.brand-subtitle { color: rgba(255, 255, 255, 0.72); font-size: 11px; font-weight: 700; letter-spacing: 0.2px; }
 
 /* Day/Night Toggle */
+.header-controls { display: flex; gap: 8px; align-items: center; position: relative; }
 .daynight-input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.daynight-toggle {
-    --w: 64px; --h: 32px; --pad: 3px; --thumb: 26px;
-    position: relative; display: inline-block; width: var(--w); height: var(--h);
-    border-radius: 999px; cursor: pointer; overflow: hidden;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.22);
-}
+.daynight-toggle { --w: 64px; --h: 32px; --pad: 3px; --thumb: 26px; position: relative; display: inline-block; width: var(--w); height: var(--h); border-radius: 999px; cursor: pointer; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.22); }
 .sky-day, .sky-night { position: absolute; inset: 0; transition: opacity 0.7s var(--ease-smooth); }
 .sky-day { background: linear-gradient(180deg, #38bdf8 0%, #7dd3fc 60%, #bae6fd 100%); opacity: 1; }
 .sky-night { background: linear-gradient(180deg, #091326 0%, #132247 60%, #1a2f61 100%); opacity: 0; }
 .daynight-input:checked ~ .daynight-toggle .sky-day { opacity: 0; }
 .daynight-input:checked ~ .daynight-toggle .sky-night { opacity: 1; }
-.sun {
-    position: absolute; top: 50%; right: 6px; width: 16px; height: 16px; border-radius: 50%;
-    transform: translateY(-50%); background: radial-gradient(circle at 35% 35%, #fff7cc, #ffd23f 60%, #ffb400 100%);
-    box-shadow: 0 0 8px 1px rgba(255, 200, 0, 0.55); transition: 0.6s var(--ease-smooth);
-}
+.sun { position: absolute; top: 50%; right: 6px; width: 16px; height: 16px; border-radius: 50%; transform: translateY(-50%); background: radial-gradient(circle at 35% 35%, #fff7cc, #ffd23f 60%, #ffb400 100%); box-shadow: 0 0 8px 1px rgba(255, 200, 0, 0.55); transition: 0.6s var(--ease-smooth); }
 .daynight-input:checked ~ .daynight-toggle .sun { opacity: 0; transform: translateY(-50%) translateX(10px) scale(0.6); }
-.moon {
-    position: absolute; top: 50%; left: 6px; width: 14px; height: 14px; border-radius: 50%;
-    transform: translateY(-50%) translateX(-10px) scale(0.6); background: #fdf0cd;
-    box-shadow: 4px -2px 0 0 #091326; opacity: 0; transition: 0.6s var(--ease-smooth);
-}
+.moon { position: absolute; top: 50%; left: 6px; width: 14px; height: 14px; border-radius: 50%; transform: translateY(-50%) translateX(-10px) scale(0.6); background: #fdf0cd; box-shadow: 4px -2px 0 0 #091326; opacity: 0; transition: 0.6s var(--ease-smooth); }
 .daynight-input:checked ~ .daynight-toggle .moon { opacity: 1; transform: translateY(-50%) translateX(0) scale(1); }
 .stars { position: absolute; inset: 0; opacity: 0; transition: opacity 0.6s var(--ease-smooth); }
 .daynight-input:checked ~ .daynight-toggle .stars { opacity: 1; }
@@ -248,221 +213,122 @@ header {
 .daynight-input:checked ~ .daynight-toggle .cloud { background: #c9d3ea; opacity: 0.85; }
 .daynight-input:checked ~ .daynight-toggle .cloud1 { box-shadow: 6px 2px 0 -1px #c9d3ea, 11px 0 0 -2px #c9d3ea; }
 .daynight-input:checked ~ .daynight-toggle .cloud2 { box-shadow: 5px 1px 0 -1px #c9d3ea; }
-.daynight-input:checked ~ .daynight-toggle .cloud3 { box-shadow: 5px 2px 0 -1px #c9d3ea, 10px 0 0 -2px #c9d3ea; }
-.toggle-thumb {
-    position: absolute; top: var(--pad); left: var(--pad); width: var(--thumb); height: var(--thumb);
-    border-radius: 50%; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-    transition: transform 0.5s var(--ease-spring); z-index: 2;
-}
+.daynight-input:checked ~ .daynight-toggle .cloud3 { box-shadow: 5px 1px 0 -1px #c9d3ea, 10px 0 0 -2px #c9d3ea; }
+.toggle-thumb { position: absolute; top: var(--pad); left: var(--pad); width: var(--thumb); height: var(--thumb); border-radius: 50%; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.25); transition: transform 0.5s var(--ease-spring); z-index: 2; }
 .daynight-input:checked ~ .daynight-toggle .toggle-thumb { transform: translateX(calc(var(--w) - var(--thumb) - (var(--pad) * 2))); }
 
 /* ---------- ОСНОВНОЙ КОНТЕЙНЕР ---------- */
-.main-container {
-    padding: 0 16px calc(115px + var(--safe-b)) 16px;
-    max-width: 640px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px; flex: 1;
-}
+.main-container { padding: 0 10px calc(115px + var(--safe-b)) 10px; max-width: 640px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 14px; flex: 1; }
 
-/* Паллеты */
 .pallet-bar {
-    background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft);
-    padding: 13px 18px; display: flex; justify-content: space-between; align-items: center;
-    cursor: pointer; border: 1px solid var(--border-color); position: relative; overflow: hidden;
-    transition: background-color var(--t-theme), border-color var(--t-theme), transform var(--t-fast);
+    background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); padding: 13px 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid var(--border-color); position: relative; overflow: hidden; transition: background-color var(--t-theme), border-color var(--t-theme), transform var(--t-fast);
 }
 .pallet-bar:active { transform: scale(0.985); }
 .pallet-bar-left { display: flex; align-items: center; gap: 10px; }
 .pallet-bar-text { font-weight: 800; font-size: 15px; color: var(--text-muted); }
-.pallet-badge {
-    background: var(--btn-add); color: white; padding: 5px 14px; border-radius: 12px;
-    font-weight: 800; font-size: 13.5px; box-shadow: 0 3px 10px rgba(5,150,105,0.28);
-    display: flex; align-items: center; gap: 6px;
-}
+.pallet-badge { background: var(--btn-add); color: white; padding: 5px 14px; border-radius: 12px; font-weight: 800; font-size: 13.5px; box-shadow: 0 3px 10px rgba(5,150,105,0.28); display: flex; align-items: center; gap: 6px; }
 
-/* Кнопка Корзины с анимацией */
-.delete-btn {
-    --del-color: #ef4444; --del-dark: #dc2626;
-    position: relative; display: inline-flex; align-items: center; gap: 8px;
-    height: 40px; padding: 0 15px 0 13px; border: none; border-radius: 13px;
-    background: linear-gradient(135deg, var(--del-color), var(--del-dark)); color: #fff;
-    font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
-    transition: transform 0.2s var(--ease-spring), box-shadow 0.2s var(--ease-smooth);
-}
+/* Кнопка Очистить с анимацией */
+.delete-btn { --del-color: #ef4444; --del-dark: #dc2626; position: relative; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 15px 0 13px; border: none; border-radius: 13px; background: linear-gradient(135deg, var(--del-color), var(--del-dark)); color: #fff; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35); transition: transform 0.2s var(--ease-spring), box-shadow 0.2s var(--ease-smooth); }
 .delete-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(239, 68, 68, 0.45); }
 .delete-btn:active { transform: translateY(0) scale(0.94); }
 .bin-icon { width: 21px; height: 21px; flex-shrink: 0; overflow: visible; transition: transform 0.3s var(--ease-spring); }
 .bin-lid { transform-origin: 5px 6.5px; transition: transform 0.25s var(--ease-spring); }
 .delete-btn.lid-open .bin-lid { transform: rotate(-55deg) translate(-2px, -2px); }
 .delete-btn.lid-open .bin-icon { animation: binShakeActive 0.22s ease-in-out infinite; }
-@keyframes binShakeActive {
-    0%, 100% { transform: rotate(0deg) scale(1); }
-    25% { transform: rotate(-12deg) scale(1.15); }
-    75% { transform: rotate(12deg) scale(1.15); }
-}
+@keyframes binShakeActive { 0%, 100% { transform: rotate(0deg) scale(1); } 25% { transform: rotate(-12deg) scale(1.15); } 75% { transform: rotate(12deg) scale(1.15); } }
 .delete-label { position: relative; display: inline-block; white-space: nowrap; }
 .letter { position: relative; display: inline-block; will-change: transform, opacity; }
-@keyframes flyIntoBinActive {
-    0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
-    35% { transform: translate(calc(var(--dx) * 0.4), calc(var(--dy) * 0.3 - 40px)) rotate(calc(var(--rot) * 0.5)) scale(1.3); opacity: 1; }
-    100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.15); opacity: 0; }
-}
+@keyframes flyIntoBinActive { 0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; } 35% { transform: translate(calc(var(--dx) * 0.4), calc(var(--dy) * 0.3 - 40px)) rotate(calc(var(--rot) * 0.5)) scale(1.3); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.15); opacity: 0; } }
 .letter.flying { animation: flyIntoBinActive 0.45s var(--ease-smooth) forwards; animation-delay: var(--delay, 0s); }
 
 /* ---------- СТРУКТУРА КОРЗИНЫ И ТАБЛИЦЫ ---------- */
-.cart-card {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
-.cart-header { padding: 0 4px 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 16px; color: var(--text-main); }
+.cart-card { display: flex; flex-direction: column; flex: 1; background: rgba(var(--bg-card-rgb), 0.94); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 14px 10px; box-shadow: var(--shadow-soft); }
+.cart-header { padding: 0 4px 12px; display: flex; justify-content: space-between; align-items: center; }
+#cartStats { padding: 6px 11px; border-radius: 10px; background: var(--input-bg); color: var(--text-muted); font-size: 13px; font-weight: 800; }
 
-table {
-    width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: -6px;
-}
+.table-responsive { width: 100%; border-radius: 14px; margin-top: 2px; overflow-x: hidden; }
+table { width: 100%; border-collapse: separate; border-spacing: 0 8px; table-layout: auto; }
+thead th { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); padding: 4px 3px 8px; text-align: center; border: none; white-space: nowrap; }
+tr { background: var(--input-bg); border-radius: var(--radius-md); box-shadow: 0 2px 6px rgba(0,0,0,0.03); transition: background-color var(--t-theme), border-color var(--t-theme); }
+[data-theme="dark"] tr { background: #13201a; }
+td { padding: 8px 6px; vertical-align: middle; text-align: center; border: none; }
+td:first-child { border-top-left-radius: var(--radius-md); border-bottom-left-radius: var(--radius-md); padding-left: 10px; width: 60%; }
+td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-radius: var(--radius-md); padding-right: 10px; width: 15%; }
 
-tr {
-    background: var(--bg-card); box-shadow: var(--shadow-soft); border-radius: var(--radius-md);
-    border: 1px solid var(--border-color); transition: background-color var(--t-theme), border-color var(--t-theme), transform var(--t-fast);
-}
-td { padding: 12px 10px; vertical-align: middle; text-align: center; border: none; }
-td:first-child { border-top-left-radius: var(--radius-md); border-bottom-left-radius: var(--radius-md); width: 58%; }
-td:nth-child(2) { width: 26%; }
-td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-radius: var(--radius-md); width: 16%; }
-
-.inline-barcode-container {
-    padding: 5px; cursor: pointer; transition: opacity var(--t-fast);
-    -webkit-touch-callout: none;
-}
+/* Линейный Штрихкод */
+.inline-barcode-container { padding: 2px; cursor: pointer; transition: opacity var(--t-fast); }
 .inline-barcode-container:active { opacity: 0.6; }
+.barcode-wrapper { background-color: #ffffff; padding: 5px; border-radius: 9px; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 150px; height: 50px; pointer-events: none; margin: 0 auto; border: 1px solid #e5ebe7; box-sizing: border-box; }
+.barcode-wrapper svg { max-width: 100%; max-height: 100%; display: block; }
 
-.pallet-header-row { background: transparent !important; box-shadow: none !important; border: none !important; }
-.pallet-header-content { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px 2px; }
-.pallet-name { font-weight: 900; font-size: 16.5px; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
-.btn-pallet-qr {
-    background: var(--btn-blue); color: white; border: none; padding: 7px 14px;
-    border-radius: 11px; font-weight: 800; font-size: 13px; cursor: pointer;
-    box-shadow: 0 4px 12px rgba(37,99,235,0.28); display: flex; align-items: center; gap: 6px;
-    transition: transform var(--t-fast) var(--ease-spring);
-}
-.btn-pallet-qr:active { transform: scale(0.92); }
-
-.barcode-wrapper {
-    background-color: #ffffff;
-    padding: 6px;
-    border-radius: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 140px;
-    height: 62px;
-    pointer-events: none;
-    margin: 0 auto;
-}
-.barcode-wrapper svg {
-    max-width: 100%;
-    max-height: 100%;
-    display: block;
-}
-
-.qty-box {
-    background: var(--input-bg); border: 2px solid var(--border-color); color: var(--text-main);
-    font-weight: 800; font-size: 17px; border-radius: 13px; padding: 12px 0; width: 100%;
-    cursor: pointer; display: block; transition: all var(--t-fast) var(--ease-spring);
-}
+.qty-box { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); font-weight: 900; font-size: 16px; border-radius: 10px; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--t-fast) var(--ease-spring); }
 .qty-box:active { background: var(--border-color); transform: scale(0.9); }
 
-.btn-remove {
-    background: var(--btn-remove-bg); color: var(--btn-remove-text); border: none;
-    width: 40px; height: 40px; border-radius: 13px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; margin: 0 auto;
-    transition: transform var(--t-fast) var(--ease-spring);
-}
+.btn-remove { background: transparent; color: var(--btn-remove-text); border: 1px solid rgba(220, 38, 38, 0.16); width: 38px; height: 38px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto; transition: transform var(--t-fast) var(--ease-spring); }
 .btn-remove:active { transform: scale(0.78) rotate(14deg); }
 
-/* ---------- ПЛЕЙСХОЛДЕР ПУСТОЙ КОРЗИНЫ ---------- */
-.no-data-card {
-    padding: 56px 20px; color: var(--text-muted); font-weight: 800; text-align: center;
-    background: var(--bg-card); border-radius: var(--radius-lg); font-size: 16px;
-    border: 2px dashed var(--border-color); display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 14px; width: 100%;
-    box-shadow: var(--shadow-soft); box-sizing: border-box;
-    transition: background-color var(--t-theme), border-color var(--t-theme), color var(--t-theme);
-}
+.pallet-header-row { background: transparent !important; box-shadow: none !important; border: none !important; }
+.pallet-header-content { display: flex; justify-content: space-between; align-items: center; padding: 6px 4px 2px; }
+.pallet-name { font-weight: 900; font-size: 16px; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+.btn-pallet-qr { background: var(--btn-blue); color: white; border: none; padding: 8px 14px; border-radius: 9px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: transform var(--t-fast) var(--ease-spring); box-shadow: 0 4px 12px rgba(37,99,235,0.28); }
+.btn-pallet-qr:active { transform: scale(0.92); }
 
-/* ---------- SNACKBAR (УВЕДОМЛЕНИЯ) ---------- */
-#snackbar {
-    visibility: hidden; min-width: 270px; background-color: var(--bg-card); color: var(--text-main);
-    border: 1px solid var(--border-color); border-radius: 22px; padding: 12px 14px 12px 18px;
-    position: fixed; z-index: 10000; left: 50%; bottom: 95px; transform: translate(-50%, 36px) scale(0.88);
-    font-weight: 800; font-size: 14.5px; display: flex; justify-content: space-between; align-items: center; gap: 14px;
-    box-shadow: var(--shadow-hover); opacity: 0; pointer-events: none;
-    transition: visibility 0s 0.35s, transform 0.35s var(--ease-spring), opacity 0.3s ease;
-}
-#snackbar.show {
-    visibility: visible; opacity: 1; transform: translate(-50%, 0) scale(1); pointer-events: auto;
-    transition: visibility 0s 0s, transform 0.35s var(--ease-spring), opacity 0.3s ease;
-}
-.snackbar-btn {
-    background: var(--btn-add); color: white; border: none; padding: 9px 18px;
-    border-radius: 13px; font-weight: 800; font-size: 13.5px; cursor: pointer; display: none;
-    transition: transform var(--t-fast);
-}
-.snackbar-btn:active { transform: scale(0.92); }
+.no-data-card { padding: 56px 20px; color: var(--text-muted); font-weight: 800; text-align: center; background: var(--bg-card); border-radius: var(--radius-lg); font-size: 16px; border: 2px dashed var(--border-color); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; width: 100%; box-shadow: var(--shadow-soft); box-sizing: border-box; }
+
+/* ---------- SNACKBAR ---------- */
+#snackbar { visibility: hidden; min-width: 270px; background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 22px; padding: 12px 14px 12px 18px; position: fixed; z-index: 10000; left: 50%; bottom: 95px; transform: translate(-50%, 36px) scale(0.88); font-weight: 800; font-size: 14.5px; display: flex; justify-content: space-between; align-items: center; gap: 14px; box-shadow: var(--shadow-hover); opacity: 0; pointer-events: none; transition: visibility 0s 0.35s, transform 0.35s var(--ease-spring), opacity 0.3s ease; }
+#snackbar.show { visibility: visible; opacity: 1; transform: translate(-50%, 0) scale(1); pointer-events: auto; transition: visibility 0s 0s, transform 0.35s var(--ease-spring), opacity 0.3s ease; }
+.snackbar-btn { background: var(--btn-add); color: white; border: none; padding: 9px 18px; border-radius: 13px; font-weight: 800; font-size: 13.5px; cursor: pointer; display: none; }
 
 /* ---------- МОДАЛЬНЫЕ ОКНА ---------- */
-.modal-overlay {
-    display: none; position: fixed; inset: 0; background: var(--modal-bg);
-    backdrop-filter: var(--modal-backdrop); -webkit-backdrop-filter: var(--modal-backdrop);
-    z-index: 9999; justify-content: center; align-items: flex-end;
-}
-.modal-content {
-    background: var(--bg-card); color: var(--text-main); padding: 28px 20px 20px;
-    border-radius: 34px 34px 0 0; width: 100%; max-width: 520px; text-align: center;
-    box-shadow: 0 -22px 46px rgba(0,0,0,0.22); animation: slideInUp 0.35s var(--ease-smooth);
-    position: relative; padding-bottom: calc(95px + var(--safe-b)); max-height: 94vh;
-    overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none;
-    transition: background-color var(--t-theme), color var(--t-theme);
-}
+.modal-overlay { display: none; position: fixed; inset: 0; background: var(--modal-bg); backdrop-filter: var(--modal-backdrop); -webkit-backdrop-filter: var(--modal-backdrop); z-index: 9999; justify-content: center; align-items: flex-end; }
+.modal-content { background: var(--bg-card); color: var(--text-main); padding: 28px 20px 20px; border-radius: 34px 34px 0 0; width: 100%; max-width: 520px; text-align: center; box-shadow: 0 -22px 46px rgba(0,0,0,0.22); animation: slideInUp 0.35s var(--ease-smooth); position: relative; padding-bottom: calc(95px + var(--safe-b)); max-height: 94vh; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
 .modal-content::-webkit-scrollbar { display: none; }
-.modal-content::before {
-    content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-    width: 42px; height: 5px; background: var(--border-color); border-radius: 10px;
-}
+.modal-content::before { content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 42px; height: 5px; background: var(--border-color); border-radius: 10px; }
 .modal-title { font-weight: 900; font-size: 19px; display: flex; align-items: center; gap: 8px; justify-content: center; margin-bottom: 12px; }
 
-.btn-modal {
-    width: 100%; padding: 16px; border: none; border-radius: var(--radius-md);
-    font-weight: 800; font-size: 16px; margin-top: 10px; cursor: pointer;
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    transition: transform var(--t-fast) var(--ease-spring);
-}
+.btn-modal { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-weight: 800; font-size: 16px; margin-top: 10px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: transform var(--t-fast) var(--ease-spring); }
 .btn-modal:active { transform: scale(0.96); }
 .btn-close { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); }
+.btn-modal:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-/* Меню список */
-.dropdown-item {
-    padding: 15px 18px; font-weight: 800; font-size: 15px; color: var(--text-main);
-    display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border-color);
-    cursor: pointer; transition: background-color var(--t-fast);
-}
+.dropdown-item { padding: 15px 18px; font-weight: 800; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background-color var(--t-fast); }
 .dropdown-item:last-child { border-bottom: none; }
 .dropdown-item:active { background: var(--input-bg); }
-.menu-icon-box {
-    width: 34px; height: 34px; border-radius: 11px; background: var(--input-bg);
-    display: flex; align-items: center; justify-content: center; color: var(--btn-add);
-}
+.menu-icon-box { width: 34px; height: 34px; border-radius: 11px; background: var(--input-bg); display: flex; align-items: center; justify-content: center; color: var(--btn-add); }
 
-/* Инструкция */
-.instruction-content { padding: 10px 0; font-size: 15px; color: var(--text-muted); font-weight: 600; text-align: left; transition: color var(--t-theme); }
+/* ВЫПАДАЮЩЕЕ МЕНЮ КАМЕР ПОВЕРХ ВИДОИСКАТЕЛЯ */
+.cam-overlay-menu { position: absolute; inset: 0; z-index: 50; background: rgba(var(--bg-card-rgb), 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: var(--radius-lg); padding: 16px 14px 18px; display: flex; flex-direction: column; text-align: left; animation: slideInUp 0.25s var(--ease-smooth); border: 1px solid var(--border-color); box-shadow: 0 12px 36px rgba(0,0,0,0.15); }
+.cam-overlay-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
+.cam-overlay-title { font-size: 16px; font-weight: 900; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+.cam-overlay-close { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform var(--t-fast); }
+.cam-overlay-close:active { transform: scale(0.9); }
+.cam-overlay-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 2px; }
+.cam-choice-card { background: var(--input-bg); border: 1.5px solid var(--border-color); border-radius: 14px; padding: 12px 14px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; transition: transform 0.18s, background-color 0.18s, border-color 0.18s; }
+.cam-choice-card:active { transform: scale(0.97); }
+.cam-choice-card.active { background: var(--info-bg); border-color: var(--btn-add); }
+.cam-card-info { display: flex; flex-direction: column; gap: 2px; }
+.cam-card-name { font-size: 14.5px; font-weight: 900; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
+.cam-badge-tag { font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 6px; background: rgba(5, 150, 105, 0.12); color: var(--btn-add); margin-left: 6px; display: inline-block; vertical-align: middle; }
+.cam-card-desc { font-size: 11.5px; font-weight: 600; color: var(--text-muted); line-height: 1.25; }
+
+[data-theme="dark"] .cam-overlay-menu { background: rgba(10, 24, 18, 0.96); border-color: rgba(255, 255, 255, 0.14); }
+[data-theme="dark"] .cam-overlay-header { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+[data-theme="dark"] .cam-overlay-title { color: #ffffff; }
+[data-theme="dark"] .cam-overlay-close { background: rgba(255, 255, 255, 0.14); border: none; color: #ffffff; }
+[data-theme="dark"] .cam-choice-card { background: rgba(255, 255, 255, 0.08); border: 1.5px solid rgba(255, 255, 255, 0.12); }
+[data-theme="dark"] .cam-choice-card.active { background: rgba(16, 185, 129, 0.22); border-color: #10b981; }
+[data-theme="dark"] .cam-card-name { color: #ffffff; }
+[data-theme="dark"] .cam-badge-tag { background: rgba(16, 185, 129, 0.22); color: #34d399; }
+[data-theme="dark"] .cam-card-desc { color: rgba(255, 255, 255, 0.65); }
+
+.instruction-content { padding: 10px 0; font-size: 15px; color: var(--text-muted); font-weight: 600; text-align: left; }
 .instruction-content ol { margin: 10px 0 0 0; padding-left: 20px; }
-.instruction-content li { margin-bottom: 12px; line-height: 1.5; color: var(--text-main); transition: color var(--t-theme); }
-.browser-note {
-    padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700;
-    display: flex; gap: 10px; align-items: flex-start; text-align: left;
-    background: var(--warn-bg); color: var(--warn-text); margin-top: 15px;
-    transition: background-color var(--t-theme), color var(--t-theme);
-}
+.instruction-content li { margin-bottom: 12px; line-height: 1.5; color: var(--text-main); }
+.browser-note { padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; text-align: left; background: var(--warn-bg); color: var(--warn-text); margin-top: 15px; }
 
-/* Настройки */
+/* НАСТРОЙКИ */
 .settings-section { text-align: left; margin-bottom: 6px; }
 .settings-section-title { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; padding: 14px 4px 6px; }
 .settings-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 13px 4px; border-bottom: 1px solid var(--border-color); }
@@ -470,156 +336,60 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .settings-row-label { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 800; }
 .settings-row-text small { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 2px; }
 
-.toggle {
-    width: 54px; height: 32px; border-radius: 20px; background: var(--border-color);
-    position: relative; cursor: pointer; transition: background-color var(--t-fast); flex-shrink: 0;
-}
-.toggle .toggle-thumb {
-    position: absolute; top: 3px; left: 3px; width: 26px; height: 26px;
-    border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-    transition: transform var(--t-fast) var(--ease-spring);
-}
+.toggle { width: 54px; height: 32px; border-radius: 20px; background: var(--border-color); position: relative; cursor: pointer; transition: background-color var(--t-fast); flex-shrink: 0; }
+.toggle .toggle-thumb { position: absolute; top: 3px; left: 3px; width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.25); transition: transform var(--t-fast) var(--ease-spring); }
 .toggle.active { background: var(--btn-add); }
 .toggle.active .toggle-thumb { transform: translateX(22px); }
 
-/* ---------- СКАНЕР И ПРИЦЕЛ (СЕРЫЕ УГОЛКИ БЕЗ СТОРОННИХ РАМОК) ---------- */
+/* ---------- СКАНЕР И ПРИЦЕЛ ---------- */
 #scannerModal { align-items: center; }
-#scannerModal .modal-content {
-    height: 100dvh; max-height: 100dvh; width: 100%; max-width: 100%; border-radius: 0;
-    margin: 0; display: flex; flex-direction: column; padding: calc(36px + var(--safe-t)) 16px calc(95px + var(--safe-b)) 16px;
-}
+#scannerModal .modal-content { height: 100dvh; max-height: 100dvh; width: 100%; max-width: 100%; border-radius: 0; margin: 0; display: flex; flex-direction: column; padding: calc(36px + var(--safe-t)) 16px calc(95px + var(--safe-b)) 16px; }
 .scanner-wrapper { flex: 1; position: relative; width: 100%; margin-bottom: 15px; border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; }
 #reader { flex: 1; width: 100%; display: flex; flex-direction: column; background: #000; position: relative; }
 #reader video { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: var(--radius-lg); }
 
-#qr-shaded-region,
-#reader__scan_region,
-#reader__dashboard_section,
-#reader div[style*="border"],
-#reader svg {
-    display: none !important;
-    border: none !important;
-    box-shadow: none !important;
-}
+#qr-shaded-region, #reader__scan_region, #reader__dashboard_section, #reader div[style*="border"], #reader svg { display: none !important; border: none !important; box-shadow: none !important; }
 
-.custom-scanner-target {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 68%; aspect-ratio: 1; max-width: 280px; max-height: 280px;
-    border-radius: 22px; box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.52); pointer-events: none; z-index: 5;
-    animation: targetPulse 2.8s infinite ease-in-out;
-}
-@keyframes targetPulse {
-    0%, 100% { box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.52), inset 0 0 0px rgba(255, 255, 255, 0); }
-    50% { box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.62), inset 0 0 20px rgba(255, 255, 255, 0.12); }
-}
-
-.custom-scanner-target .corner { 
-    position: absolute; width: 42px; height: 42px; 
-    border-color: #cbd5e1; border-style: solid; border-width: 0;
-    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.6));
-}
+.custom-scanner-target { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68%; aspect-ratio: 1; max-width: 280px; max-height: 280px; border-radius: 22px; box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.52); pointer-events: none; z-index: 5; animation: targetPulse 2.8s infinite ease-in-out; }
+@keyframes targetPulse { 0%, 100% { box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.52), inset 0 0 0px rgba(255, 255, 255, 0); } 50% { box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.62), inset 0 0 20px rgba(255, 255, 255, 0.12); } }
+.custom-scanner-target .corner { position: absolute; width: 42px; height: 42px; border-color: #cbd5e1; border-style: solid; border-width: 0; filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.6)); }
 .corner.tl { top: -2px; left: -2px; border-top-width: 4px; border-left-width: 4px; border-top-left-radius: 22px; animation: bracketTL 2s infinite ease-in-out; }
 .corner.tr { top: -2px; right: -2px; border-top-width: 4px; border-right-width: 4px; border-top-right-radius: 22px; animation: bracketTR 2s infinite ease-in-out; }
 .corner.bl { bottom: -2px; left: -2px; border-bottom-width: 4px; border-left-width: 4px; border-bottom-left-radius: 22px; animation: bracketBL 2s infinite ease-in-out; }
 .corner.br { bottom: -2px; right: -2px; border-bottom-width: 4px; border-right-width: 4px; border-bottom-right-radius: 22px; animation: bracketBR 2s infinite ease-in-out; }
-
 @keyframes bracketTL { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(4px, 4px); } }
 @keyframes bracketTR { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-4px, 4px); } }
 @keyframes bracketBL { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(4px, -4px); } }
 @keyframes bracketBR { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-4px, -4px); } }
 
-/* Мягкая серая линия сканирования с эффектом затухания по краям и исчезновения */
-.laser { 
-    position: absolute; left: 8%; right: 8%; height: 2px;
-    background: linear-gradient(90deg, transparent 0%, rgba(203, 213, 225, 0.5) 15%, #e2e8f0 50%, rgba(203, 213, 225, 0.5) 85%, transparent 100%);
-    box-shadow: 0 0 10px rgba(226, 232, 240, 0.6), 0 0 20px rgba(148, 163, 184, 0.3);
-    border-radius: 999px;
-    animation: scanGrayFade 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
-}
-@keyframes scanGrayFade { 
-    0% { 
-        top: 6%; 
-        opacity: 0; 
-        transform: scaleX(0.7); 
-    }
-    18% { 
-        opacity: 0.9; 
-        transform: scaleX(1); 
-    }
-    82% { 
-        opacity: 0.9; 
-        transform: scaleX(1); 
-    }
-    100% { 
-        top: 94%; 
-        opacity: 0; 
-        transform: scaleX(0.7); 
-    }
-}
+.laser { position: absolute; left: 8%; right: 8%; height: 2px; background: linear-gradient(90deg, transparent 0%, rgba(203, 213, 225, 0.5) 15%, #e2e8f0 50%, rgba(203, 213, 225, 0.5) 85%, transparent 100%); box-shadow: 0 0 10px rgba(226, 232, 240, 0.6), 0 0 20px rgba(148, 163, 184, 0.3); border-radius: 999px; animation: scanGrayFade 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate; }
+@keyframes scanGrayFade { 0% { top: 6%; opacity: 0; transform: scaleX(0.7); } 18% { opacity: 0.9; transform: scaleX(1); } 82% { opacity: 0.9; transform: scaleX(1); } 100% { top: 94%; opacity: 0; transform: scaleX(0.7); } }
 
-.scan-hint {
-    position: absolute; left: -24px; right: -24px; bottom: -44px; text-align: center;
-    font-size: 14px; font-weight: 800; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.85);
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-}
+.scan-hint { position: absolute; left: -24px; right: -24px; bottom: -44px; text-align: center; font-size: 14px; font-weight: 800; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-.btn-icon-torch {
-    position: absolute; right: 14px; top: 14px; z-index: 6;
-    background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    color: #fff; width: 44px; height: 44px; border-radius: 50%; border: none;
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
-    transition: transform var(--t-fast) var(--ease-spring), background-color var(--t-fast);
-}
+/* КНОПКИ СКАНЕРА */
+.btn-icon-torch { position: absolute; right: 14px; top: 14px; z-index: 6; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; width: 44px; height: 44px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform var(--t-fast) var(--ease-spring), background-color var(--t-fast); }
 .btn-icon-torch.active { background: #f59e0b; color: #111; box-shadow: 0 0 16px rgba(245, 158, 11, 0.65); }
-.zoom-pill {
-    position: absolute; left: 50%; top: 14px; transform: translateX(-50%); display: flex; gap: 4px;
-    background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    border-radius: 24px; padding: 4px; z-index: 6;
-}
-.zoom-btn {
-    border: none; background: transparent; color: rgba(255,255,255,0.8); font-weight: 800;
-    font-size: 13px; padding: 8px 12px; border-radius: 18px; cursor: pointer;
-}
+.btn-icon-camera { position: absolute; left: 14px; top: 14px; z-index: 6; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; width: 44px; height: 44px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform var(--t-fast) var(--ease-spring), background-color var(--t-fast); }
+.btn-icon-camera:active { transform: scale(0.88); background: rgba(255,255,255,0.25); }
+.zoom-pill { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); display: flex; gap: 4px; background: rgba(0,0,0,0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 24px; padding: 4px; z-index: 6; border: 1px solid rgba(255,255,255,0.15); }
+.zoom-btn { border: none; background: transparent; color: rgba(255,255,255,0.85); font-weight: 800; font-size: 13.5px; padding: 7px 14px; border-radius: 18px; cursor: pointer; transition: background-color var(--t-fast), color var(--t-fast); }
 .zoom-btn.active { background: #fff; color: #111827; }
 
-/* ---------- ЦИФРОВАЯ КЛАВИАТУРА И РУЧНОЙ ВВОД (NUMPAD) ---------- */
+/* ---------- NUMPAD ---------- */
 .numpad-content { background: var(--numpad-bg); padding-top: 20px; }
 .numpad-title { font-size: 15px; font-weight: 800; color: var(--text-muted); margin-bottom: 10px; }
-.numpad-input-group {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 15px;
-    background: transparent; border: 2px solid transparent; border-radius: 16px; 
-    padding: 0 4px; min-height: 60px; transition: all var(--t-fast);
-}
-.numpad-input-group.manual-mode {
-    background: var(--bg-card); border-color: var(--btn-add); box-shadow: 0 0 0 4px var(--glow-soft);
-}
-.numpad-display {
-    flex: 1; font-size: clamp(28px, 8vw, 34px); font-weight: 900; padding: 10px;
-    text-align: left; color: var(--text-main); letter-spacing: 1px;
-    overflow-x: auto; white-space: nowrap; scrollbar-width: none;
-}
+.numpad-input-group { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: transparent; border: 2px solid transparent; border-radius: 16px; padding: 0 4px; min-height: 60px; transition: all var(--t-fast); }
+.numpad-input-group.manual-mode { background: var(--bg-card); border-color: var(--btn-add); box-shadow: 0 0 0 4px var(--glow-soft); }
+.numpad-display { flex: 1; font-size: clamp(28px, 8vw, 34px); font-weight: 900; padding: 10px; text-align: left; color: var(--text-main); letter-spacing: 1px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
 .numpad-display::-webkit-scrollbar { display: none; }
-.numpad-cursor {
-    display: inline-block; width: 2.5px; height: 0.9em; background-color: var(--btn-add);
-    vertical-align: text-bottom; margin-left: 4px; margin-bottom: 2px; border-radius: 2px;
-    animation: blinkCursor 1.1s step-end infinite;
-}
+.numpad-cursor { display: inline-block; width: 2.5px; height: 0.9em; background-color: var(--btn-add); vertical-align: text-bottom; margin-left: 4px; margin-bottom: 2px; border-radius: 2px; animation: blinkCursor 1.1s step-end infinite; }
 @keyframes blinkCursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 .numpad-placeholder { color: var(--text-muted); opacity: 0.6; font-size: 16px; font-weight: 700; }
-.numpad-paste-btn {
-    background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color);
-    border-radius: 13px; width: 46px; height: 46px; display: flex; justify-content: center;
-    align-items: center; cursor: pointer; flex-shrink: 0; transition: transform var(--t-fast) var(--ease-spring);
-}
-.numpad-paste-btn:active { transform: scale(0.85) rotate(-5deg); }
+.numpad-paste-btn { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 13px; width: 46px; height: 46px; display: flex; justify-content: center; align-items: center; cursor: pointer; flex-shrink: 0; }
 .numpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.num-btn {
-    background: var(--numpad-btn); color: var(--text-main); border: none; border-radius: 20px;
-    font-size: 26px; font-weight: 900; padding: 18px 0; cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center;
-    transition: background-color var(--t-theme), color var(--t-theme), transform 0.18s var(--ease-spring), box-shadow 0.18s;
-}
-.num-btn:active { background: var(--border-color); transform: scale(0.88) translateY(3px); box-shadow: none; }
+.num-btn { background: var(--numpad-btn); color: var(--text-main); border: none; border-radius: 20px; font-size: 26px; font-weight: 900; padding: 18px 0; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; transition: transform 0.18s var(--ease-spring); }
+.num-btn:active { background: var(--border-color); transform: scale(0.88) translateY(3px); }
 .num-btn.action-c { color: #dc2626; font-size: 22px; }
 .num-btn.action-back { color: #d97706; }
 .numpad-actions { display: flex; gap: 12px; margin-top: 18px; }
@@ -627,53 +397,26 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .btn-numpad-ok { flex: 2; background: var(--btn-add); color: white; border: none; border-radius: 20px; font-size: 18px; font-weight: 800; padding: 18px 0; box-shadow: 0 8px 20px rgba(5, 150, 105, 0.32); }
 
 /* ---------- GOOEY BOTTOM NAVBAR ---------- */
-.navbar-wrap {
-    position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: center;
-    padding: 0 16px calc(12px + var(--safe-b)); pointer-events: none; z-index: 10005;
-}
+.navbar-wrap { position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; padding: 0 16px calc(12px + var(--safe-b)); pointer-events: none; z-index: 10005; }
 .navbar { position: relative; width: 100%; max-width: 520px; height: 62px; pointer-events: auto; }
 .navbar-goo-layer { position: absolute; inset: 0; filter: url(#gooey-filter-soft); }
-.navbar-pill {
-    position: absolute; inset: 0; background: var(--nav-bg); border-radius: 30px;
-    box-shadow: var(--nav-shadow); border: 1px solid var(--nav-border);
-    transition: background-color var(--t-theme), border-color var(--t-theme), box-shadow var(--t-theme);
-}
-.navbar-bead {
-    position: absolute; top: -13px; left: 0; width: 48px; height: 48px;
-    transform: translateX(0); transition: transform 0.45s var(--ease-spring); will-change: transform;
-}
+.navbar-pill { position: absolute; inset: 0; background: var(--nav-bg); border-radius: 30px; box-shadow: var(--nav-shadow); border: 1px solid var(--nav-border); transition: background-color var(--t-theme), border-color var(--t-theme), box-shadow var(--t-theme); }
+.navbar-bead { position: absolute; top: -13px; left: 0; width: 48px; height: 48px; transform: translateX(0); transition: transform 0.45s var(--ease-spring); will-change: transform; }
 .bead-inner { width: 100%; height: 100%; border-radius: 50%; background: var(--nav-bead); transition: background-color var(--t-theme); }
-@keyframes beadSquash {
-    0% { transform: scale(1, 1); }
-    35% { transform: scale(1.18, 0.82); }
-    65% { transform: scale(0.92, 1.08); }
-    100% { transform: scale(1, 1); }
-}
+@keyframes beadSquash { 0% { transform: scale(1, 1); } 35% { transform: scale(1.18, 0.82); } 65% { transform: scale(0.92, 1.08); } 100% { transform: scale(1, 1); } }
 .bead-inner.squash { animation: beadSquash 0.42s var(--ease-spring); }
-.navbar-glow {
-    position: absolute; top: -13px; left: 0; width: 48px; height: 48px; border-radius: 50%;
-    transform: translateX(0); transition: transform 0.45s var(--ease-spring);
-    box-shadow: 0 0 16px 4px var(--nav-glow); opacity: 0.85; pointer-events: none;
-}
+.navbar-glow { position: absolute; top: -13px; left: 0; width: 48px; height: 48px; border-radius: 50%; transform: translateX(0); transition: transform 0.45s var(--ease-spring); box-shadow: 0 0 16px 4px var(--nav-glow); opacity: 0.85; pointer-events: none; }
 .navbar-items-layer { position: relative; z-index: 2; display: flex; height: 100%; }
-.navitem {
-    flex: 1; position: relative; display: flex; flex-direction: column; align-items: center;
-    justify-content: center; gap: 2px; height: 100%; background: none; border: none;
-    cursor: pointer; color: var(--nav-icon-inactive); -webkit-user-select: none; user-select: none;
-}
+.navitem { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; height: 100%; background: none; border: none; cursor: pointer; color: var(--nav-icon-inactive); -webkit-user-select: none; user-select: none; }
 .navitem-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; transition: transform 0.45s var(--ease-spring), color var(--t-theme); }
 .icon-inner { display: block; width: 100%; height: 100%; }
 .icon-inner svg { width: 100%; height: 100%; overflow: visible; }
-@keyframes iconActivatePop {
-    0% { transform: scale(0.65); } 50% { transform: scale(1.22); }
-    75% { transform: scale(0.93); } 100% { transform: scale(1); }
-}
+@keyframes iconActivatePop { 0% { transform: scale(0.65); } 50% { transform: scale(1.22); } 75% { transform: scale(0.93); } 100% { transform: scale(1); } }
 .navitem.active .icon-inner { animation: iconActivatePop 0.5s var(--ease-bounce); }
 .navitem-label { font-size: 10.5px; font-weight: 800; color: var(--nav-icon-inactive); position: absolute; bottom: 7px; transition: color var(--t-theme); }
 .navitem.active .navitem-icon { transform: translateY(-22px); color: var(--nav-icon-active); }
 .navitem.active .navitem-label { color: var(--nav-bead); font-weight: 900; }
 
-/* Микроанимации внутри иконок навигации */
 .smoke { opacity: 0; }
 .navitem.active .smoke-1 { animation: smokeRise 1.8s ease-in-out infinite; }
 .navitem.active .smoke-2 { animation: smokeRise 1.8s ease-in-out infinite 0.9s; }
@@ -689,11 +432,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .navitem.active .key-3 { animation: keyType 0.35s var(--ease-bounce) 0.4s; }
 
 .navitem.active .scan-line { animation: scanSweep 1.3s cubic-bezier(0.45,0,0.55,1) infinite; }
-@keyframes scanSweep {
-    0% { transform: translateY(-3.2px); opacity: 0.55; }
-    50% { transform: translateY(3.2px); opacity: 1; }
-    100% { transform: translateY(-3.2px); opacity: 0.55; }
-}
+@keyframes scanSweep { 0% { transform: translateY(-3.2px); opacity: 0.55; } 50% { transform: translateY(3.2px); opacity: 1; } 100% { transform: translateY(-3.2px); opacity: 0.55; } }
 
 @keyframes cellPop { 0% { opacity: 0; transform: scale(0.3); } 60% { opacity: 1; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
 .navitem.active .cell1 { animation: cellPop 0.4s var(--ease-bounce) 0.04s forwards; }
@@ -706,11 +445,8 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .navitem.active .dot-c { animation: dotPulse 1.1s ease-in-out infinite 0.15s; }
 .navitem.active .dot-r { animation: dotPulse 1.1s ease-in-out infinite 0.3s; }
 
-/* ---------- КАРТОЧКА РАЗРАБОТЧИКА (ABOUT) ---------- */
-.dev-card {
-    background: var(--input-bg); padding: 20px; border-radius: 20px; margin-top: 15px; margin-bottom: 12px;
-    border: 1px solid var(--border-color); text-align: center; display: flex; flex-direction: column; align-items: center;
-}
+/* Карточка разработчика (Аватар) */
+.dev-card { background: var(--input-bg); padding: 20px; border-radius: 20px; margin-top: 15px; margin-bottom: 12px; border: 1px solid var(--border-color); text-align: center; display: flex; flex-direction: column; align-items: center; }
 .dev-avatar-svg { width: 100px; height: 100px; margin-bottom: 12px; overflow: visible; }
 .character .head { transform-origin: 115px 70px; animation: headBob 3s ease-in-out infinite; }
 .arms .arm-l-group { animation: typeLeft 0.18s ease-in-out infinite alternate; }
@@ -718,416 +454,49 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .code-lines rect { animation: codeScroll 1.5s infinite linear; }
 .code-1 { animation-delay: 0s; } .code-2 { animation-delay: 0.2s; } .code-3 { animation-delay: 0.4s; }
 .code-4 { animation-delay: 0.6s; } .code-5 { animation-delay: 0.8s; } .code-6 { animation-delay: 1.0s; }
-
 @keyframes headBob { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(1.5deg) translateY(1.5px); } }
 @keyframes typeLeft { 0% { transform: translateY(0); } 100% { transform: translateY(-3.5px); } }
 @keyframes typeRight { 0% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
 @keyframes codeScroll { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-20px); opacity: 0; } }
 
-.tg-dev-btn {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    background: linear-gradient(135deg, #28a8ea 0%, #178cc4 100%); color: #fff;
-    text-decoration: none; padding: 14px 20px; border-radius: var(--radius-md);
-    font-weight: 800; font-size: 15px; margin-top: 12px; width: 100%;
-    box-shadow: 0 8px 20px rgba(40, 168, 234, 0.3); transition: transform var(--t-fast) var(--ease-spring);
-}
+.tg-dev-btn { display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #28a8ea 0%, #178cc4 100%); color: #fff; text-decoration: none; padding: 14px 20px; border-radius: var(--radius-md); font-weight: 800; font-size: 15px; margin-top: 12px; width: 100%; box-shadow: 0 8px 20px rgba(40, 168, 234, 0.3); transition: transform var(--t-fast) var(--ease-spring); }
 .tg-dev-btn:active { transform: scale(0.95); }
 .tg-icon-fly { width: 22px; height: 22px; animation: gentleFloat 3s ease-in-out infinite; }
 .tg-dev-btn:active .tg-icon-fly { animation: flyAway 0.6s ease forwards; }
 @keyframes gentleFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
-@keyframes flyAway {
-    0% { transform: translate(0, 0) scale(1); opacity: 1; }
-    30% { transform: translate(25px, -25px) scale(0.8); opacity: 0; }
-    31% { transform: translate(-25px, 25px) scale(0.8); opacity: 0; }
-    100% { transform: translate(0, 0) scale(1); opacity: 1; }
-}
+@keyframes flyAway { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 30% { transform: translate(25px, -25px) scale(0.8); opacity: 0; } 31% { transform: translate(-25px, 25px) scale(0.8); opacity: 0; } 100% { transform: translate(0, 0) scale(1); opacity: 1; } }
 
-/* ---------- АРХИВ ВЫГРУЗОК ---------- */
 .archive-list { display: flex; flex-direction: column; gap: 12px; padding: 4px; text-align: left; }
-.archive-item {
-    background: var(--input-bg); border-radius: var(--radius-md); padding: 16px;
-    display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--border-color);
-}
+.archive-item { background: var(--input-bg); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--border-color); }
 .archive-info-row { display: flex; justify-content: space-between; align-items: center; }
 .archive-date { color: var(--text-main); font-weight: 800; font-size: 15px; }
 .archive-stats { color: var(--text-muted); font-size: 13.5px; font-weight: 700; }
 .archive-actions { display: flex; gap: 10px; width: 100%; }
-.archive-btn {
-    flex: 1; background: var(--btn-add); color: white; border: none; padding: 11px 5px;
-    border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 13px;
-    transition: transform var(--t-fast); box-shadow: 0 4px 12px rgba(5, 150, 105, 0.22); white-space: nowrap;
-}
-.archive-btn-secondary {
-    flex: 1; background: var(--border-color); color: var(--text-main); border: none; padding: 11px 5px;
-    border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 13px;
-    transition: background-color var(--t-theme), color var(--t-theme), transform var(--t-fast); white-space: nowrap;
-}
+.archive-btn { flex: 1; background: var(--btn-add); color: white; border: none; padding: 11px 5px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 13px; transition: transform var(--t-fast); box-shadow: 0 4px 12px rgba(5, 150, 105, 0.22); white-space: nowrap; }
+.archive-btn-secondary { flex: 1; background: var(--border-color); color: var(--text-main); border: none; padding: 11px 5px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 13px; transition: background-color var(--t-theme), color var(--t-theme), transform var(--t-fast); white-space: nowrap; }
 .archive-btn:active, .archive-btn-secondary:active { transform: scale(0.94); }
 
-/* ============================================================
-   УПРОЩЕННЫЙ РЕЖИМ (LOW FX)
-   ============================================================ */
-[data-fx="low"] *, [data-fx="low"] *::before, [data-fx="low"] *::after {
-    animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important;
-}
-[data-fx="low"] .bg-blob, [data-fx="low"] .ripple, [data-fx="low"] .confetti-piece,
-[data-fx="low"] .stars, [data-fx="low"] .clouds, [data-fx="low"] .sun, [data-fx="low"] .moon,
-[data-fx="low"] .laser { display: none !important; }
+/* Зум мод для умного копирования */
+.zoom-touch-target { position: relative; display: inline-block; cursor: pointer; border-radius: 16px; overflow: hidden; padding: 6px; transition: transform var(--t-fast), opacity var(--t-fast); }
+.zoom-touch-target:active { transform: scale(0.97); opacity: 0.85; }
+
+/* УПРОЩЕННЫЙ РЕЖИМ (БЕЗОПАСНАЯ И БЫСТРАЯ ОПТИМИЗАЦИЯ) */
+[data-fx="low"] .bg-blob { display: none !important; }
+[data-fx="low"] .stars { display: none !important; }
+[data-fx="low"] .clouds { display: none !important; }
+[data-fx="low"] .logo-laser { animation: none !important; }
+[data-fx="low"] header { animation: none !important; }
 [data-fx="low"] .navbar-goo-layer { filter: none !important; }
 [data-fx="low"] .navbar-glow { box-shadow: none !important; }
-[data-fx="low"] .modal-overlay { backdrop-filter: none !important; background-color: rgba(0,0,0,0.95) !important; }
-
-/* ============================================================
-   ОБНОВЛЁННАЯ ВИЗУАЛЬНАЯ ИЕРАРХИЯ
-   Более спокойная поверхность, явные зоны действий и удобные touch-targets.
-   ============================================================ */
-:root {
-    --bg-body: #f6f9f7;
-    --bg-card: #ffffff;
-    --text-main: #10231b;
-    --text-muted: #647970;
-    --border-color: #dfe9e3;
-    --input-bg: #f3f7f4;
-    --btn-add: #087f5b;
-    --btn-add-dark: #066747;
-    --shadow-soft: 0 8px 24px rgba(16, 35, 27, 0.07);
-    --shadow-hover: 0 18px 44px rgba(16, 35, 27, 0.14);
-    --radius-sm: 12px;
-    --radius-md: 16px;
-    --radius-lg: 22px;
-    --radius-xl: 28px;
-}
-
-[data-theme="dark"] {
-    --bg-body: #0b1511;
-    --bg-card: #14231c;
-    --text-main: #eef7f1;
-    --text-muted: #9aafa4;
-    --border-color: #263b30;
-    --input-bg: #102019;
-    --btn-add: #19b982;
-    --btn-add-dark: #0c9366;
-    --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.28);
-    --shadow-hover: 0 18px 44px rgba(0, 0, 0, 0.46);
-}
-
-body {
-    background-color: var(--bg-body);
-}
-
-body::before {
-    background: radial-gradient(circle at 50% -10%, #e4f2ea 0%, var(--bg-body) 58%);
-}
-
-[data-theme="dark"] body::after {
-    background: radial-gradient(circle at 50% -10%, #153326 0%, var(--bg-body) 62%);
-}
-
-header {
-    padding: calc(13px + var(--safe-t)) 16px 14px;
-    margin-bottom: 4px;
-    border-bottom-left-radius: 24px;
-    border-bottom-right-radius: 24px;
-    box-shadow: 0 8px 24px rgba(4, 96, 69, 0.2);
-}
-
-.brand-wrapper {
-    gap: 11px;
-}
-
-.brand-logo-svg {
-    width: 42px;
-    height: 42px;
-}
-
-.brand-copy {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-}
-
-.brand-title {
-    font-size: 20px;
-    letter-spacing: -0.35px;
-}
-
-.brand-subtitle {
-    color: rgba(255, 255, 255, 0.72);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.2px;
-}
-
-.daynight-toggle {
-    --w: 58px;
-    --h: 30px;
-    --thumb: 24px;
-}
-
-.main-container {
-    max-width: 680px;
-    gap: 14px;
-    padding: 12px 16px calc(116px + var(--safe-b));
-}
-
-.pallet-bar {
-    min-height: 58px;
-    padding: 10px 12px;
-    border-radius: 18px;
-    box-shadow: 0 5px 16px rgba(16, 35, 27, 0.06);
-}
-
-.pallet-bar::after {
-    content: '';
-    width: 8px;
-    height: 8px;
-    margin-left: 8px;
-    border-top: 2px solid var(--text-muted);
-    border-right: 2px solid var(--text-muted);
-    transform: rotate(45deg);
-    opacity: 0.65;
-}
-
-.pallet-bar-left {
-    min-width: 0;
-}
-
-.pallet-bar-left > .app-icon {
-    width: 34px;
-    height: 34px;
-    padding: 8px;
-    border-radius: 11px;
-    background: var(--info-bg);
-}
-
-.pallet-bar-text {
-    font-size: 12px;
-    line-height: 1.15;
-}
-
-.pallet-badge {
-    max-width: 47%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    padding: 7px 11px;
-    border-radius: 10px;
-    font-size: 13px;
-}
-
-.cart-card {
-    min-height: 280px;
-    padding: 15px 13px 13px;
-    background: rgba(var(--bg-card-rgb), 0.92);
-    border: 1px solid var(--border-color);
-    border-radius: 24px;
-    box-shadow: var(--shadow-soft);
-}
-
-.cart-header {
-    padding: 0 2px 13px;
-}
-
-#cartStats {
-    padding: 7px 10px;
-    border-radius: 10px;
-    background: var(--input-bg);
-    color: var(--text-muted);
-    font-size: 13px;
-    line-height: 1;
-}
-
-.delete-btn {
-    height: 36px;
-    padding: 0 11px;
-    border: 1px solid rgba(220, 38, 38, 0.18);
-    border-radius: 10px;
-    background: var(--btn-remove-bg);
-    color: var(--btn-remove-text);
-    box-shadow: none;
-    font-size: 13px;
-}
-
-.delete-btn:hover {
-    box-shadow: 0 5px 14px rgba(239, 68, 68, 0.16);
-}
-
-table {
-    border-spacing: 0 8px;
-    margin-top: -4px;
-}
-
-tr {
-    background: var(--input-bg);
-    box-shadow: none;
-    border: 1px solid var(--border-color);
-}
-
-td {
-    padding: 10px 8px;
-}
-
-.pallet-header-content {
-    padding: 8px 4px 3px;
-}
-
-.pallet-name {
-    min-width: 0;
-    font-size: 15px;
-}
-
-.pallet-name .app-icon {
-    width: 18px;
-    height: 18px;
-    padding: 3px;
-    border-radius: 6px;
-    background: var(--info-bg);
-}
-
-.btn-pallet-qr {
-    padding: 8px 10px;
-    border-radius: 9px;
-    font-size: 12px;
-    box-shadow: none;
-}
-
-.barcode-wrapper {
-    width: 132px;
-    height: 58px;
-    padding: 5px;
-    border: 1px solid #e5ebe7;
-    box-shadow: 0 2px 8px rgba(16, 35, 27, 0.08);
-}
-
-.qty-box {
-    padding: 10px 0;
-    border: 1px solid var(--border-color);
-    border-radius: 11px;
-    background: var(--bg-card);
-    font-size: 16px;
-}
-
-.btn-remove {
-    width: 36px;
-    height: 36px;
-    border: 1px solid rgba(220, 38, 38, 0.14);
-    background: transparent;
-}
-
-.no-data-card {
-    min-height: 235px;
-    padding: 40px 18px;
-    border: 1px dashed #c7d9cf;
-    background: var(--input-bg);
-    box-shadow: none;
-    font-size: 15px;
-}
-
-.no-data-card .app-icon {
-    width: 44px !important;
-    height: 44px !important;
-    padding: 10px;
-    border-radius: 14px;
-    background: var(--info-bg);
-}
-
-.navbar-wrap {
-    padding: 0 12px calc(10px + var(--safe-b));
-}
-
-.navbar {
-    height: 64px;
-    max-width: 600px;
-}
-
-.navbar-pill {
-    border-radius: 22px;
-    box-shadow: 0 -6px 26px rgba(16, 35, 27, 0.1);
-}
-
-.navitem-label {
-    bottom: 6px;
-    font-size: 10px;
-}
-
-.navitem.active .navitem-icon {
-    transform: translateY(-21px);
-}
-
-.modal-overlay {
-    background: rgba(7, 19, 13, 0.62);
-}
-
-.modal-content {
-    padding: 30px 18px 18px;
-    border-radius: 28px 28px 0 0;
-    box-shadow: 0 -18px 42px rgba(0, 0, 0, 0.2);
-}
-
-.modal-title {
-    font-size: 18px;
-}
-
-.btn-modal {
-    padding: 14px;
-    border-radius: 14px;
-}
-
-.dropdown-item {
-    padding: 14px 12px;
-}
-
-.menu-icon-box {
-    width: 38px;
-    height: 38px;
-}
-
-.settings-row {
-    padding: 14px 2px;
-}
-
-.archive-item {
-    padding: 14px;
-    gap: 10px;
-}
-
-@media (min-width: 680px) {
-    header {
-        padding-left: max(24px, calc((100% - 648px) / 2));
-        padding-right: max(24px, calc((100% - 648px) / 2));
-    }
-}
-
-@media (max-width: 380px) {
-    .brand-subtitle {
-        display: none;
-    }
-
-    .delete-label {
-        display: none;
-    }
-
-    .delete-btn {
-        width: 36px;
-        justify-content: center;
-        padding: 0;
-    }
-
-    .barcode-wrapper {
-        width: 118px;
-    }
-
-    td:first-child {
-        width: 55%;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        animation-duration: 0.001ms !important;
-        transition-duration: 0.001ms !important;
-    }
-}
+[data-fx="low"] .modal-overlay { backdrop-filter: none !important; background: rgba(7, 19, 13, 0.92) !important; }
+[data-fx="low"] .cam-overlay-menu { backdrop-filter: none !important; }
+[data-fx="low"] .character .head,
+[data-fx="low"] .arms .arm-l-group,
+[data-fx="low"] .arms .arm-r-group,
+[data-fx="low"] .code-lines rect,
+[data-fx="low"] .tg-icon-fly { animation: none !important; }
+[data-fx="low"] .custom-scanner-target { animation: none !important; }
+[data-fx="low"] .corner { animation: none !important; }
 </style>
 </head>
 <body>
@@ -1137,18 +506,18 @@ td {
 
 <header>
     <div class="brand-wrapper">
-        <svg class="brand-logo-svg" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="40" height="40" rx="12" fill="rgba(255, 255, 255, 0.2)"/>
-            <rect x="7" y="7" width="26" height="26" rx="6" stroke="#ffffff" stroke-width="2.5"/>
-            <rect x="12" y="13" width="2" height="14" rx="1" fill="#ffffff"/>
-            <rect x="16" y="13" width="3" height="14" rx="1" fill="#ffffff"/>
-            <rect x="21" y="13" width="2" height="14" rx="1" fill="#ffffff"/>
-            <rect x="25" y="13" width="3" height="14" rx="1" fill="#ffffff"/>
-            <line x1="5" y1="20" x2="35" y2="20" stroke="#fcd34d" stroke-width="2.5" stroke-linecap="round" class="logo-laser"/>
+        <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100" height="100" rx="28" fill="rgba(255, 255, 255, 0.2)"/>
+            <rect x="22" y="22" width="56" height="56" rx="12" stroke="#ffffff" stroke-width="6"/>
+            <rect x="31" y="33" width="5" height="34" rx="2.5" fill="#ffffff"/>
+            <rect x="40" y="33" width="7" height="34" rx="2.5" fill="#ffffff"/>
+            <rect x="51" y="33" width="5" height="34" rx="2.5" fill="#ffffff"/>
+            <rect x="60" y="33" width="7" height="34" rx="2.5" fill="#ffffff"/>
+            <line x1="10" y1="50" x2="90" y2="50" stroke="#fcd34d" stroke-width="5" stroke-linecap="round" class="logo-laser"/>
         </svg>
         <div class="brand-copy">
             <span class="brand-title">Мой ТСД</span>
-            <span class="brand-subtitle">Учёт и сканирование</span>
+            <span class="brand-subtitle">Инвентаризация и сбор</span>
         </div>
     </div>
 
@@ -1196,9 +565,7 @@ td {
               <span class="delete-label" id="deleteLabel">Очистить</span>
             </button>
         </div>
-        <div id="cartContentArea">
-            <table id="cartTable"></table>
-        </div>
+        <div id="cartContentArea"></div>
     </div>
 </div>
 
@@ -1264,19 +631,16 @@ td {
         <span class="navitem-label">Скан</span>
       </button>
 
-      <button class="navitem" data-action="onNavExcel" onclick="switchNav(this)">
+      <!-- Кнопка изменена с "В Excel" на "Выгрузить", т.к. экспорт теперь в QR -->
+      <button class="navitem" data-action="onNavExport" onclick="switchNav(this)">
         <span class="navitem-icon"><span class="icon-inner">
           <svg viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
-            <path d="M3 12H21" stroke="currentColor" stroke-width="1.4" opacity="0.5"/>
-            <path d="M12 4V20" stroke="currentColor" stroke-width="1.4" opacity="0.5"/>
-            <rect class="cell cell1" x="5" y="6" width="5" height="4" rx="0.8" fill="currentColor"/>
-            <rect class="cell cell2" x="14" y="6" width="5" height="4" rx="0.8" fill="currentColor"/>
-            <rect class="cell cell3" x="5" y="14" width="5" height="4" rx="0.8" fill="currentColor"/>
-            <rect class="cell cell4" x="14" y="14" width="5" height="4" rx="0.8" fill="currentColor"/>
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </span></span>
-        <span class="navitem-label">В Excel</span>
+        <span class="navitem-label">Выгрузить</span>
       </button>
 
       <button class="navitem" data-action="onNavMenu" onclick="switchNav(this)">
@@ -1299,7 +663,7 @@ td {
     <button class="snackbar-btn" id="snackbarUndoBtn" onclick="undoDelete()">Вернуть</button>
 </div>
 
-<!-- ГЛАВНОЕ МЕНЮ -->
+<!-- МОДАЛЬНЫЕ ОКНА: ГЛАВНОЕ МЕНЮ -->
 <div class="modal-overlay" id="mainMenuModal">
     <div class="modal-content">
         <h3 class="modal-title">
@@ -1328,20 +692,15 @@ td {
     </div>
 </div>
 
-<!-- НАСТРОЙКИ -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal-content">
-        <h3 class="modal-title">
-            <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
-            Настройки
-        </h3>
-
+        <h3 class="modal-title">Настройки</h3>
         <div class="settings-section">
             <div class="settings-section-title">Сканирование</div>
             <div class="settings-row">
                 <div class="settings-row-label">
                     <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
-                    <div class="settings-row-text">Непрерывный скан<small>Не закрывать камеру после кода</small></div>
+                    <div class="settings-row-text">Непрерывный скан<small>Не закрывать камеру</small></div>
                 </div>
                 <div class="toggle" id="toggle-continuous" onclick="toggleSetting('continuous')"><div class="toggle-thumb"></div></div>
             </div>
@@ -1353,7 +712,6 @@ td {
                 <div class="toggle" id="toggle-autolens" onclick="toggleSetting('autolens')"><div class="toggle-thumb"></div></div>
             </div>
         </div>
-
         <div class="settings-section">
             <div class="settings-section-title">Сигналы и отклик</div>
             <div class="settings-row">
@@ -1378,7 +736,6 @@ td {
                 <div class="toggle" id="toggle-vibro" onclick="toggleSetting('vibro')"><div class="toggle-thumb"></div></div>
             </div>
         </div>
-
         <div class="settings-section">
             <div class="settings-section-title">Производительность</div>
             <div class="settings-row">
@@ -1389,69 +746,71 @@ td {
                 <div class="toggle" id="toggle-simplemode" onclick="toggleSimpleMode()"><div class="toggle-thumb"></div></div>
             </div>
         </div>
-
         <button class="btn-modal btn-close" onclick="closeAllModals()">Готово</button>
     </div>
 </div>
 
-<!-- ПОЛНОЭКРАННЫЙ СКАНЕР -->
 <div class="modal-overlay" id="scannerModal">
     <div class="modal-content">
-        <h3 class="modal-title">
-            <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
-            Наведите камеру
-        </h3>
-        <p id="iosScanHint" style="display:none; font-size: 14px; color: #f59e0b; margin-top: -4px; margin-bottom: 12px; font-weight: 700;">Отодвиньте телефон на 15-20 см</p>
-
+        <h3 class="modal-title">Наведите камеру на штрихкод</h3>
         <div class="scanner-wrapper">
             <div id="reader"></div>
-            
             <div class="custom-scanner-target">
                 <div class="corner tl"></div><div class="corner tr"></div>
                 <div class="corner bl"></div><div class="corner br"></div>
                 <div class="laser"></div>
-                <div class="scan-hint" id="orientationHint">
-                    <span class="app-icon" style="width:18px;height:18px;display:inline-flex;">
-                        <svg viewBox="0 0 24 24" fill="none">
-                            <path d="M3 8V5C3 3.9 3.9 3 5 3H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M16 3H19C20.1 3 21 3.9 21 5V8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M21 16V19C21 20.1 20.1 21 19 21H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M8 21H5C3.9 21 3 20.1 3 19V16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            <line x1="5.5" y1="12" x2="18.5" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                    </span>
-                    <span>Наведите штрихкод на рамку</span>
-                </div>
+                <div class="scan-hint"><span>Артикул или ШК в рамку</span></div>
             </div>
             
-            <button class="btn-icon-torch" id="torchBtn" onclick="toggleTorch()">
-                <span class="app-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+            <!-- КНОПКА ВЫБОРА КАМЕРЫ (СЛЕВА) -->
+            <button class="btn-icon-camera" id="cameraBtn" onclick="toggleCameraOverlayMenu()" title="Выбрать камеру">
+                <span class="app-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2v2"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                </span>
             </button>
 
+            <!-- ПЛАШКА ЗУМА (ПО ЦЕНТРУ) -->
             <div class="zoom-pill" id="zoomPill">
                 <button class="zoom-btn active" data-zoom="1" onclick="setZoomLevel(1)">1x</button>
                 <button class="zoom-btn" data-zoom="2" onclick="setZoomLevel(2)">2x</button>
-                <button class="zoom-btn" data-zoom="3" id="zoomBtn3" style="display:none;" onclick="setZoomLevel(3)">3x</button>
+                <button class="zoom-btn" data-zoom="3" onclick="setZoomLevel(3)">3x</button>
+            </div>
+
+            <!-- КНОПКА ФОНАРИКА (СПРАВА) -->
+            <button class="btn-icon-torch" id="torchBtn" onclick="toggleTorch()" title="Включить фонарик">
+                <span class="app-icon"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+            </button>
+
+            <!-- ВЫПАДАЮЩЕЕ МЕНЮ КАМЕР ПРЯМО ПОВЕРХ ВИДОИСКАТЕЛЯ -->
+            <div class="cam-overlay-menu" id="camOverlayMenu" style="display:none;">
+                <div class="cam-overlay-header">
+                    <span class="cam-overlay-title">
+                        <span class="app-icon" style="color:var(--btn-add); width:18px; height:18px;"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2v2"/><circle cx="12" cy="13" r="4"/></svg></span>
+                        Камеры устройства
+                    </span>
+                    <button class="cam-overlay-close" onclick="closeCameraMenu(event)">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="cam-overlay-list" id="camOverlayList"></div>
             </div>
         </div>
-
-        <div id="rotate-assist-hidden" style="display:none;"></div>
-        <button class="btn-modal btn-close" onclick="stopScanner()" style="margin-top:0;">Завершить</button>
+        <button class="btn-modal btn-close" onclick="stopScanner()">Завершить</button>
     </div>
 </div>
 
-<!-- ЦИФРОВАЯ КЛАВИАТУРА И РУЧНОЙ ВВОД -->
 <div class="modal-overlay" id="numpadModal">
     <div class="modal-content numpad-content">
         <div class="numpad-title" id="numpadTitle">Количество товара</div>
-        
         <div class="numpad-input-group" id="numpadInputGroup">
             <div class="numpad-display" id="numpadDisplay"></div>
             <button class="numpad-paste-btn" id="numpadPasteBtn" onclick="pasteToNumpad()">
-                <span class="app-icon"><svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span>
+                <span class="app-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span>
             </button>
         </div>
-
         <div class="numpad-grid">
             <button class="num-btn" onclick="numPress(1)">1</button>
             <button class="num-btn" onclick="numPress(2)">2</button>
@@ -1465,7 +824,7 @@ td {
             <button class="num-btn action-c" onclick="numClear()">C</button>
             <button class="num-btn" onclick="numPress(0)">0</button>
             <button class="num-btn action-back" onclick="numBackspace()">
-                <span class="app-icon"><svg viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg></span>
+                <span class="app-icon"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg></span>
             </button>
         </div>
         <div class="numpad-actions">
@@ -1475,19 +834,11 @@ td {
     </div>
 </div>
 
-<!-- ВЫБОР ПАЛЛЕТА -->
 <div class="modal-overlay" id="palletModal">
     <div class="modal-content">
-        <h3 class="modal-title">
-            <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span>
-            Выбор паллета
-        </h3>
-        <p style="font-size: 14px; color: var(--text-muted); font-weight: 700; margin-bottom: 12px;">Все новые сканирования будут привязаны к нему</p>
-        
+        <h3 class="modal-title">Выбор паллета</h3>
         <input type="text" id="palletInput" style="background:var(--input-bg); width:100%; border-radius:14px; padding:14px; margin-bottom: 14px; border:1px solid var(--border-color); text-align:center; font-size:18px; font-weight:800; color:var(--text-main);" placeholder="Введите название...">
-        
         <div id="existingPallets" style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:15px;"></div>
-
         <div style="display:flex; gap:10px;">
             <button class="btn-modal btn-close" onclick="document.getElementById('palletModal').style.display='none'">Отмена</button>
             <button class="btn-modal" style="background:var(--btn-add); color:#fff;" onclick="confirmPallet()">Выбрать</button>
@@ -1495,91 +846,84 @@ td {
     </div>
 </div>
 
-<!-- QR ЭКСПОРТ -->
 <div class="modal-overlay" id="qrModal" style="align-items: center;">
     <div class="modal-content" style="background: transparent; box-shadow: none;">
         <div class="brightness-text">Выкрути яркость на максимум!</div>
-        <canvas id="finalQrCanvas" width="340" height="340" style="display:none; margin: 0 auto; border-radius: 22px; background: #fff; padding: 12px; box-shadow: 0 16px 45px rgba(255,255,255,0.25);"></canvas>
-        <button class="btn-modal" style="background:var(--btn-add); color:white; margin-top:25px;" onclick="downloadQR()">
-            <span class="app-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
-            Сохранить в галерею
-        </button>
-        <button class="btn-modal" style="background:#2563eb; color:white;" onclick="shareToExcel()">
-            <span class="app-icon"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
-            Поделиться текстом
-        </button>
+        <canvas id="finalQrCanvas" width="340" height="340" style="display:none; margin: 0 auto; border-radius: 22px; background: #fff; padding: 12px;"></canvas>
+        <button class="btn-modal" style="background:var(--btn-add); color:white; margin-top:25px;" onclick="downloadQR()">Сохранить в галерею</button>
+        <button class="btn-modal" style="background:#2563eb; color:white;" onclick="shareToExcel()">Скопировать текст</button>
         <button class="btn-modal btn-close" style="background:rgba(255,255,255,0.2); color:white; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);" onclick="closeQRModal()">Закрыть</button>
     </div>
 </div>
 
-<!-- АРХИВ ВЫГРУЗОК -->
+<!-- ЗУМ С КОПИРОВАНИЕМ ПО УДЕРЖАНИЮ (0.5 сек) -->
+<div class="modal-overlay" id="zoomModal" style="align-items: center;" onclick="handleZoomClick(event)">
+    <div class="modal-content" style="background:var(--bg-card); max-width:460px; padding:26px; border-radius:var(--radius-lg); text-align:center; position: relative;">
+        <p style="font-weight:800; font-size:13.5px; color:var(--btn-add); margin-top:-8px; margin-bottom:12px;">Зажмите код пальцем, чтобы скопировать</p>
+        
+        <div class="zoom-touch-target" id="zoomedCodeContainer"
+             onmousedown="startCopyTimer(event)" 
+             onmouseup="cancelCopyTimer(event)" 
+             onmouseleave="cancelCopyTimer(event)" 
+             ontouchstart="startCopyTimer(event)" 
+             ontouchend="cancelCopyTimer(event)" 
+             ontouchcancel="cancelCopyTimer(event)">
+            
+            <div style="background:#fff; padding:16px; border-radius:16px; display:flex; justify-content:center; align-items:center; min-height: 180px; box-shadow: inset 0 0 0 1px #e5ebe7; pointer-events: none;">
+                <svg id="zoomedBarcodeSvg" style="max-width:100%; max-height:220px; display:block; margin:0 auto;"></svg>
+            </div>
+        </div>
+        
+        <p id="zoomTextLabel" style="font-weight:900; font-size:16px; color:var(--text-main); margin-top:8px; font-family: monospace;"></p>
+        <button class="btn-modal btn-close" onclick="document.getElementById('zoomModal').style.display='none'" style="margin-top: 15px;">Закрыть окно</button>
+    </div>
+</div>
+
 <div class="modal-overlay" id="archiveModal">
     <div class="modal-content">
-        <h3 class="modal-title">
-            <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></span>
-            История выгрузок
-        </h3>
-        <p style="font-size: 14px; color: var(--text-muted); margin-top: -8px; margin-bottom: 16px; font-weight: 700;">Последние 15 сохранений</p>
+        <h3 class="modal-title">История выгрузок</h3>
         <div id="archiveList" class="archive-list"></div>
         <button class="btn-modal btn-close" onclick="closeAllModals()" style="margin-top: 18px;">Закрыть</button>
     </div>
 </div>
 
-<!-- ИНСТРУКЦИЯ -->
 <div class="modal-overlay" id="instructionModal">
     <div class="modal-content">
-        <h3 class="modal-title">
-            <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
-            Как это работает?
-        </h3>
+        <h3 class="modal-title">Инструкция</h3>
         <div class="instruction-content">
             <ol>
-                <li>Нажми <b>Скан</b> на нижней панели или введи артикул вручную на вкладке <b>Вручную</b>.</li>
-                <li>Товары автоматически добавляются в выбранный <b>Паллет</b>. Паллеты можно менять.</li>
-                <li><b>Долгое нажатие (0.5 сек)</b> на штрихкод в корзине увеличивает его и копирует в буфер.</li>
-                <li><b>Режим «🔄 Непрерывный скан»</b>: сканируй потоком без закрытия камеры.</li>
-                <li>Нажми <b>Показать QR</b> у нужного паллета в корзине, чтобы выгрузить только его. Либо <b>В EXCEL</b> внизу, чтобы выгрузить всё.</li>
+                <li>Нажмите кнопку сканера снизу, чтобы отсканировать штрихкод товара.</li>
+                <li>Товар добавится в таблицу с количеством. Вы можете изменить количество нажав на него.</li>
+                <li>Вверху экрана сканера доступны кнопки: <b>Выбор камеры</b> (слева), <b>Зум 1x, 2x, 3x</b> (по центру), <b>Фонарик</b> (справа).</li>
+                <li>Нажмите на штрихкод в таблице для увеличения. <b>Зажмите увеличенный код пальцем на 0.5 сек</b>, чтобы скопировать.</li>
+                <li>Нажмите кнопку <b>«Выгрузить»</b>, чтобы сгенерировать итоговый QR-код со всеми собранными данными для переноса на ПК.</li>
             </ol>
-            <div class="note-box browser-note">
-                <span class="app-icon" style="color:var(--warn-text); width:22px; height:22px;"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/></svg></span>
-                <div style="flex: 1; line-height: 1.4;"><b>Важно:</b> Для быстрой работы камеры используйте браузер <b>Chrome</b> или <b>Safari</b>! Штрихкод можно держать в любом развороте.</div>
-            </div>
         </div>
         <button class="btn-modal btn-close" onclick="closeAllModals()">Понятно</button>
     </div>
 </div>
 
-<!-- О ПРИЛОЖЕНИИ / КАРТОЧКА РАЗРАБОТЧИКА -->
+<!-- АВАТАР РАЗРАБОТЧИКА -->
 <div class="modal-overlay" id="aboutModal">
     <div class="modal-content">
-        <h3 class="modal-title">
-            <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
-            О приложении
-        </h3>
-        <p style="margin: 0 0 10px 0; font-size: 14.5px; color: var(--text-muted); line-height: 1.5; font-weight: 700;">
-            «Мой ТСД» — автономный терминал сбора данных для инвентаризации и мгновенного переноса данных в Excel.
-        </p>
-
+        <h3 class="modal-title">О приложении</h3>
         <div class="dev-card">
             <svg viewBox="0 0 160 160" class="dev-avatar-svg" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="screen-glow" x1="0%" y1="0%" x2="100%" y2="100%">
                    <stop offset="0%" stop-color="#10b981" stop-opacity="0.25" />
-                   <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.05" />
+                   <stop offset="30%" stop-color="#3b82f6" stop-opacity="0.05" />
                 </linearGradient>
                 <linearGradient id="glass-refl" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stop-color="rgba(255,255,255,0.6)"/>
                     <stop offset="30%" stop-color="rgba(255,255,255,0.1)"/>
                     <stop offset="100%" stop-color="rgba(255,255,255,0.1)"/>
                 </linearGradient>
-                <clipPath id="screen-clip">
-                    <rect x="23" y="68" width="39" height="44" />
-                </clipPath>
+                <clipPath id="screen-clip"><rect x="23" y="68" width="39" height="44" /></clipPath>
               </defs>
 
               <circle cx="80" cy="80" r="75" fill="var(--header-icon-bg)" />
 
-              <!-- Ноутбук -->
               <path d="M 15 115 L 60 115 L 75 125 L 5 125 Z" fill="#94a3b8" />
               <path d="M 15 115 L 60 115 L 60 65 L 15 65 Z" fill="#334155" />
               <rect x="18" y="68" width="39" height="44" fill="#0f172a" />
@@ -1624,14 +968,11 @@ td {
               </g>
               <line x1="0" y1="125" x2="160" y2="125" stroke="var(--border-color)" stroke-width="4" stroke-linecap="round" />
             </svg>
-
             <p style="font-size: 19px; font-weight: 900; color: var(--text-main);">Сергей Джугань</p>
-            <p style="font-size: 13.5px; color: var(--text-muted); font-weight: 700; margin-top: 2px;">Версия: 10.8</p>
-            
+            <p style="font-size: 13.5px; color: var(--text-muted); font-weight: 700; margin-top: 2px;">Версия: 17.0 (Fast Payload)</p>
             <a href="https://t.me/segarey" target="_blank" class="tg-dev-btn">
                 <svg class="tg-icon-fly" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    <line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                 </svg>
                 Написать в Telegram
             </a>
@@ -1640,20 +981,57 @@ td {
     </div>
 </div>
 
-<!-- ЗУМ ШТРИХКОДА -->
-<div class="modal-overlay" id="zoomModal" style="align-items: center;" onclick="this.style.display='none'">
-    <div class="modal-content" style="background:var(--bg-card); max-width:450px; padding:30px; border-radius:var(--radius-lg); text-align:center;">
-        <div style="background:#fff; padding:15px; border-radius:12px; margin-bottom:15px;">
-            <svg id="zoomedBarcodeSvg" style="max-width:100%; max-height:200px; display:block; margin:0 auto;"></svg>
-        </div>
-        <p style="font-weight:800; font-size:15px; color:var(--text-main); margin:0;">Нажмите в любом месте, чтобы закрыть</p>
-    </div>
-</div>
-
 <script>
-/* ============================================================
-   WEB AUDIO API СИНТЕЗАТОР И ТАКТИЛЬНЫЙ ОТКЛИК (HAPTICS)
-   ============================================================ */
+/* ================= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ & АНИМАЦИИ ================= */
+function isLowFx() { return document.documentElement.getAttribute('data-fx') === 'low'; }
+
+document.addEventListener('pointerdown', function(e) {
+    if (isLowFx()) return;
+    const target = e.target.closest('.btn-modal, .toggle, .pallet-bar');
+    if (!target) return;
+    const rect = target.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+    target.appendChild(ripple);
+    ripple.addEventListener('animationend', () => ripple.remove());
+});
+
+function burstConfetti(x, y) {
+    if (isLowFx()) return;
+    const colors = ['#22c55e', '#06b6d4', '#8b5cf6', '#ec4899', '#f59e0b'];
+    const count = 14;
+    for (let i = 0; i < count; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        const angle = (Math.PI * 2 * i) / count + Math.random() * 0.4;
+        const distance = 75 + Math.random() * 60;
+        piece.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+        piece.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+        piece.style.setProperty('--rot', (Math.random() * 360 - 180) + 'deg');
+        piece.style.left = x + 'px';
+        piece.style.top = y + 'px';
+        piece.style.background = colors[i % colors.length];
+        document.body.appendChild(piece);
+        piece.addEventListener('animationend', () => piece.remove());
+    }
+}
+
+function flashCartStats() {
+    const el = document.getElementById('cartStats');
+    if (!el) return;
+    el.classList.remove('cart-stats-flash');
+    void el.offsetWidth;
+    el.classList.add('cart-stats-flash');
+    if (!isLowFx()) {
+        const rect = el.getBoundingClientRect();
+        burstConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    }
+}
+
 const SoundFX = {
     ctx: null,
     init() {
@@ -1725,78 +1103,20 @@ const SoundFX = {
 };
 
 function triggerVibrate(pattern = 12) {
-    if (settings.vibro && navigator.vibrate) {
-        try { navigator.vibrate(pattern); } catch(e) {}
-    }
+    if (settings.vibro && navigator.vibrate) { try { navigator.vibrate(pattern); } catch(e) {} }
 }
 
 document.addEventListener('pointerdown', (e) => {
-    const interactive = e.target.closest('button, .navitem, .toggle, .pallet-bar, .dropdown-item, .qty-box, .numpad-paste-btn, .num-btn');
-    if (interactive) {
-        SoundFX.tap();
-        triggerVibrate(12);
-    }
+    const interactive = e.target.closest('button, .navitem, .toggle, .pallet-bar, .dropdown-item, .qty-box, .numpad-paste-btn, .num-btn, .zoom-touch-target, .cam-choice-card');
+    if (interactive) { SoundFX.tap(); triggerVibrate(12); }
 });
-
-document.addEventListener('pointerdown', function(e) {
-    if (isLowFx()) return;
-    const target = e.target.closest('.btn-modal, .toggle, .pallet-bar');
-    if (!target) return;
-    const rect = target.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    const ripple = document.createElement('span');
-    ripple.className = 'ripple';
-    ripple.style.width = ripple.style.height = size + 'px';
-    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
-    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
-    target.appendChild(ripple);
-    ripple.addEventListener('animationend', () => ripple.remove());
-});
-
-function burstConfetti(x, y) {
-    if (isLowFx()) return;
-    const colors = ['#22c55e', '#06b6d4', '#8b5cf6', '#ec4899', '#f59e0b'];
-    const count = 14;
-    for (let i = 0; i < count; i++) {
-        const piece = document.createElement('div');
-        piece.className = 'confetti-piece';
-        const angle = (Math.PI * 2 * i) / count + Math.random() * 0.4;
-        const distance = 75 + Math.random() * 60;
-        piece.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
-        piece.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
-        piece.style.setProperty('--rot', (Math.random() * 360 - 180) + 'deg');
-        piece.style.left = x + 'px';
-        piece.style.top = y + 'px';
-        piece.style.background = colors[i % colors.length];
-        document.body.appendChild(piece);
-        piece.addEventListener('animationend', () => piece.remove());
-    }
-}
-
-function flashCartStats() {
-    const el = document.getElementById('cartStats');
-    if (!el) return;
-    el.classList.remove('cart-stats-flash');
-    void el.offsetWidth;
-    el.classList.add('cart-stats-flash');
-    if (!isLowFx()) {
-        const rect = el.getBoundingClientRect();
-        burstConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
-    }
-}
 
 /* ================= НАСТРОЙКИ & ТЕМА ================= */
 let settings = Object.assign({
-    theme: 'light',
-    continuous: true,
-    sound: true,
-    uiSound: true,
-    vibro: true,
-    autolens: true
+    theme: 'light', continuous: true, autolens: true, sound: true, uiSound: true, vibro: true
 }, JSON.parse(localStorage.getItem('tsd_settings')) || {});
 
 function saveSettings() { localStorage.setItem('tsd_settings', JSON.stringify(settings)); }
-
 function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     const meta = document.getElementById('meta-theme-color');
@@ -1804,27 +1124,19 @@ function applyTheme(theme) {
     const switchEl = document.getElementById('themeSwitch');
     if (switchEl) switchEl.checked = (theme === 'dark');
 }
-
-function toggleTheme() {
-    settings.theme = settings.theme === 'dark' ? 'light' : 'dark';
-    saveSettings();
-    applyTheme(settings.theme);
-}
+function toggleTheme() { settings.theme = settings.theme === 'dark' ? 'light' : 'dark'; saveSettings(); applyTheme(settings.theme); }
 applyTheme(settings.theme);
 
-function paintToggle(id, val) {
-    const el = document.getElementById(id);
-    if (el) el.classList.toggle('active', !!val);
-}
+function paintToggle(id, val) { const el = document.getElementById(id); if (el) el.classList.toggle('active', !!val); }
 
 function openSettings() {
     document.getElementById('mainMenuModal').style.display = 'none';
     paintToggle('toggle-continuous', settings.continuous);
+    paintToggle('toggle-autolens', settings.autolens);
     paintToggle('toggle-sound', settings.sound);
     paintToggle('toggle-uiSound', settings.uiSound);
     paintToggle('toggle-vibro', settings.vibro);
-    paintToggle('toggle-autolens', settings.autolens);
-    paintToggle('toggle-simplemode', localStorage.getItem('tsd_force_simple') === 'true');
+    paintToggle('toggle-simplemode', isLowFx());
     document.getElementById('settingsModal').style.display = 'flex';
 }
 
@@ -1835,70 +1147,15 @@ function toggleSetting(key) {
 }
 
 function toggleSimpleMode() {
-    const forced = !(localStorage.getItem('tsd_force_simple') === 'true');
-    localStorage.setItem('tsd_force_simple', forced ? 'true' : 'false');
-    paintToggle('toggle-simplemode', forced);
-    document.documentElement.setAttribute('data-fx', forced ? 'low' : 'high');
+    const willBeLow = !isLowFx();
+    localStorage.setItem('tsd_force_simple', willBeLow ? 'true' : 'false');
+    document.documentElement.setAttribute('data-fx', willBeLow ? 'low' : 'high');
+    paintToggle('toggle-simplemode', willBeLow);
     const activeBtn = document.querySelector('.navitem.active');
     if (activeBtn) moveBeadTo(activeBtn, false);
 }
 
-function isLowFx() { return document.documentElement.getAttribute('data-fx') === 'low'; }
-
-/* ================= КОПИРОВАНИЕ И ДОЛГОЕ НАЖАТИЕ ================= */
-let pressTimer = null;
-let isLongPress = false;
-
-window.copyToClipboard = function(text) {
-    if (!text) return;
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text)
-            .then(() => { showToast("Скопировано: " + text); })
-            .catch(() => { fallbackCopyTextToClipboard(text); });
-    } else {
-        fallbackCopyTextToClipboard(text);
-    }
-};
-
-function fallbackCopyTextToClipboard(text) {
-    var textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed";
-    textArea.style.top = "0";
-    textArea.style.left = "0";
-    textArea.style.opacity = "0";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    try {
-        document.execCommand('copy');
-        showToast("Скопировано: " + text);
-    } catch (err) {
-        showToast("Скопировано: " + text);
-    }
-    document.body.removeChild(textArea);
-}
-
-window.startPress = function(e, text) {
-    isLongPress = false;
-    if (pressTimer) clearTimeout(pressTimer);
-    pressTimer = setTimeout(() => {
-        isLongPress = true;
-        copyToClipboard(text);
-        triggerVibrate([25, 45, 25]);
-        document.getElementById('zoomModal').style.display = 'flex';
-        renderBarcodeSafe('zoomedBarcodeSvg', text, { width: 2.5, height: 100, displayValue: true, fontSize: 20, margin: 10 });
-    }, 500);
-};
-
-window.cancelPress = function() {
-    if (pressTimer) {
-        clearTimeout(pressTimer);
-        pressTimer = null;
-    }
-};
-
-/* ================= АНИМАЦИЯ КНОПКИ ОЧИСТКИ ================= */
+/* ================= АНИМАЦИЯ КОРЗИНЫ ================= */
 let deleteLetters = [];
 let isDeleteAnimating = false;
 
@@ -1919,8 +1176,8 @@ function initDeleteButton() {
 function playDeleteAnimation(callback) {
     if (isDeleteAnimating) return;
     const deleteBtn = document.getElementById('deleteBtn');
-    const binIcon = deleteBtn.querySelector('.bin-icon');
-    if (!deleteBtn || !binIcon) { if(callback) callback(); return; }
+    const binIcon = deleteBtn ? deleteBtn.querySelector('.bin-icon') : null;
+    if (!deleteBtn || !binIcon || isLowFx()) { if (callback) callback(); return; }
 
     isDeleteAnimating = true;
     SoundFX.trash();
@@ -1951,56 +1208,810 @@ function playDeleteAnimation(callback) {
     });
 
     const totalTime = (deleteLetters.length - 1) * staggerMs + flightMs;
-    setTimeout(() => { deleteBtn.classList.remove('lid-open'); }, totalTime);
+    setTimeout(() => { if (deleteBtn) deleteBtn.classList.remove('lid-open'); }, totalTime);
     setTimeout(() => {
-        if(callback) callback();
+        if (callback) callback();
         deleteLetters.forEach(l => l.classList.remove('flying'));
         isDeleteAnimating = false;
     }, totalTime + 200);
 }
 
-(function createStars(){
-  const layer = document.getElementById('starsLayer');
-  if(!layer) return;
-  for (let i = 0; i < 8; i++){
-    const star = document.createElement('span');
-    star.className = 'star';
-    star.style.setProperty('--x', Math.random() * 60 + 6 + '%');
-    star.style.setProperty('--y', Math.random() * 55 + 15 + '%');
-    star.style.setProperty('--d', (Math.random() * 1.6).toFixed(2) + 's');
-    layer.appendChild(star);
-  }
-})();
+function clearCart() {
+    if (currentCart.length === 0) return;
+    if (confirm("Очистить таблицу целиком?")) {
+        playDeleteAnimation(() => {
+            currentCart = [];
+            saveState();
+            renderCart();
+        });
+    }
+}
 
-/* ================= GOOEY BOTTOM NAVBAR ================= */
+/* ================= УМНЫЙ ЗУМ И КОПИРОВАНИЕ ================= */
+window.copyToClipboard = function(text) {
+    if (!text) return;
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => showToast("Скопировано: " + text)).catch(() => fallbackCopy(text));
+    } else {
+        fallbackCopy(text);
+    }
+};
+
+function fallbackCopy(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed"; ta.style.top = "0"; ta.style.left = "0"; ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    try { document.execCommand('copy'); showToast("Скопировано: " + text); } catch(e){}
+    document.body.removeChild(ta);
+}
+
+let zoomCopyTimer = null;
+
+window.zoomBarcode = function(code) {
+    triggerVibrate([25, 45, 25]);
+    const bSvg = document.getElementById('zoomedBarcodeSvg');
+    document.getElementById('zoomTextLabel').innerText = code;
+    window.currentZoomCode = code; 
+    document.getElementById('zoomModal').style.display = 'flex';
+    renderBarcodeSafe('zoomedBarcodeSvg', code, { width: 2.2, height: 85, displayValue: false, margin: 8 });
+};
+
+window.startCopyTimer = function(e) {
+    if (zoomCopyTimer) clearTimeout(zoomCopyTimer);
+    zoomCopyTimer = setTimeout(() => {
+        copyToClipboard(window.currentZoomCode);
+        triggerVibrate([30, 50, 30]);
+    }, 500);
+};
+
+window.cancelCopyTimer = function(e) {
+    if (zoomCopyTimer) {
+        clearTimeout(zoomCopyTimer);
+        zoomCopyTimer = null;
+    }
+};
+
+window.handleZoomClick = function(e) {
+    if (e.target.id === 'zoomModal') {
+        document.getElementById('zoomModal').style.display = 'none';
+    }
+};
+
+/* ================= БАЗОВАЯ ЛОГИКА ТСД (БЕЗ ПАРСИНГА ЦЕН) ================= */
+const MASTER_CODES = { "14630557641291": { code: "4607075900196", qtyInBox: 50 } };
+let currentCart = [];
+let activePallet = "Основной";
+
+function normalizeBarcode(text) {
+    if (!text) return "";
+    let clean = String(text).trim().replace(/[\x00-\x1F\x7F ]/g, '');
+    if (clean.startsWith("]d2") || clean.startsWith("]e0") || clean.startsWith("]C1")) clean = clean.substring(3);
+    if (clean.startsWith("01") && clean.length >= 16) {
+        let gtin = clean.substring(2, 16);
+        clean = gtin.startsWith("0") ? gtin.substring(1) : gtin;
+    }
+    if (clean.length === 14 && clean.startsWith("0")) clean = clean.substring(1);
+    if (MASTER_CODES[clean]) clean = MASTER_CODES[clean].code;
+    return clean;
+}
+
+function updateCartStats() {
+    const total = currentCart.reduce((acc, i) => acc + i.qty, 0);
+    const stats = document.getElementById('cartStats');
+    if (stats) stats.innerText = `${currentCart.length} строк (${total} шт.)`;
+}
+
+function saveState() {
+    localStorage.setItem('tsd_lite_cart', JSON.stringify(currentCart));
+}
+
+function renderBarcodeSafe(targetId, code, opts = {}) {
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    try {
+        JsBarcode(el, code, Object.assign({ format: "EAN13", lineColor: "#000", background: "transparent" }, opts));
+    } catch (e) {
+        try {
+            JsBarcode(el, code, Object.assign({ format: "CODE128", lineColor: "#000", background: "transparent" }, opts));
+        } catch (err) {
+            el.outerHTML = `<span style="font-family:monospace;font-weight:900;font-size:13px;">${code}</span>`;
+        }
+    }
+}
+
+function addOrUpdateItem(code, qty = 1) {
+    const pallet = activePallet;
+    const barcode = normalizeBarcode(code);
+    
+    const existing = currentCart.find(i => i.code === barcode && i.pallet === pallet);
+    if (existing) {
+        existing.qty += qty;
+    } else {
+        const newItem = {
+            id: 'item_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+            code: barcode,
+            qty: qty,
+            pallet: pallet
+        };
+        currentCart.unshift(newItem);
+    }
+
+    saveState();
+    renderCart();
+    SoundFX.success();
+    triggerVibrate([20, 35, 20]);
+    flashCartStats();
+}
+
+function renderCart() {
+    const area = document.getElementById('cartContentArea');
+    if (!area) return;
+    
+    if (currentCart.length === 0) {
+        area.innerHTML = `
+            <div class="no-data-card">
+                <span class="app-icon" style="width:44px;height:44px;color:var(--btn-add);"><svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg></span>
+                <span>Наведите камеру на штрихкод</span>
+            </div>`;
+        updateCartStats();
+        return;
+    }
+
+    const pallets = {};
+    currentCart.forEach(item => {
+        if (!pallets[item.pallet]) pallets[item.pallet] = [];
+        pallets[item.pallet].push(item);
+    });
+
+    let html = `<div class="table-responsive"><table>
+        <thead>
+            <tr>
+                <th>Штрихкод</th>
+                <th style="width:54px;">Кол</th>
+                <th style="width:50px;"></th>
+            </tr>
+        </thead>`;
+
+    for (const [palletName, items] of Object.entries(pallets)) {
+        html += `
+            <tbody>
+                <tr class="pallet-header-row">
+                    <td colspan="3">
+                        <div class="pallet-header-content">
+                            <span class="pallet-name">
+                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span>
+                                ${palletName}
+                            </span>
+                            <button class="btn-pallet-qr" onclick="showPalletQR('${palletName}')">
+                                <span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+                                Показать QR
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+
+        items.forEach((item, idx) => {
+            const delay = Math.min(idx * 40, 240);
+            const rowStyle = !isLowFx() ? `style="animation: popIn 0.4s var(--ease-spring) ${delay}ms forwards; opacity: 0;"` : '';
+
+            html += `
+                <tr ${rowStyle}>
+                    <td class="inline-barcode-container" onclick="zoomBarcode('${item.code}')">
+                        <div class="barcode-wrapper"><svg id="bc-${item.id}"></svg></div>
+                    </td>
+                    <td>
+                        <button class="qty-box" onclick="showNumpadForEdit('${item.id}')">${item.qty}</button>
+                    </td>
+                    <td>
+                        <button class="btn-remove" onclick="removeItem('${item.id}')">
+                            <span class="app-icon" style="width:18px;height:18px;"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+                        </button>
+                    </td>
+                </tr>`;
+        });
+        html += `</tbody>`;
+    }
+    html += `</table></div>`;
+    area.innerHTML = html;
+
+    currentCart.forEach(item => {
+        renderBarcodeSafe(`bc-${item.id}`, item.code, { width: 1.5, height: 36, displayValue: true, fontSize: 13, margin: 1 });
+    });
+
+    updateCartStats();
+}
+
+function showToast(msg) {
+    const sb = document.getElementById('snackbar');
+    document.getElementById('snackbarText').innerText = msg;
+    document.getElementById('snackbarUndoBtn').style.display = 'none';
+    sb.classList.add('show');
+    setTimeout(() => sb.classList.remove('show'), 3000);
+}
+
+let lastDeletedItem = null;
+
+function removeItem(itemId) {
+    const idx = currentCart.findIndex(i => i.id === itemId);
+    if (idx !== -1) {
+        lastDeletedItem = currentCart.splice(idx, 1)[0];
+        saveState();
+        renderCart();
+        SoundFX.trash();
+        triggerVibrate([20, 30]);
+        const sb = document.getElementById('snackbar');
+        document.getElementById('snackbarText').innerText = 'Товар удалён';
+        document.getElementById('snackbarUndoBtn').style.display = 'block';
+        sb.classList.add('show');
+        setTimeout(() => sb.classList.remove('show'), 3800);
+    }
+}
+
+function undoDelete() {
+    if (lastDeletedItem) {
+        currentCart.unshift(lastDeletedItem);
+        lastDeletedItem = null;
+        saveState();
+        renderCart();
+        document.getElementById('snackbar').classList.remove('show');
+    }
+}
+
+/* ================= NUMPAD МОДАЛ ================= */
+let numpadVal = "1";
+let numpadMode = "";
+let targetCode = "";
+let editingItemId = null;
+
+function updateNumpadUI() {
+    const display = document.getElementById('numpadDisplay');
+    const group = document.getElementById('numpadInputGroup');
+    const pasteBtn = document.getElementById('numpadPasteBtn');
+
+    if (numpadMode === 'manual') {
+        group.classList.add('manual-mode');
+        pasteBtn.style.display = 'flex';
+        display.innerHTML = numpadVal ? `${numpadVal}<span class="numpad-cursor"></span>` : `<span class="numpad-placeholder">Ввод ШК или Артикула...</span><span class="numpad-cursor"></span>`;
+    } else {
+        group.classList.remove('manual-mode');
+        pasteBtn.style.display = 'none';
+        display.innerHTML = `${numpadVal || 0}<span class="numpad-cursor"></span>`;
+    }
+    display.scrollLeft = display.scrollWidth;
+}
+
+function showNumpadForManual() {
+    numpadMode = 'manual';
+    numpadVal = "";
+    document.getElementById('numpadTitle').style.display = "none";
+    updateNumpadUI();
+    document.getElementById('numpadModal').style.display = 'flex';
+}
+
+function showNumpadForScan(code) {
+    numpadMode = 'scan';
+    targetCode = code;
+    let defQty = 1;
+    if (MASTER_CODES[code] && MASTER_CODES[code].qtyInBox) {
+        defQty = MASTER_CODES[code].qtyInBox;
+    }
+    numpadVal = String(defQty);
+    const titleEl = document.getElementById('numpadTitle');
+    titleEl.style.display = "block";
+    titleEl.innerText = `ШК: ${code}`;
+    updateNumpadUI();
+    document.getElementById('numpadModal').style.display = 'flex';
+}
+
+function showNumpadForEdit(itemId) {
+    const item = currentCart.find(i => i.id === itemId);
+    if (!item) return;
+    numpadMode = 'edit';
+    editingItemId = itemId;
+    numpadVal = String(item.qty);
+    const titleEl = document.getElementById('numpadTitle');
+    titleEl.style.display = "block";
+    titleEl.innerText = `Изменить кол-во: ${item.code}`;
+    updateNumpadUI();
+    document.getElementById('numpadModal').style.display = 'flex';
+}
+
+function numPress(n) {
+    if (numpadVal === "0" && numpadMode !== 'manual') numpadVal = "";
+    if (numpadVal.length < 28) numpadVal += String(n);
+    updateNumpadUI();
+}
+function numClear() { numpadVal = ""; updateNumpadUI(); }
+function numBackspace() { numpadVal = numpadVal.slice(0, -1); updateNumpadUI(); }
+
+function numCancel() {
+    document.getElementById('numpadModal').style.display = 'none';
+    if (numpadMode === 'scan' && settings.continuous) isScannerPaused = false;
+    else updateNavState('onNavHome');
+}
+
+function numConfirm() {
+    document.getElementById('numpadModal').style.display = 'none';
+    if (numpadMode === 'manual') {
+        const c = numpadVal.trim();
+        if (c) {
+            addOrUpdateItem(c, 1);
+        }
+        updateNavState('onNavHome');
+    } else if (numpadMode === 'scan') {
+        const q = parseInt(numpadVal) || 1;
+        if (targetCode) addOrUpdateItem(targetCode, Math.max(1, q));
+        if (settings.continuous) isScannerPaused = false;
+        else stopScanner(true);
+    } else if (numpadMode === 'edit') {
+        const item = currentCart.find(i => i.id === editingItemId);
+        if (item) {
+            item.qty = Math.max(1, parseInt(numpadVal) || 1);
+            saveState();
+            renderCart();
+        }
+    }
+}
+
+async function pasteToNumpad() {
+    try {
+        const text = await navigator.clipboard.readText();
+        if (text) { numpadVal = text.trim(); updateNumpadUI(); }
+    } catch(e) {}
+}
+
+/* ================= ПАЛЛЕТЫ ================= */
+function openPalletModal() {
+    document.getElementById('palletInput').value = activePallet;
+    const pallets = [...new Set(currentCart.map(i => i.pallet))];
+    const container = document.getElementById('existingPallets');
+    container.innerHTML = pallets.map(p => `
+        <button style="background:var(--input-bg); border:1px solid var(--border-color); border-radius:11px; padding:8px 14px; font-weight:800; font-size:14px; color:var(--text-main); cursor:pointer;" onclick="document.getElementById('palletInput').value='${p}'">${p}</button>
+    `).join('');
+    document.getElementById('palletModal').style.display = 'flex';
+}
+
+function confirmPallet() {
+    activePallet = document.getElementById('palletInput').value.trim() || "Основной";
+    document.getElementById('currentPalletBadge').innerHTML = `
+        <span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
+        ${activePallet}
+    `;
+    document.getElementById('palletModal').style.display = 'none';
+}
+
+/* ================= СИСТЕМА УПРАВЛЕНИЯ КАМЕРАМИ ================= */
+let html5QrCode = null;
+let isScannerPaused = false;
+let torchEnabled = false;
+let allCamerasList = [];
+let selectedCameraId = null;
+let isSwitchingCamera = false;
+
+function parseRussianCameraLabel(cam, index) {
+    const l = (cam.label || '').toLowerCase();
+    const isFront = l.includes('front') || l.includes('user') || l.includes('передн') || l.includes('selfie') || l.includes('facing front');
+
+    let title = "";
+    let desc = "";
+    let badge = "";
+
+    if (isFront) {
+        title = l.includes('1') ? "Фронтальная (основная)" : "Фронтальная (широкая)";
+        desc = "Передняя селфи-камера";
+        badge = "Селфи";
+    } else {
+        if (l.includes('camera2 0') || l.includes('camera 0') || l.includes('0, facing back') || (index === 0 && !l.includes('2') && !l.includes('3'))) {
+            title = "Основная камера (1x)";
+            desc = "Автофокус и высокая чёткость";
+            badge = "Основная";
+        } else if (l.includes('camera2 2') || l.includes('ultra') || l.includes('wide') || l.includes('0.5') || l.includes('широк')) {
+            title = "Сверхширокоугольная (0.5x)";
+            desc = "Широкий обзор, фиксированный фокус";
+            badge = "Ширик";
+        } else if (l.includes('camera2 3') || l.includes('macro') || l.includes('макро')) {
+            title = "Макро-объектив";
+            desc = "Для съёмки с очень близкого расстояния";
+            badge = "Макро";
+        } else if (l.includes('tele') || l.includes('zoom') || l.includes('теле')) {
+            title = "Телеобъектив (зум)";
+            desc = "Оптическое увеличение";
+            badge = "Зум";
+        } else if (l.includes('depth') || l.includes('глубин')) {
+            title = "Датчик глубины";
+            desc = "Вспомогательный сенсор резкости";
+            badge = "Сенсор";
+        } else {
+            title = `Задняя камера #${index + 1}`;
+            desc = cam.label || "Тыловой датчик изображения";
+            badge = "Задняя";
+        }
+    }
+
+    return { title, desc, badge };
+}
+
+async function detectAllCameras() {
+    if (allCamerasList && allCamerasList.length > 0) return allCamerasList;
+    try {
+        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+            const devs = await navigator.mediaDevices.enumerateDevices();
+            const vDevs = devs.filter(d => d.kind === 'videoinput');
+            if (vDevs.length > 0 && vDevs.some(d => d.label)) {
+                allCamerasList = vDevs.map((d, i) => ({ id: d.deviceId, label: d.label || `Камера ${i + 1}` }));
+                return allCamerasList;
+            }
+        }
+        const cameras = await Html5Qrcode.getCameras();
+        if (cameras && cameras.length) {
+            allCamerasList = cameras;
+        }
+    } catch(e) { console.warn("Detect cameras error:", e); }
+    return allCamerasList;
+}
+
+function getBestDefaultCameraId() {
+    if (!allCamerasList || !allCamerasList.length) return null;
+    let best = allCamerasList.find(c => {
+        const l = (c.label || '').toLowerCase();
+        const isNotFront = !l.includes('front') && !l.includes('user') && !l.includes('передн') && !l.includes('selfie');
+        const isNotAux = !l.includes('ultra') && !l.includes('0.5') && !l.includes('macro') && !l.includes('depth') && !l.includes('широк');
+        return isNotFront && isNotAux && (l.includes('camera2 0') || l.includes('camera 0') || l.includes('0, facing back') || l.includes('main'));
+    });
+    if (best) return best.id;
+
+    best = allCamerasList.find(c => {
+        const l = (c.label || '').toLowerCase();
+        const isNotFront = !l.includes('front') && !l.includes('user') && !l.includes('передн') && !l.includes('selfie');
+        return isNotFront && !l.includes('ultra') && !l.includes('0.5') && !l.includes('macro') && !l.includes('depth') && !l.includes('широк');
+    });
+    if (best) return best.id;
+
+    return allCamerasList.find(c => !c.label.toLowerCase().includes('front'))?.id || allCamerasList[0].id;
+}
+
+async function startScanner() {
+    isScannerPaused = false;
+    document.getElementById('scannerModal').style.display = 'flex';
+    closeCameraMenu();
+
+    if (html5QrCode) {
+        try { await html5QrCode.stop(); } catch(e) {}
+        try { html5QrCode.clear(); } catch(e) {}
+        html5QrCode = null;
+    }
+
+    html5QrCode = new Html5Qrcode("reader", {
+        formatsToSupport: [ Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.EAN_8, Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.QR_CODE ],
+        experimentalFeatures: { useBarCodeDetectorIfSupported: true },
+        verbose: false
+    });
+
+    const config = { fps: 22 };
+    await detectAllCameras();
+    if (!selectedCameraId) selectedCameraId = getBestDefaultCameraId();
+
+    try {
+        if (selectedCameraId) {
+            await html5QrCode.start(selectedCameraId, config, onCodeDetected);
+        } else {
+            await html5QrCode.start({ facingMode: "environment" }, config, onCodeDetected);
+        }
+        updateZoomButtonsUI(1);
+    } catch(err) {
+        try {
+            await html5QrCode.start({ facingMode: "environment" }, config, onCodeDetected);
+            updateZoomButtonsUI(1);
+        } catch(err2) {
+            document.getElementById('scannerModal').style.display = 'none';
+            if (html5QrCode) { try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; }
+            alert("Не удалось запустить камеру. Проверьте разрешения в браузере.");
+            updateNavState('onNavHome');
+        }
+    }
+}
+
+async function toggleCameraOverlayMenu() {
+    const overlay = document.getElementById('camOverlayMenu');
+    if (overlay && overlay.style.display === 'flex') { closeCameraMenu(); return; }
+    if (!allCamerasList || !allCamerasList.length) await detectAllCameras();
+    if (!allCamerasList || !allCamerasList.length) { showToast("Камеры не найдены"); return; }
+
+    const listContainer = document.getElementById('camOverlayList');
+    listContainer.innerHTML = allCamerasList.map((cam, idx) => {
+        const info = parseRussianCameraLabel(cam, idx);
+        const isActive = (cam.id === selectedCameraId) || (!selectedCameraId && idx === 0);
+        return `
+            <div class="cam-choice-card ${isActive ? 'active' : ''}" onclick="selectCameraById('${cam.id}')">
+                <div class="cam-card-info">
+                    <div class="cam-card-name">
+                        <span>${info.title}</span>
+                        <span class="cam-badge-tag">${info.badge}</span>
+                    </div>
+                    <div class="cam-card-desc">${info.desc}</div>
+                </div>
+                ${isActive ? '<span class="app-icon" style="color:var(--btn-add); width:20px; height:20px;"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>' : ''}
+            </div>
+        `;
+    }).join('');
+
+    overlay.style.display = 'flex';
+}
+
+function closeCameraMenu(e) {
+    if (e) e.stopPropagation();
+    const overlay = document.getElementById('camOverlayMenu');
+    if (overlay) overlay.style.display = 'none';
+}
+
+async function selectCameraById(camId) {
+    closeCameraMenu();
+    if (isSwitchingCamera) return;
+    if (selectedCameraId === camId && html5QrCode && html5QrCode.isScanning) return;
+
+    isSwitchingCamera = true;
+    selectedCameraId = camId;
+    triggerVibrate(20);
+
+    try {
+        torchEnabled = false;
+        const torchBtn = document.getElementById('torchBtn');
+        if (torchBtn) torchBtn.classList.remove('active');
+        updateZoomButtonsUI(1);
+
+        if (html5QrCode) {
+            try { if (html5QrCode.isScanning) await html5QrCode.stop(); } catch(e) {}
+            try { await html5QrCode.clear(); } catch(e) {}
+            html5QrCode = null;
+        }
+
+        await new Promise(r => setTimeout(r, 250));
+
+        html5QrCode = new Html5Qrcode("reader", { experimentalFeatures: { useBarCodeDetectorIfSupported: true }, verbose: false });
+        await html5QrCode.start(camId, { fps: 22 }, onCodeDetected);
+        showToast("Камера переключена");
+    } catch(err) {
+        showToast("Ошибка запуска сенсора");
+        try {
+            if (!html5QrCode) html5QrCode = new Html5Qrcode("reader", { experimentalFeatures: { useBarCodeDetectorIfSupported: true } });
+            await html5QrCode.start({ facingMode: "environment" }, { fps: 22 }, onCodeDetected);
+        } catch(e2) {}
+    } finally {
+        isSwitchingCamera = false;
+    }
+}
+
+async function toggleTorch() {
+    if (!html5QrCode) return;
+    const nextTorchState = !torchEnabled;
+    let applied = false;
+
+    try {
+        const videoEl = document.querySelector("#reader video");
+        if (videoEl && videoEl.srcObject) {
+            const track = videoEl.srcObject.getVideoTracks()[0];
+            if (track) {
+                const caps = track.getCapabilities ? track.getCapabilities() : {};
+                if ('torch' in caps || caps.fillLightMode) {
+                    await track.applyConstraints({ advanced: [{ torch: nextTorchState }] });
+                    applied = true;
+                }
+            }
+        }
+    } catch(e) {}
+
+    if (!applied) {
+        try {
+            await html5QrCode.applyVideoConstraints({ advanced: [{ torch: nextTorchState }] });
+            applied = true;
+        } catch(e) {}
+    }
+
+    if (applied) {
+        torchEnabled = nextTorchState;
+        document.getElementById('torchBtn').classList.toggle('active', torchEnabled);
+        triggerVibrate(15);
+    } else {
+        showToast("Вспышка недоступна на этой камере");
+    }
+}
+
+function updateZoomButtonsUI(lvl) {
+    document.querySelectorAll('.zoom-btn').forEach(b => {
+        b.classList.toggle('active', Number(b.dataset.zoom) === lvl);
+    });
+}
+
+function setZoomLevel(lvl) {
+    updateZoomButtonsUI(lvl);
+    triggerVibrate(15);
+    
+    try {
+        const videoEl = document.querySelector("#reader video");
+        if (videoEl && videoEl.srcObject) {
+            const track = videoEl.srcObject.getVideoTracks()[0];
+            if (track) {
+                const caps = track.getCapabilities ? track.getCapabilities() : {};
+                if (caps.zoom) {
+                    const target = Math.min(Math.max(lvl, caps.zoom.min || 1), caps.zoom.max || 10);
+                    track.applyConstraints({ advanced: [{ zoom: target }] }).catch(() => {});
+                    return;
+                }
+            }
+        }
+    } catch(e) {}
+
+    if (html5QrCode) {
+        html5QrCode.applyVideoConstraints({ advanced: [{ zoom: lvl }] }).catch(() => {});
+    }
+}
+
+function onCodeDetected(decodedText) {
+    if (isScannerPaused) return;
+    isScannerPaused = true;
+    const cleanCode = normalizeBarcode(decodedText);
+    showNumpadForScan(cleanCode);
+}
+
+function stopScanner(resetNav = true) {
+    closeCameraMenu();
+    if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+            try { html5QrCode.clear(); } catch(e) {}
+            html5QrCode = null;
+        }).catch(() => {
+            try { html5QrCode.clear(); } catch(e) {}
+            html5QrCode = null;
+        });
+    }
+    torchEnabled = false;
+    const torchBtn = document.getElementById('torchBtn');
+    if (torchBtn) torchBtn.classList.remove('active');
+    document.getElementById('scannerModal').style.display = 'none';
+    if (resetNav) updateNavState('onNavHome');
+}
+
+/* ================= ВЫГРУЗКА PAYLOAD ================= */
+function showTransferQR() {
+    if (currentCart.length === 0) {
+        alert("Корзина пуста!");
+        updateNavState('onNavHome');
+        return;
+    }
+    const payload = currentCart.map(i => `${i.code}-${i.qty}`).join(" ");
+    const totalQty = currentCart.reduce((a, b) => a + b.qty, 0);
+    saveToArchivePayload(currentCart, totalQty);
+    renderQRModal(payload);
+}
+
+function showPalletQR(palletName) {
+    const items = currentCart.filter(i => i.pallet === palletName);
+    if (!items.length) return;
+    const payload = items.map(i => `${i.code}-${i.qty}`).join(" ");
+    renderQRModal(payload);
+}
+
+function renderQRModal(payload) {
+    document.getElementById('qrModal').style.display = 'flex';
+    const canvas = document.getElementById('finalQrCanvas');
+    canvas.style.display = 'block';
+    window.currentPayload = payload;
+    QRCode.toCanvas(canvas, payload, { width: 320, margin: 2 });
+}
+
+function closeQRModal() {
+    document.getElementById('qrModal').style.display = 'none';
+    updateNavState('onNavHome');
+}
+
+function downloadQR() {
+    const canvas = document.getElementById('finalQrCanvas');
+    const a = document.createElement('a');
+    a.download = `TSD_QR_${Date.now()}.png`;
+    a.href = canvas.toDataURL("image/png");
+    a.click();
+}
+
+function shareToExcel() {
+    if (navigator.clipboard && window.currentPayload) {
+        navigator.clipboard.writeText(window.currentPayload);
+        showToast("Данные скопированы в буфер!");
+    }
+}
+
+function saveToArchivePayload(cartItems, totalQty) {
+    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
+    const now = new Date();
+    const payload = cartItems.map(i => `${i.code}-${i.qty}`).join(" ");
+    
+    archive.unshift({
+        date: now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+        lines: cartItems.length,
+        totalQty: totalQty || cartItems.reduce((a, b) => a + b.qty, 0),
+        payload: payload,
+        cartData: JSON.parse(JSON.stringify(cartItems))
+    });
+    if (archive.length > 15) archive.pop();
+    localStorage.setItem('tsd_archive', JSON.stringify(archive));
+}
+
+function renderArchive() {
+    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
+    const container = document.getElementById('archiveList');
+    if (!archive.length) {
+        container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);font-weight:700;">Архив пуст</div>';
+    } else {
+        container.innerHTML = archive.map((item, idx) => `
+            <div class="archive-item">
+                <div class="archive-info-row">
+                    <div class="archive-date">${item.date}</div>
+                    <div class="archive-stats">${item.lines} строк | ${item.totalQty} шт.</div>
+                </div>
+                <div class="archive-actions">
+                    <button class="archive-btn-secondary" onclick="restoreArchiveToTable(${idx})">Вернуть в таблицу</button>
+                    <button class="archive-btn" onclick="openArchiveQR(${idx})">Показать QR</button>
+                </div>
+            </div>`).join('');
+    }
+}
+
+function openArchive() {
+    document.getElementById('mainMenuModal').style.display = 'none';
+    renderArchive();
+    document.getElementById('archiveModal').style.display = 'flex';
+}
+
+function restoreArchiveToTable(idx) {
+    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
+    if (!archive[idx]) return;
+    if (confirm("Заменить текущие строки данными из архива?")) {
+        if (archive[idx].cartData) {
+            currentCart = JSON.parse(JSON.stringify(archive[idx].cartData));
+        }
+        saveState();
+        renderCart();
+        closeAllModals(true);
+    }
+}
+
+function openArchiveQR(idx) {
+    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
+    if (archive[idx] && archive[idx].payload) {
+        document.getElementById('archiveModal').style.display = 'none';
+        renderQRModal(archive[idx].payload);
+    } else {
+        showToast("Ошибка: нет данных payload");
+    }
+}
+
+function openInstruction() { document.getElementById('mainMenuModal').style.display = 'none'; document.getElementById('instructionModal').style.display = 'flex'; }
+function openAbout() { document.getElementById('mainMenuModal').style.display = 'none'; document.getElementById('aboutModal').style.display = 'flex'; }
+
+/* ================= НАВИГАЦИЯ ================= */
 const navbarEl = document.getElementById('navbar');
 const beadEl = document.getElementById('navBead');
-const beadInnerEl = document.getElementById('beadInner');
 const glowEl = document.getElementById('navGlow');
 
 function moveBeadTo(targetBtn, animate = true) {
-    if (!targetBtn) return;
+    if (!targetBtn || !navbarEl || !beadEl || !glowEl) return;
     const navRect = navbarEl.getBoundingClientRect();
     const btnRect = targetBtn.getBoundingClientRect();
     const x = (btnRect.left - navRect.left) + (btnRect.width / 2) - 24;
-    if (!animate || isLowFx()) {
-        beadEl.style.transition = 'none';
-        glowEl.style.transition = 'none';
-    }
-    beadEl.style.transform = `translateX(${x}px)`;
-    glowEl.style.transform = `translateX(${x}px)`;
-    if (!animate || isLowFx()) {
-        void beadEl.offsetWidth;
-        beadEl.style.transition = '';
-        glowEl.style.transition = '';
-    }
+    
+    if (!animate || isLowFx()) { beadEl.style.transition = 'none'; glowEl.style.transition = 'none'; }
+    beadEl.style.transform = `translateX(${x}px)`; glowEl.style.transform = `translateX(${x}px)`;
+    if (!animate || isLowFx()) { void beadEl.offsetWidth; beadEl.style.transition = ''; glowEl.style.transition = ''; }
 }
 
 function playBeadSquash() {
     if (isLowFx()) return;
-    beadInnerEl.classList.remove('squash');
-    void beadInnerEl.offsetWidth;
-    beadInnerEl.classList.add('squash');
+    const beadInner = document.getElementById('beadInner');
+    if (!beadInner) return;
+    beadInner.classList.remove('squash');
+    void beadInner.offsetWidth;
+    beadInner.classList.add('squash');
 }
 
 function switchNav(btn, executeAction = true) {
@@ -2026,20 +2037,10 @@ function updateNavState(actionName) {
     }
 }
 
-window.addEventListener('load', () => {
-    initDeleteButton();
-    const home = document.querySelector('[data-action="onNavHome"]');
-    if (home) moveBeadTo(home, false);
-});
-window.addEventListener('resize', () => {
-    const active = document.querySelector('.navitem.active');
-    if (active) moveBeadTo(active, false);
-});
-
 function onNavHome() { closeAllModals(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 function onNavManual() { closeAllModals(false); showNumpadForManual(); }
 function onNavScan() { closeAllModals(false); startScanner(); }
-function onNavExcel() { closeAllModals(false); showTransferQR(); }
+function onNavExport() { closeAllModals(false); showTransferQR(); }
 function onNavMenu() { closeAllModals(false); document.getElementById('mainMenuModal').style.display = 'flex'; }
 
 function closeAllModals(resetNavToHome = true) {
@@ -2054,546 +2055,43 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', function(e) {
         if (e.target === this) {
             if (this.id === 'numpadModal') numCancel();
-            else if (this.id === 'palletModal') this.style.display = 'none';
             else closeAllModals();
         }
     });
 });
 
-/* ================= КОРЗИНА И СТРОКИ ================= */
-const MASTER_CODES = { "14630557641291": { code: "4601501761856", qtyInBox: 50 } };
-let currentCart = [];
-let activePallet = "Основной";
-
-function getSafeId(text) { return encodeURIComponent(text).replace(/%/g, '_').replace(/[^a-zA-Z0-9_-]/g, '_'); }
-function saveState() { localStorage.setItem('tsd_lite_cart', JSON.stringify(currentCart)); }
-
-function normalizeBarcode(text) {
-    let clean = text.trim().replace(/[\x00-\x1F\x7F ]/g, '');
-    if (clean.startsWith("]d2") || clean.startsWith("]e0") || clean.startsWith("]C1")) clean = clean.substring(3);
-    if (clean.startsWith("01") && clean.length >= 16) {
-        let gtin = clean.substring(2, 16);
-        clean = gtin.startsWith("0") ? gtin.substring(1) : gtin;
-    }
-    if (clean.length === 14 && clean.startsWith("0")) clean = clean.substring(1);
-    if (clean.length === 13 && clean.startsWith("0")) clean = clean.substring(1);
-    if (MASTER_CODES[clean]) clean = MASTER_CODES[clean].code;
-    return clean;
-}
-
-function updateCartStats() {
-    const total = currentCart.reduce((acc, i) => acc + i.qty, 0);
-    const stats = document.getElementById('cartStats');
-    if (stats) stats.innerText = `${currentCart.length} строк (${total} шт.)`;
-}
-
-function renderBarcodeSafe(targetId, code, opts = {}) {
-    const el = document.getElementById(targetId);
-    if (!el) return;
-    try {
-        JsBarcode(el, code, Object.assign({ format: "EAN13", lineColor: "#000", background: "transparent" }, opts));
-    } catch (e) {
-        try {
-            JsBarcode(el, code, Object.assign({ format: "CODE128", lineColor: "#000", background: "transparent" }, opts));
-        } catch (err) {
-            el.outerHTML = `<span style="font-family:monospace;font-weight:900;font-size:14px;">${code}</span>`;
-        }
-    }
-}
-
-function addOrUpdateItem(code, qty) {
-    const pallet = activePallet;
-    const existing = currentCart.find(i => i.code === code && i.pallet === pallet);
-    if (existing) {
-        existing.qty += qty;
-    } else {
-        currentCart.unshift({ code, qty, pallet });
-    }
-    saveState();
-    renderCart();
-    SoundFX.success();
-    triggerVibrate([20, 35, 20]);
-    flashCartStats();
-}
-
-function renderCart() {
-    const area = document.getElementById('cartContentArea');
-    if (!area) return;
-    
-    if (currentCart.length === 0) {
-        area.innerHTML = `
-            <div class="no-data-card">
-                <span class="app-icon" style="width:36px;height:36px;color:var(--btn-add);"><svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg></span>
-                <span>Начните сканировать товары</span>
-            </div>`;
-        updateCartStats();
-        return;
-    }
-
-    area.innerHTML = `<table id="cartTable"></table>`;
-    const table = document.getElementById('cartTable');
-
-    const pallets = {};
-    currentCart.forEach(item => {
-        if (!pallets[item.pallet]) pallets[item.pallet] = [];
-        pallets[item.pallet].push(item);
-    });
-
-    const highFx = !isLowFx();
-    for (const [palletName, items] of Object.entries(pallets)) {
-        const safePallet = getSafeId(palletName);
-        const tbody = document.createElement('tbody');
-        tbody.id = `pallet-${safePallet}`;
-        tbody.innerHTML = `
-            <tr class="pallet-header-row">
-                <td colspan="3" style="padding-bottom:2px;">
-                    <div class="pallet-header-content">
-                        <span class="pallet-name">
-                            <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span>
-                            ${palletName}
-                        </span>
-                        <button class="btn-pallet-qr" onclick="showPalletQR('${palletName}')">
-                            <span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
-                            Показать QR
-                        </button>
-                    </div>
-                </td>
-            </tr>`;
-
-        items.forEach((item, index) => {
-            const safeId = getSafeId(item.code);
-            const tr = document.createElement('tr');
-            if (highFx) tr.style.animation = `popIn 0.4s var(--ease-spring) ${Math.min(index * 40, 240)}ms forwards`;
-            tr.innerHTML = `
-                <td class="inline-barcode-container"
-                    onmousedown="startPress(event, '${item.code}')"
-                    onmouseup="cancelPress()"
-                    onmouseleave="cancelPress()"
-                    ontouchstart="startPress(event, '${item.code}')"
-                    ontouchend="cancelPress()"
-                    ontouchcancel="cancelPress()"
-                    oncontextmenu="event.preventDefault(); return false;">
-                    <div class="barcode-wrapper"><svg id="bc-${safeId}-${safePallet}"></svg></div>
-                </td>
-                <td><button class="qty-box" onclick="showNumpadForEdit('${item.code}', '${palletName}')">${item.qty}</button></td>
-                <td>
-                    <button class="btn-remove" onclick="removeItem('${item.code}', '${palletName}')">
-                        <span class="app-icon" style="width:18px;height:18px;"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
-                    </button>
-                </td>`;
-            tbody.appendChild(tr);
-        });
-        table.appendChild(tbody);
-
-        items.forEach(item => {
-            renderBarcodeSafe(`bc-${getSafeId(item.code)}-${safePallet}`, item.code, { width: 2, height: 45, displayValue: true, fontSize: 15, margin: 2 });
-        });
-    }
-    updateCartStats();
-}
-
-/* ================= УДАЛЕНИЕ И ОЧИСТКА ================= */
-let lastDeletedItem = null;
-let snackbarTimer = null;
-
-function showToast(msg) {
-    const sb = document.getElementById('snackbar');
-    document.getElementById('snackbarText').innerText = msg;
-    document.getElementById('snackbarUndoBtn').style.display = 'none';
-    sb.classList.add('show');
-    if (snackbarTimer) clearTimeout(snackbarTimer);
-    snackbarTimer = setTimeout(() => sb.classList.remove('show'), 3000);
-}
-
-function removeItem(code, pallet) {
-    const idx = currentCart.findIndex(i => i.code === code && i.pallet === pallet);
-    if (idx !== -1) {
-        lastDeletedItem = currentCart.splice(idx, 1)[0];
-        saveState();
-        renderCart();
-        SoundFX.trash();
-        triggerVibrate([20, 30]);
-        showUndoToast();
-    }
-}
-
-function showUndoToast() {
-    const sb = document.getElementById('snackbar');
-    document.getElementById('snackbarText').innerText = 'Товар удалён';
-    document.getElementById('snackbarUndoBtn').style.display = 'block';
-    sb.classList.add('show');
-    if (snackbarTimer) clearTimeout(snackbarTimer);
-    snackbarTimer = setTimeout(() => sb.classList.remove('show'), 3800);
-}
-
-function undoDelete() {
-    if (lastDeletedItem) {
-        currentCart.unshift(lastDeletedItem);
-        lastDeletedItem = null;
-        saveState();
-        renderCart();
-        document.getElementById('snackbar').classList.remove('show');
-    }
-}
-
-function clearCart() {
-    if (currentCart.length === 0) return;
-    if (confirm("Очистить корзину целиком?")) {
-        playDeleteAnimation(() => {
-            currentCart = [];
-            saveState();
-            renderCart();
-        });
-    }
-}
-
-/* ================= NUMPAD МОДАЛ ================= */
-let numpadVal = "1";
-let numpadMode = "";
-let targetCode = "";
-let targetPallet = "";
-
-function updateNumpadUI() {
-    const display = document.getElementById('numpadDisplay');
-    const group = document.getElementById('numpadInputGroup');
-    const pasteBtn = document.getElementById('numpadPasteBtn');
-
-    if (numpadMode === 'manual') {
-        group.classList.add('manual-mode');
-        pasteBtn.style.display = 'flex';
-        display.innerHTML = numpadVal ? `${numpadVal}<span class="numpad-cursor"></span>` : `<span class="numpad-placeholder">Ввод ШК или Артикула...</span><span class="numpad-cursor"></span>`;
-    } else {
-        group.classList.remove('manual-mode');
-        pasteBtn.style.display = 'none';
-        display.innerHTML = `${numpadVal || 0}<span class="numpad-cursor"></span>`;
-    }
-    display.scrollLeft = display.scrollWidth;
-}
-
-function showNumpadForManual() {
-    numpadMode = 'manual';
-    numpadVal = "";
-    const titleEl = document.getElementById('numpadTitle');
-    if (titleEl) {
-        titleEl.innerText = "";
-        titleEl.style.display = "none";
-    }
-    updateNumpadUI();
-    document.getElementById('numpadModal').style.display = 'flex';
-}
-
-function showNumpadForScan(code) {
-    numpadMode = 'scan';
-    targetCode = code;
-    let defQty = 1;
-    for (let k in MASTER_CODES) {
-        if (MASTER_CODES[k].code === code && MASTER_CODES[k].qtyInBox) { defQty = MASTER_CODES[k].qtyInBox; break; }
-    }
-    numpadVal = String(defQty);
-    const titleEl = document.getElementById('numpadTitle');
-    if (titleEl) {
-        titleEl.style.display = "block";
-        titleEl.innerText = `ШК: ${code}`;
-    }
-    updateNumpadUI();
-    document.getElementById('numpadModal').style.display = 'flex';
-}
-
-function showNumpadForEdit(code, pallet) {
-    const item = currentCart.find(i => i.code === code && i.pallet === pallet);
-    if (!item) return;
-    numpadMode = 'edit';
-    targetCode = code;
-    targetPallet = pallet;
-    numpadVal = String(item.qty);
-    const titleEl = document.getElementById('numpadTitle');
-    if (titleEl) {
-        titleEl.style.display = "block";
-        titleEl.innerText = `Изменить: ${code}`;
-    }
-    updateNumpadUI();
-    document.getElementById('numpadModal').style.display = 'flex';
-}
-
-function numPress(n) {
-    if (numpadVal === "0" && numpadMode !== 'manual') numpadVal = "";
-    if (numpadVal.length < 28) numpadVal += String(n);
-    updateNumpadUI();
-}
-
-function numClear() {
-    numpadVal = "";
-    updateNumpadUI();
-}
-
-function numBackspace() {
-    numpadVal = numpadVal.slice(0, -1);
-    updateNumpadUI();
-}
-
-function numCancel() {
-    document.getElementById('numpadModal').style.display = 'none';
-    if (numpadMode === 'scan' && settings.continuous) isScannerPaused = false;
-    else updateNavState('onNavHome');
-}
-
-function numConfirm() {
-    document.getElementById('numpadModal').style.display = 'none';
-    if (numpadMode === 'manual') {
-        const c = numpadVal.trim();
-        if (c) addOrUpdateItem(normalizeBarcode(c), 1);
-        updateNavState('onNavHome');
-    } else if (numpadMode === 'scan') {
-        const q = parseInt(numpadVal) || 1;
-        addOrUpdateItem(targetCode, Math.max(1, q));
-        if (settings.continuous) isScannerPaused = false;
-        else stopScanner(true);
-    } else if (numpadMode === 'edit') {
-        const item = currentCart.find(i => i.code === targetCode && i.pallet === targetPallet);
-        if (item) {
-            item.qty = Math.max(1, parseInt(numpadVal) || 1);
-            saveState();
-            renderCart();
-        }
-    }
-}
-
-async function pasteToNumpad() {
-    try {
-        const text = await navigator.clipboard.readText();
-        if (text) {
-            numpadVal = text.trim();
-            updateNumpadUI();
-            triggerVibrate(15);
-        }
-    } catch(e) {}
-}
-
-/* ================= ПАЛЛЕТЫ ================= */
-function openPalletModal() {
-    document.getElementById('palletInput').value = activePallet;
-    const pallets = [...new Set(currentCart.map(i => i.pallet))];
-    const container = document.getElementById('existingPallets');
-    container.innerHTML = pallets.map(p => `
-        <button style="background:var(--input-bg); border:1px solid var(--border-color); border-radius:11px; padding:8px 14px; font-weight:800; font-size:14px; color:var(--text-main); cursor:pointer;" onclick="document.getElementById('palletInput').value='${p}'">${p}</button>
-    `).join('');
-    document.getElementById('palletModal').style.display = 'flex';
-}
-
-function confirmPallet() {
-    const val = document.getElementById('palletInput').value.trim() || "Основной";
-    activePallet = val;
-    document.getElementById('currentPalletBadge').innerHTML = `
-        <span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
-        ${activePallet}
-    `;
-    document.getElementById('palletModal').style.display = 'none';
-}
-
-/* ================= КАМЕРА И СКАНЕР ================= */
-let html5QrCode = null;
-let isScannerPaused = false;
-let torchEnabled = false;
-
-function startScanner() {
-    isScannerPaused = false;
-    document.getElementById('scannerModal').style.display = 'flex';
-    if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-
-    const config = {
-        fps: 22,
-        qrbox: (w, h) => { const min = Math.min(w, h); return { width: Math.floor(min * 0.68), height: Math.floor(min * 0.68) }; },
-        formatsToSupport: [
-            Html5QrcodeSupportedFormats.EAN_13,
-            Html5QrcodeSupportedFormats.EAN_8,
-            Html5QrcodeSupportedFormats.UPC_A,
-            Html5QrcodeSupportedFormats.DATA_MATRIX,
-            Html5QrcodeSupportedFormats.CODE_128,
-            Html5QrcodeSupportedFormats.CODE_39,
-            Html5QrcodeSupportedFormats.QR_CODE
-        ],
-        experimentalFeatures: { useBarCodeDetectorIfSupported: true }
-    };
-
-    html5QrCode.start({ facingMode: "environment" }, config, onCodeDetected)
-    .catch(() => {
-        document.getElementById('scannerModal').style.display = 'none';
-        alert("Не удалось запустить камеру. Проверьте разрешения в браузере.");
-        updateNavState('onNavHome');
-    });
-}
-
-function onCodeDetected(decodedText) {
-    if (isScannerPaused) return;
-    isScannerPaused = true;
-    const clean = normalizeBarcode(decodedText);
-    showNumpadForScan(clean);
-}
-
-function stopScanner(resetNav = true) {
-    if (html5QrCode) {
-        html5QrCode.stop().then(() => { html5QrCode.clear(); html5QrCode = null; }).catch(() => {});
-    }
-    document.getElementById('scannerModal').style.display = 'none';
-    if (resetNav) updateNavState('onNavHome');
-}
-
-function toggleTorch() {
-    if (!html5QrCode) return;
-    torchEnabled = !torchEnabled;
-    html5QrCode.applyVideoConstraints({ advanced: [{ torch: torchEnabled }] })
-    .then(() => document.getElementById('torchBtn').classList.toggle('active', torchEnabled))
-    .catch(() => { torchEnabled = false; });
-}
-
-function setZoomLevel(lvl) {
-    document.querySelectorAll('.zoom-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.zoom) === lvl));
-    if (html5QrCode) html5QrCode.applyVideoConstraints({ advanced: [{ zoom: lvl }] }).catch(() => {});
-}
-
-/* ================= ЭКСПОРТ & АРХИВ ================= */
-function showTransferQR() {
-    if (currentCart.length === 0) {
-        alert("Корзина пуста!");
-        updateNavState('onNavHome');
-        return;
-    }
-    const payload = currentCart.map(i => `${i.code}-${i.qty}`).join(" ");
-    const totalQty = currentCart.reduce((a, b) => a + b.qty, 0);
-    saveToArchive(payload, totalQty);
-    renderQR(payload);
-}
-
-function showPalletQR(palletName) {
-    const items = currentCart.filter(i => i.pallet === palletName);
-    if (!items.length) return;
-    const payload = items.map(i => `${i.code}-${i.qty}`).join(" ");
-    renderQR(payload);
-}
-
-function renderQR(payload) {
-    document.getElementById('qrModal').style.display = 'flex';
-    const canvas = document.getElementById('finalQrCanvas');
-    canvas.style.display = 'block';
-    window.currentPayload = payload;
-    QRCode.toCanvas(canvas, payload, { width: 340, margin: 2 });
-}
-
-function closeQRModal() {
-    document.getElementById('qrModal').style.display = 'none';
-    updateNavState('onNavHome');
-}
-
-function downloadQR() {
-    const canvas = document.getElementById('finalQrCanvas');
-    const a = document.createElement('a');
-    a.download = `TSD_QR_${Date.now()}.png`;
-    a.href = canvas.toDataURL("image/png");
-    a.click();
-}
-
-function shareToExcel() {
-    if (navigator.clipboard && window.currentPayload) {
-        navigator.clipboard.writeText(window.currentPayload);
-        alert("Данные скопированы в буфер!");
-    }
-}
-
-function saveToArchive(payload, totalQty) {
-    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
-    const now = new Date();
-    archive.unshift({
-        date: now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-        lines: currentCart.length,
-        totalQty: totalQty,
-        payload: payload,
-        cartData: JSON.parse(JSON.stringify(currentCart))
-    });
-    if (archive.length > 15) archive.pop();
-    localStorage.setItem('tsd_archive', JSON.stringify(archive));
-}
-
-function renderArchive() {
-    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
-    const container = document.getElementById('archiveList');
-    if (!archive.length) {
-        container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);font-weight:700;">Архив выгрузок пуст</div>';
-    } else {
-        container.innerHTML = archive.map((item, idx) => {
-            const qty = item.totalQty !== undefined ? item.totalQty : (item.total !== undefined ? item.total : (item.cartData ? item.cartData.reduce((s,i)=>s+i.qty,0) : 0));
-            return `
-            <div class="archive-item">
-                <div class="archive-info-row">
-                    <div class="archive-date">${item.date}</div>
-                    <div class="archive-stats">${item.lines || (item.cartData ? item.cartData.length : 0)} строк | ${qty} шт.</div>
-                </div>
-                <div class="archive-actions">
-                    <button class="archive-btn-secondary" onclick="restoreArchiveToTable(${idx})">Вернуть в таблицу</button>
-                    <button class="archive-btn" onclick="openArchiveQR(${idx})">Открыть QR</button>
-                </div>
-            </div>`;
-        }).join('');
-    }
-}
-
-function openArchive() {
-    document.getElementById('mainMenuModal').style.display = 'none';
-    renderArchive();
-    document.getElementById('archiveModal').style.display = 'flex';
-}
-
-function restoreArchiveToTable(idx) {
-    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
-    if (!archive[idx]) return;
-    if (currentCart.length > 0) {
-        if (!confirm("Внимание! Текущие данные в корзине будут стерты.\nВы точно хотите загрузить старые данные из архива?")) return;
-    }
-    if (archive[idx].cartData) {
-        currentCart = JSON.parse(JSON.stringify(archive[idx].cartData));
-    } else if (archive[idx].payload) {
-        currentCart = [];
-        archive[idx].payload.split(" ").forEach(itemStr => {
-            const parts = itemStr.split("-");
-            if (parts.length === 2) currentCart.push({ code: parts[0], qty: parseInt(parts[1]) || 1, pallet: "Из архива" });
-        });
-    }
-    saveState();
-    renderCart();
-    closeAllModals(true);
-}
-
-function openArchiveQR(idx) {
-    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [];
-    if (archive[idx]) {
-        document.getElementById('archiveModal').style.display = 'none';
-        renderQR(archive[idx].payload);
-    }
-}
-
-function openInstruction() {
-    document.getElementById('mainMenuModal').style.display = 'none';
-    document.getElementById('instructionModal').style.display = 'flex';
-}
-
-function openAbout() {
-    document.getElementById('mainMenuModal').style.display = 'none';
-    document.getElementById('aboutModal').style.display = 'flex';
-}
-
 window.onload = function() {
+    initDeleteButton();
     const saved = localStorage.getItem('tsd_lite_cart');
     if (saved) {
         try { currentCart = JSON.parse(saved); } catch(e) {}
     }
     renderCart();
+    const home = document.querySelector('[data-action="onNavHome"]');
+    if (home) moveBeadTo(home, false);
 };
 
-/* ================= РЕГИСТРАЦИЯ SERVICE WORKER ================= */
+window.addEventListener('resize', () => {
+    const active = document.querySelector('.navitem.active');
+    if (active) moveBeadTo(active, false);
+});
+
+(function createStars(){
+  const layer = document.getElementById('starsLayer');
+  if(!layer) return;
+  for (let i = 0; i < 8; i++){
+    const star = document.createElement('span');
+    star.className = 'star';
+    star.style.setProperty('--x', Math.random() * 60 + 6 + '%');
+    star.style.setProperty('--y', Math.random() * 55 + 15 + '%');
+    star.style.setProperty('--d', (Math.random() * 1.6).toFixed(2) + 's');
+    layer.appendChild(star);
+  }
+})();
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('SW зарегистрирован:', reg.scope))
-            .catch(err => console.warn('Ошибка регистрации SW:', err));
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
     });
 }
 </script>
