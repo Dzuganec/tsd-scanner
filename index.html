@@ -131,6 +131,22 @@
     --nav-icon-inactive: #758e82;
 }
 
+/* ===== AMOLED (глубокий чёрный) — активируется только вместе с тёмной темой ===== */
+[data-theme="dark"][data-amoled="true"] {
+    --bg-body: #000000;
+    --bg-card: #000000;
+    --bg-card-rgb: 0, 0, 0;
+    --input-bg: #050505;
+    --border-color: #1a1a1a;
+    --numpad-bg: #000000;
+    --numpad-btn: #0a0a0a;
+    --nav-bg: #000000;
+    --nav-border: #161616;
+    --modal-bg: rgba(0, 0, 0, 0.92);
+}
+[data-theme="dark"][data-amoled="true"] .bg-blob { display: none !important; }
+[data-theme="dark"][data-amoled="true"] body::after { background: #000000; opacity: 1; }
+
 * { box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; outline: none; margin: 0; padding: 0; -webkit-user-select: none; user-select: none; }
 input, textarea { -webkit-user-select: text; user-select: text; }
 html { -webkit-text-size-adjust: 100%; }
@@ -276,11 +292,21 @@ header {
 .cart-header { padding: 0 4px 12px; display: flex; justify-content: space-between; align-items: center; }
 #cartStats { padding: 6px 11px; border-radius: 10px; background: var(--input-bg); color: var(--text-muted); font-size: 13px; font-weight: 800; transition: background-color var(--t-theme), color var(--t-theme); }
 
+/* ---------- СТРОКА ПОИСКА ---------- */
+.search-bar-wrap { display: flex; align-items: center; gap: 9px; background: var(--input-bg); border: 1.5px solid var(--border-color); border-radius: 15px; padding: 10px 14px; margin: 0 4px 12px; transition: background-color var(--t-theme), border-color var(--t-theme); }
+.search-bar-wrap:focus-within { border-color: var(--btn-add); box-shadow: 0 0 0 3px var(--glow-soft); }
+.search-icon-fixed { color: var(--text-muted); width: 18px; height: 18px; flex-shrink: 0; transition: color var(--t-theme); }
+.search-input { flex: 1; background: transparent; border: none; font-size: 14.5px; font-weight: 700; color: var(--text-main); -webkit-user-select: text; user-select: text; min-width: 0; }
+.search-input::placeholder { color: var(--text-muted); opacity: 0.75; font-weight: 700; }
+.search-clear-btn { background: var(--border-color); border: none; color: var(--text-main); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: transform var(--t-fast) var(--ease-spring), background-color var(--t-theme), color var(--t-theme); }
+.search-clear-btn:active { transform: scale(0.85); }
+
 .table-responsive { width: 100%; border-radius: 14px; margin-top: 2px; overflow-x: hidden; }
 table { width: 100%; border-collapse: separate; border-spacing: 0 6px; table-layout: auto; }
 thead th { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); padding: 4px 3px 8px; text-align: center; border: none; white-space: nowrap; transition: color var(--t-theme); }
 tr { background: var(--input-bg); border-radius: var(--radius-md); box-shadow: 0 1px 4px rgba(0,0,0,0.04); transition: background-color var(--t-theme), border-color var(--t-theme); }
 [data-theme="dark"] tr { background: #1a2c24; }
+[data-theme="dark"][data-amoled="true"] tr { background: #0a0a0a; }
 td { padding: 8px 6px; vertical-align: middle; text-align: center; border: none; border-bottom: 1px solid transparent; }
 td:first-child { border-top-left-radius: var(--radius-md); border-bottom-left-radius: var(--radius-md); padding-left: 10px; width: 60%; }
 td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-radius: var(--radius-md); padding-right: 10px; width: 15%; }
@@ -601,6 +627,15 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
               <span class="delete-label" id="deleteLabel">Очистить</span>
             </button>
         </div>
+
+        <div class="search-bar-wrap">
+            <span class="app-icon search-icon-fixed"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+            <input type="text" id="searchInput" class="search-input" inputmode="search" placeholder="Поиск по штрихкоду..." oninput="filterCart(this.value)">
+            <button class="search-clear-btn" id="searchClearBtn" style="display:none;" onclick="clearSearch()">
+                <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
         <div id="cartContentArea"></div>
     </div>
 </div>
@@ -775,6 +810,23 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
                 </div>
                 <div class="toggle" id="toggle-vibro" onclick="toggleSetting('vibro')"><div class="toggle-thumb"></div></div>
             </div>
+            <div class="settings-row">
+                <div class="settings-row-label">
+                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span>
+                    <div class="settings-row-text">Голосовое подтверждение<small>Озвучивает количество после скана</small></div>
+                </div>
+                <div class="toggle" id="toggle-ttsVoice" onclick="toggleSetting('ttsVoice')"><div class="toggle-thumb"></div></div>
+            </div>
+        </div>
+        <div class="settings-section">
+            <div class="settings-section-title">Внешний вид</div>
+            <div class="settings-row">
+                <div class="settings-row-label">
+                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+                    <div class="settings-row-text">AMOLED (глубокий чёрный)<small>Чистый чёрный фон в тёмной теме</small></div>
+                </div>
+                <div class="toggle" id="toggle-amoled" onclick="toggleAmoled()"><div class="toggle-thumb"></div></div>
+            </div>
         </div>
         <div class="settings-section">
             <div class="settings-section-title">Производительность</div>
@@ -930,6 +982,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
         <canvas id="finalQrCanvas" width="340" height="340" style="display:none; margin: 0 auto; border-radius: 22px; background: #fff; padding: 12px;"></canvas>
         <button class="btn-modal" style="background:var(--btn-add); color:white; margin-top:25px;" onclick="downloadQR()">Сохранить в галерею</button>
         <button class="btn-modal" style="background:#2563eb; color:white;" onclick="shareToExcel()">Скопировать текст</button>
+        <button class="btn-modal" style="background:#f59e0b; color:white;" onclick="downloadCSV()">Скачать CSV</button>
         <button class="btn-modal btn-close" style="background:rgba(255,255,255,0.2); color:white; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);" onclick="closeQRModal()">Закрыть</button>
     </div>
 </div>
@@ -973,8 +1026,9 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
                 <li>Товар добавится в таблицу с количеством. Вы можете изменить количество нажав на него.</li>
                 <li>Вверху экрана сканера доступны кнопки: <b>Выбор камеры</b> (слева), <b>Зум 1x, 2x, 3x</b> (по центру), <b>Фонарик</b> (справа).</li>
                 <li>Нажмите на штрихкод в таблице для увеличения. <b>Зажмите увеличенный код пальцем на 0.5 сек</b>, чтобы скопировать.</li>
-                <li>Нажмите кнопку <b>«Выгрузить»</b>, чтобы сгенерировать итоговый QR-код со всеми собранными данными для переноса на ПК или другой телефон.</li>
+                <li>Нажмите кнопку <b>«Выгрузить»</b>, чтобы сгенерировать итоговый QR-код со всеми собранными данными для переноса на ПК или другой телефон, или скачать CSV-файл.</li>
                 <li>При сканировании общего QR-кода со списком приложение автоматически откроет окно импорта прямо поверх камеры.</li>
+                <li>Используйте строку поиска над таблицей, чтобы быстро найти нужный штрихкод в длинном списке.</li>
             </ol>
         </div>
         <button class="btn-modal btn-close" onclick="closeAllModals()">Понятно</button>
@@ -1034,7 +1088,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
               <line x1="0" y1="125" x2="160" y2="125" stroke="var(--border-color)" stroke-width="4" stroke-linecap="round" />
             </svg>
             <p style="font-size: 19px; font-weight: 900; color: var(--text-main); transition: color var(--t-theme);">Сергей Джугань</p>
-            <p style="font-size: 13.5px; color: var(--text-muted); font-weight: 700; margin-top: 2px; transition: color var(--t-theme);">Версия: 18.2 (Layer Fixed Edition)</p>
+            <p style="font-size: 13.5px; color: var(--text-muted); font-weight: 700; margin-top: 2px; transition: color var(--t-theme);">Версия: 19.0 (Feature Update)</p>
             <a href="https://t.me/segarey" target="_blank" class="tg-dev-btn">
                 <svg class="tg-icon-fly" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Написать в Telegram
             </a>
@@ -1138,8 +1192,22 @@ document.addEventListener('pointerdown', (e) => {
     if (interactive) { SoundFX.tap(); triggerVibrate(12); }
 });
 
+/* ================= ГОЛОСОВОЕ ПОДТВЕРЖДЕНИЕ (TTS) ================= */
+function speakQuantity(qty) {
+    if (!settings.ttsVoice) return;
+    if (!('speechSynthesis' in window)) return;
+    try {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(String(qty));
+        utter.lang = 'ru-RU';
+        utter.rate = 1;
+        utter.volume = 1;
+        window.speechSynthesis.speak(utter);
+    } catch(e) {}
+}
+
 /* ================= НАСТРОЙКИ & ТЕМА ================= */
-let settings = Object.assign({ theme: 'light', continuous: true, autolens: true, sound: true, uiSound: true, vibro: true }, JSON.parse(localStorage.getItem('tsd_settings')) || {});
+let settings = Object.assign({ theme: 'light', continuous: true, autolens: true, sound: true, uiSound: true, vibro: true, ttsVoice: false, amoled: false }, JSON.parse(localStorage.getItem('tsd_settings')) || {});
 function saveSettings() { localStorage.setItem('tsd_settings', JSON.stringify(settings)); }
 function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
@@ -1151,6 +1219,10 @@ function applyTheme(theme) {
 function toggleTheme() { settings.theme = settings.theme === 'dark' ? 'light' : 'dark'; saveSettings(); applyTheme(settings.theme); }
 applyTheme(settings.theme);
 
+function applyAmoled() { document.documentElement.setAttribute('data-amoled', settings.amoled ? 'true' : 'false'); }
+applyAmoled();
+function toggleAmoled() { settings.amoled = !settings.amoled; paintToggle('toggle-amoled', settings.amoled); saveSettings(); applyAmoled(); }
+
 function paintToggle(id, val) { const el = document.getElementById(id); if (el) el.classList.toggle('active', !!val); }
 
 function openSettings() {
@@ -1160,6 +1232,8 @@ function openSettings() {
     paintToggle('toggle-sound', settings.sound);
     paintToggle('toggle-uiSound', settings.uiSound);
     paintToggle('toggle-vibro', settings.vibro);
+    paintToggle('toggle-ttsVoice', settings.ttsVoice);
+    paintToggle('toggle-amoled', settings.amoled);
     paintToggle('toggle-simplemode', isLowFx());
     document.getElementById('settingsModal').style.display = 'flex';
 }
@@ -1259,6 +1333,7 @@ window.handleZoomClick = function(e) { if (e.target.id === 'zoomModal') { docume
 /* ================= БАЗОВАЯ ЛОГИКА ТСД ================= */
 const MASTER_CODES = { "14630557641291": { code: "4607075900196", qtyInBox: 50 } };
 let currentCart = [], activePallet = "Основной";
+let searchQuery = "";
 
 function normalizeBarcode(text) {
     if (!text) return ""; let clean = String(text).trim().replace(/[\x00-\x1F\x7F ]/g, '');
@@ -1274,549 +1349,13 @@ function updateCartStats() {
 }
 function saveState() { localStorage.setItem('tsd_lite_cart', JSON.stringify(currentCart)); }
 
-function renderBarcodeSafe(targetContainerId, code, opts = {}, wrapWithDiv = true) {
-    const container = document.getElementById(targetContainerId); 
-    if (!container) return;
-    
-    // Если нужно создать SVG внутри контейнера (фикс перезаписи DOM)
-    let el = container;
-    if (wrapWithDiv) {
-        container.innerHTML = `<svg id="svg-${targetContainerId}"></svg>`;
-        el = document.getElementById(`svg-${targetContainerId}`);
-    }
-
-    try { 
-        JsBarcode(el, code, Object.assign({ format: "EAN13", lineColor: "#000", background: "transparent" }, opts)); 
-    } 
-    catch (e) { 
-        try { JsBarcode(el, code, Object.assign({ format: "CODE128", lineColor: "#000", background: "transparent" }, opts)); } 
-        catch (err) { 
-            if (wrapWithDiv) {
-                container.innerHTML = `<span style="font-family:monospace;font-weight:900;font-size:13px;transition:color var(--t-theme);">${code}</span>`; 
-            } else {
-                container.style.display = 'none';
-            }
-        } 
-    }
-}
-
-function addOrUpdateItem(code, qty = 1) {
-    const pallet = activePallet, barcode = normalizeBarcode(code), existing = currentCart.find(i => i.code === barcode && i.pallet === pallet);
-    if (existing) existing.qty += qty; else currentCart.unshift({ id: 'item_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6), code: barcode, qty: qty, pallet: pallet });
-    saveState(); renderCart(); SoundFX.success(); triggerVibrate([20, 35, 20]); flashCartStats();
-}
-
-function renderCart() {
-    const area = document.getElementById('cartContentArea'); if (!area) return;
-    if (currentCart.length === 0) {
-        area.innerHTML = `<div class="no-data-card"><span class="app-icon" style="width:44px;height:44px;color:var(--btn-add);"><svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg></span><span>Наведите камеру на штрихкод</span></div>`;
-        updateCartStats(); return;
-    }
-
-    const pallets = {}; currentCart.forEach(item => { if (!pallets[item.pallet]) pallets[item.pallet] = []; pallets[item.pallet].push(item); });
-    let html = `<div class="table-responsive"><table><thead><tr><th>Штрихкод</th><th style="width:54px;">Кол</th><th style="width:50px;"></th></tr></thead>`;
-
-    for (const [palletName, items] of Object.entries(pallets)) {
-        html += `<tbody><tr class="pallet-header-row"><td colspan="3"><div class="pallet-header-content"><span class="pallet-name"><span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span>${palletName}</span><button class="btn-pallet-qr" onclick="showPalletQR('${palletName}')"><span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Показать QR</button></div></td></tr>`;
-        items.forEach((item, idx) => {
-            const delay = Math.min(idx * 40, 240); const rowStyle = !isLowFx() ? `style="animation: popIn 0.4s var(--ease-spring) ${delay}ms forwards; opacity: 0;"` : '';
-            // Используем div вместо svg для безопасности ререндера
-            html += `<tr ${rowStyle}><td class="inline-barcode-container" onclick="zoomBarcode('${item.code}')"><div id="bc-wrap-${item.id}" class="barcode-wrapper"></div></td><td><button class="qty-box" onclick="showNumpadForEdit('${item.id}')">${item.qty}</button></td><td><button class="btn-remove" onclick="removeItem('${item.id}')"><span class="app-icon" style="width:18px;height:18px;"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></button></td></tr>`;
-        });
-        html += `</tbody>`;
-    }
-    html += `</table></div>`; area.innerHTML = html;
-    
-    // Рендерим штрихкоды
-    currentCart.forEach(item => { 
-        renderBarcodeSafe(`bc-wrap-${item.id}`, item.code, { width: 1.5, height: 36, displayValue: true, fontSize: 13, margin: 1 }, true); 
-    });
-    updateCartStats();
-}
-
-function showToast(msg) {
-    const sb = document.getElementById('snackbar'); document.getElementById('snackbarText').innerText = msg; document.getElementById('snackbarUndoBtn').style.display = 'none';
-    sb.classList.add('show'); setTimeout(() => sb.classList.remove('show'), 3000);
-}
-
-let lastDeletedItem = null;
-function removeItem(itemId) {
-    const idx = currentCart.findIndex(i => i.id === itemId);
-    if (idx !== -1) {
-        lastDeletedItem = currentCart.splice(idx, 1)[0]; saveState(); renderCart(); SoundFX.trash(); triggerVibrate([20, 30]);
-        const sb = document.getElementById('snackbar'); document.getElementById('snackbarText').innerText = 'Товар удалён'; document.getElementById('snackbarUndoBtn').style.display = 'block'; sb.classList.add('show'); setTimeout(() => sb.classList.remove('show'), 3800);
-    }
-}
-function undoDelete() { if (lastDeletedItem) { currentCart.unshift(lastDeletedItem); lastDeletedItem = null; saveState(); renderCart(); document.getElementById('snackbar').classList.remove('show'); } }
-
-/* ================= ПАРСЕР СПИСКОВ И QR ================= */
-function parseQuantitySafe(qStr) {
-    if (typeof qStr === 'number') return Math.max(1, Math.round(qStr));
-    let s = String(qStr || '1').trim();
-    if (s.includes('+')) {
-        let sum = s.split('+').reduce((acc, v) => acc + (parseFloat(v.replace(',', '.')) || 0), 0);
-        return Math.max(1, Math.round(sum));
-    }
-    let val = parseInt(s, 10);
-    return isNaN(val) || val < 1 ? 1 : val;
-}
-
-function parsePayloadOrList(rawText) {
-    if (!rawText || typeof rawText !== 'string') return [];
-    let str = rawText.trim();
-    let result = [];
-
-    // 1. JSON
-    if ((str.startsWith('[') && str.endsWith(']')) || (str.startsWith('{') && str.endsWith('}'))) {
-        try {
-            let data = JSON.parse(str);
-            let list = Array.isArray(data) ? data : (data.items || data.cart || data.rows || data.goods || []);
-            if (Array.isArray(list) && list.length > 0) {
-                list.forEach(row => {
-                    let c = row.code || row.barcode || row.lm || row.sku || row.id;
-                    let q = row.qty || row.count || row.quantity || row.kolvo || 1;
-                    if (c) result.push({ code: normalizeBarcode(String(c)), qty: parseQuantitySafe(q), pallet: row.pallet || activePallet });
-                });
-                if (result.length > 0) return result;
-            }
-        } catch(e) {}
-    }
-
-    // 2. Строка пробелов: "КОД-КОЛ КОД-КОЛ"
-    let singleTokens = str.split(/\s+/);
-    if (singleTokens.length > 1) {
-        let pairs = [];
-        for (let t of singleTokens) {
-            let m = t.match(/^([0-9A-Za-z]{6,18})[-:=_](\d+(?:\+\d+)?)$/);
-            if (m) pairs.push({ code: normalizeBarcode(m[1]), qty: parseQuantitySafe(m[2]), pallet: activePallet });
-        }
-        if (pairs.length >= 2) return pairs;
-    }
-
-    // 3. Таблицы 1С / Карточки предподсчета / CSV / TSV
-    let lines = str.split(/[\r\n]+/).map(l => l.trim()).filter(Boolean);
-    for (let line of lines) {
-        if (/поставщик|наименование|штрихкод|кол-во|артикул|цена|номер|лист/i.test(line)) continue;
-
-        let delim = line.includes('\t') ? '\t' : (line.includes(';') ? ';' : (line.includes('|') ? '|' : (line.includes(',') ? ',' : null)));
-        if (delim) {
-            let cols = line.split(delim).map(c => c.trim().replace(/^["']|["']$/g, ''));
-            let foundCode = null;
-            let foundQty = 1;
-
-            for (let c of cols) {
-                let clean = c.replace(/\s+/g, '');
-                if (/^\d{12,14}$/.test(clean)) { foundCode = clean; break; }
-            }
-            if (!foundCode) {
-                for (let c of cols) {
-                    let clean = c.replace(/\s+/g, '');
-                    if (/^\d{8}$/.test(clean)) { foundCode = clean; break; }
-                }
-            }
-            if (!foundCode && cols.length >= 2) {
-                let c0 = cols[0].replace(/\s+/g, '');
-                if (/^[0-9A-Za-z]{6,18}$/.test(c0)) foundCode = c0;
-            }
-
-            for (let i = cols.length - 1; i >= 0; i--) {
-                let val = cols[i].replace(/\s+/g, '');
-                if (/^\d+(\+\d+)?$/.test(val) && val !== foundCode) {
-                    foundQty = parseQuantitySafe(val);
-                    break;
-                }
-            }
-
-            if (foundCode) {
-                result.push({ code: normalizeBarcode(foundCode), qty: foundQty, pallet: activePallet });
-                continue;
-            }
-        }
-
-        let m = line.match(/([0-9A-Za-z]{7,18})[-:=_ ]+(\d+(?:\+\d+)?)/);
-        if (m) {
-            result.push({ code: normalizeBarcode(m[1]), qty: parseQuantitySafe(m[2]), pallet: activePallet });
-        } else {
-            let solo = line.replace(/\s+/g, '');
-            if (/^\d{8,14}$/.test(solo)) {
-                result.push({ code: normalizeBarcode(solo), qty: 1, pallet: activePallet });
-            }
-        }
-    }
-
-    return result;
-}
-
-function groupItemsByCode(list) {
-    let map = new Map();
-    for (let item of list) {
-        let key = item.code + '___' + (item.pallet || activePallet);
-        if (map.has(key)) {
-            map.get(key).qty += item.qty;
-        } else {
-            map.set(key, { ...item });
-        }
-    }
-    return Array.from(map.values());
-}
-
-let pendingImportItems = [];
-let isImportFromScanner = false;
-
-function showImportModal(items) {
-    isImportFromScanner = (html5QrCode && html5QrCode.isScanning) || (document.getElementById('scannerModal').style.display === 'flex');
-    pendingImportItems = groupItemsByCode(items);
-    const totalQty = pendingImportItems.reduce((acc, i) => acc + i.qty, 0);
-    document.getElementById('importStats').innerText = `Найдено позиций: ${pendingImportItems.length} (всего ${totalQty} шт.)`;
-
-    const preview = document.getElementById('importListPreview');
-    preview.innerHTML = pendingImportItems.map(item => `
-        <div style="display:flex; justify-content:space-between; align-items:center; padding: 9px 12px; margin-bottom: 7px; background: var(--bg-card); border-radius: 13px; border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
-            <span style="font-family:monospace; font-weight:900; font-size:15px; color:var(--text-main);">${item.code}</span>
-            <span style="background:var(--input-bg); padding: 4px 11px; border-radius: 9px; font-size: 13px; font-weight:800; border: 1px solid var(--border-color); color:var(--text-main);">${item.qty} шт.</span>
-        </div>
-    `).join('');
-
-    SoundFX.success();
-    triggerVibrate([30, 60, 30]);
-    document.getElementById('importModal').style.display = 'flex';
-    
-    // Если вызвалось из сканера, навигационная бусина сохраняет статус «Скан»
-    if (isImportFromScanner) {
-        updateNavState('onNavScan');
-    }
-}
-
-function confirmImport(mode) {
-    if (!pendingImportItems || pendingImportItems.length === 0) return;
-
-    if (mode === 'replace') {
-        currentCart = pendingImportItems.map(item => ({
-            id: 'item_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
-            code: item.code,
-            qty: item.qty,
-            pallet: item.pallet || activePallet
-        }));
-    } else {
-        pendingImportItems.forEach(item => {
-            const existing = currentCart.find(i => i.code === item.code && i.pallet === (item.pallet || activePallet));
-            if (existing) {
-                existing.qty += item.qty;
-            } else {
-                currentCart.unshift({
-                    id: 'item_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
-                    code: item.code,
-                    qty: item.qty,
-                    pallet: item.pallet || activePallet
-                });
-            }
-        });
-    }
-
-    saveState();
+/* ================= ПОИСК ПО ТАБЛИЦЕ ================= */
+function filterCart(val) {
+    searchQuery = (val || '').trim().toLowerCase();
+    const clearBtn = document.getElementById('searchClearBtn');
+    if (clearBtn) clearBtn.style.display = searchQuery ? 'flex' : 'none';
     renderCart();
-    flashCartStats();
-    document.getElementById('importModal').style.display = 'none';
-
-    if (isImportFromScanner) {
-        stopScanner(true);
-    } else {
-        updateNavState('onNavHome');
-    }
-    isImportFromScanner = false;
-    showToast(mode === 'replace' ? "Список заменён!" : "Товары объединены!");
 }
-
-function cancelImport() {
-    document.getElementById('importModal').style.display = 'none';
-    pendingImportItems = [];
-    
-    // Если окно было открыто поверх камеры, возобновляем сканирование не выходя из режима
-    if (isImportFromScanner && html5QrCode && html5QrCode.isScanning) {
-        isScannerPaused = false;
-        updateNavState('onNavScan');
-    } else if (!isImportFromScanner) {
-        updateNavState('onNavHome');
-    }
-    isImportFromScanner = false;
-}
-
-function openTextImportModal() {
-    closeAllModals(false);
-    document.getElementById('rawTextImportArea').value = "";
-    document.getElementById('textImportModal').style.display = 'flex';
-    if (navigator.clipboard && navigator.clipboard.readText) {
-        navigator.clipboard.readText().then(t => {
-            if (t) document.getElementById('rawTextImportArea').value = t;
-        }).catch(() => {});
-    }
-}
-
-function processTextImport() {
-    const val = document.getElementById('rawTextImportArea').value;
-    const parsed = parsePayloadOrList(val);
-    if (!parsed || parsed.length === 0) {
-        alert("Не удалось распознать штрихкоды или артикулы в тексте.");
-        return;
-    }
-    document.getElementById('textImportModal').style.display = 'none';
-    showImportModal(parsed);
-}
-
-/* ================= NUMPAD МОДАЛ ================= */
-let numpadVal = "1", numpadMode = "", targetCode = "", editingItemId = null;
-function updateNumpadUI() {
-    const display = document.getElementById('numpadDisplay'), group = document.getElementById('numpadInputGroup'), pasteBtn = document.getElementById('numpadPasteBtn');
-    if (numpadMode === 'manual') { group.classList.add('manual-mode'); pasteBtn.style.display = 'flex'; display.innerHTML = numpadVal ? `${numpadVal}<span class="numpad-cursor"></span>` : `<span class="numpad-placeholder">Ввод ШК...</span><span class="numpad-cursor"></span>`; } 
-    else { group.classList.remove('manual-mode'); pasteBtn.style.display = 'none'; display.innerHTML = `${numpadVal || 0}<span class="numpad-cursor"></span>`; }
-    display.scrollLeft = display.scrollWidth;
-}
-function showNumpadForManual() { numpadMode = 'manual'; numpadVal = ""; document.getElementById('numpadTitle').style.display = "none"; updateNumpadUI(); document.getElementById('numpadModal').style.display = 'flex'; }
-function showNumpadForScan(code) { numpadMode = 'scan'; targetCode = code; let defQty = 1; if (MASTER_CODES[code] && MASTER_CODES[code].qtyInBox) { defQty = MASTER_CODES[code].qtyInBox; } numpadVal = String(defQty); const titleEl = document.getElementById('numpadTitle'); titleEl.style.display = "block"; titleEl.innerText = `ШК: ${code}`; updateNumpadUI(); document.getElementById('numpadModal').style.display = 'flex'; }
-function showNumpadForEdit(itemId) { const item = currentCart.find(i => i.id === itemId); if (!item) return; numpadMode = 'edit'; editingItemId = itemId; numpadVal = String(item.qty); const titleEl = document.getElementById('numpadTitle'); titleEl.style.display = "block"; titleEl.innerText = `Изменить кол-во: ${item.code}`; updateNumpadUI(); document.getElementById('numpadModal').style.display = 'flex'; }
-function numPress(n) { 
-    if (numpadVal === "0" && numpadMode !== 'manual') numpadVal = ""; 
-    // Защита от переполнения (8 символов достаточно для количества, 28 для ручного ввода ШК)
-    if (numpadMode === 'manual' && numpadVal.length < 28) numpadVal += String(n); 
-    else if (numpadMode !== 'manual' && numpadVal.length < 8) numpadVal += String(n);
-    updateNumpadUI(); 
-}
-function numClear() { numpadVal = ""; updateNumpadUI(); }
-function numBackspace() { numpadVal = numpadVal.slice(0, -1); updateNumpadUI(); }
-function numCancel() { document.getElementById('numpadModal').style.display = 'none'; if (numpadMode === 'scan' && settings.continuous) { isScannerPaused = false; } else { updateNavState('onNavHome'); } }
-function numConfirm() {
-    document.getElementById('numpadModal').style.display = 'none';
-    if (numpadMode === 'manual') { const c = numpadVal.trim(); if (c) { addOrUpdateItem(c, 1); } updateNavState('onNavHome'); } 
-    else if (numpadMode === 'scan') { const q = parseInt(numpadVal) || 1; if (targetCode) addOrUpdateItem(targetCode, Math.max(1, q)); if (settings.continuous) { isScannerPaused = false; } else { stopScanner(true); } } 
-    else if (numpadMode === 'edit') { const item = currentCart.find(i => i.id === editingItemId); if (item) { item.qty = Math.max(1, parseInt(numpadVal) || 1); saveState(); renderCart(); } }
-}
-async function pasteToNumpad() { try { const text = await navigator.clipboard.readText(); if (text) { numpadVal = text.trim(); updateNumpadUI(); } } catch(e) {} }
-
-/* ================= ПАЛЛЕТЫ ================= */
-function openPalletModal() {
-    document.getElementById('palletInput').value = activePallet;
-    const pallets = [...new Set(currentCart.map(i => i.pallet))], container = document.getElementById('existingPallets');
-    container.innerHTML = pallets.map(p => `<button style="background:var(--input-bg); border:1px solid var(--border-color); border-radius:11px; padding:8px 14px; font-weight:800; font-size:14px; color:var(--text-main); cursor:pointer; transition: background-color var(--t-theme), color var(--t-theme), border-color var(--t-theme);" onclick="document.getElementById('palletInput').value='${p}'">${p}</button>`).join('');
-    document.getElementById('palletModal').style.display = 'flex';
-}
-function confirmPallet() { activePallet = document.getElementById('palletInput').value.trim() || "Основной"; document.getElementById('currentPalletBadge').innerHTML = `<span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>${activePallet}`; document.getElementById('palletModal').style.display = 'none'; }
-
-/* ================= УПРАВЛЕНИЕ КАМЕРОЙ ================= */
-let html5QrCode = null, isScannerPaused = false, torchEnabled = false, allCamerasList = [], selectedCameraId = null, isSwitchingCamera = false;
-
-function parseRussianCameraLabel(cam, index) {
-    const l = (cam.label || '').toLowerCase(), isFront = l.includes('front') || l.includes('user') || l.includes('передн') || l.includes('selfie') || l.includes('facing front');
-    let title = "", desc = "", badge = "";
-    if (isFront) { title = l.includes('1') ? "Фронтальная (основная)" : "Фронтальная (широкая)"; desc = "Передняя селфи-камера"; badge = "Селфи"; } 
-    else {
-        if (l.includes('camera2 0') || l.includes('camera 0') || l.includes('0, facing back') || (index === 0 && !l.includes('2') && !l.includes('3'))) { title = "Основная камера (1x)"; desc = "Автофокус и высокая чёткость"; badge = "Основная"; } 
-        else if (l.includes('camera2 2') || l.includes('ultra') || l.includes('wide') || l.includes('0.5') || l.includes('широк')) { title = "Сверхширокоугольная (0.5x)"; desc = "Широкий обзор, фиксированный фокус"; badge = "Ширик"; } 
-        else if (l.includes('camera2 3') || l.includes('macro') || l.includes('макро')) { title = "Макро-объектив"; desc = "Для съёмки с очень близкого расстояния"; badge = "Макро"; } 
-        else if (l.includes('tele') || l.includes('zoom') || l.includes('теле')) { title = "Телеобъектив (зум)"; desc = "Оптическое увеличение"; badge = "Зум"; } 
-        else if (l.includes('depth') || l.includes('глубин')) { title = "Датчик глубины"; desc = "Вспомогательный сенсор резкости"; badge = "Сенсор"; } 
-        else { title = `Задняя камера #${index + 1}`; desc = cam.label || "Тыловой датчик изображения"; badge = "Задняя"; }
-    }
-    return { title, desc, badge };
-}
-
-async function detectAllCameras() {
-    if (allCamerasList && allCamerasList.length > 0) return allCamerasList;
-    try {
-        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-            const devs = await navigator.mediaDevices.enumerateDevices(), vDevs = devs.filter(d => d.kind === 'videoinput');
-            if (vDevs.length > 0 && vDevs.some(d => d.label)) { allCamerasList = vDevs.map((d, i) => ({ id: d.deviceId, label: d.label || `Камера ${i + 1}` })); return allCamerasList; }
-        }
-        const cameras = await Html5Qrcode.getCameras(); if (cameras && cameras.length) { allCamerasList = cameras; }
-    } catch(e) {} return allCamerasList;
-}
-
-function getBestDefaultCameraId() {
-    if (!allCamerasList || !allCamerasList.length) return null;
-    let best = allCamerasList.find(c => { const l = (c.label || '').toLowerCase(), isNotFront = !l.includes('front') && !l.includes('user') && !l.includes('передн') && !l.includes('selfie'), isNotAux = !l.includes('ultra') && !l.includes('0.5') && !l.includes('macro') && !l.includes('depth') && !l.includes('широк'); return isNotFront && isNotAux && (l.includes('camera2 0') || l.includes('camera 0') || l.includes('0, facing back') || l.includes('main')); }); if (best) return best.id;
-    best = allCamerasList.find(c => { const l = (c.label || '').toLowerCase(), isNotFront = !l.includes('front') && !l.includes('user') && !l.includes('передн') && !l.includes('selfie'); return isNotFront && !l.includes('ultra') && !l.includes('0.5') && !l.includes('macro') && !l.includes('depth') && !l.includes('широк'); }); if (best) return best.id;
-    return allCamerasList.find(c => !c.label.toLowerCase().includes('front'))?.id || allCamerasList[0].id;
-}
-
-async function startScanner() {
-    isScannerPaused = false; document.getElementById('scannerModal').style.display = 'flex'; closeCameraMenu();
-    if (html5QrCode) { try { await html5QrCode.stop(); } catch(e) {} try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; }
-    html5QrCode = new Html5Qrcode("reader", { formatsToSupport: [ Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.EAN_8, Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.QR_CODE ], experimentalFeatures: { useBarCodeDetectorIfSupported: true }, verbose: false });
-    const config = { fps: 22 }; await detectAllCameras(); if (!selectedCameraId) selectedCameraId = getBestDefaultCameraId();
-    try {
-        if (selectedCameraId) await html5QrCode.start(selectedCameraId, config, onCodeDetected); else await html5QrCode.start({ facingMode: "environment" }, config, onCodeDetected);
-        updateZoomButtonsUI(1);
-    } catch(err) {
-        try { await html5QrCode.start({ facingMode: "environment" }, config, onCodeDetected); updateZoomButtonsUI(1); } 
-        catch(err2) { document.getElementById('scannerModal').style.display = 'none'; if (html5QrCode) { try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; } alert("Не удалось запустить камеру. Проверьте разрешения в браузере."); updateNavState('onNavHome'); }
-    }
-}
-
-async function toggleCameraOverlayMenu() {
-    const overlay = document.getElementById('camOverlayMenu'); if (overlay && overlay.style.display === 'flex') { closeCameraMenu(); return; }
-    if (!allCamerasList || !allCamerasList.length) await detectAllCameras(); if (!allCamerasList || !allCamerasList.length) { showToast("Камеры не найдены"); return; }
-    const listContainer = document.getElementById('camOverlayList');
-    listContainer.innerHTML = allCamerasList.map((cam, idx) => {
-        const info = parseRussianCameraLabel(cam, idx), isActive = (cam.id === selectedCameraId) || (!selectedCameraId && idx === 0);
-        return `<div class="cam-choice-card ${isActive ? 'active' : ''}" onclick="selectCameraById('${cam.id}')"><div class="cam-card-info"><div class="cam-card-name"><span>${info.title}</span><span class="cam-badge-tag">${info.badge}</span></div><div class="cam-card-desc">${info.desc}</div></div>${isActive ? '<span class="app-icon" style="color:var(--btn-add); width:20px; height:20px;"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>' : ''}</div>`;
-    }).join(''); overlay.style.display = 'flex';
-}
-
-function closeCameraMenu(e) { if (e) e.stopPropagation(); const overlay = document.getElementById('camOverlayMenu'); if (overlay) overlay.style.display = 'none'; }
-
-async function selectCameraById(camId) {
-    closeCameraMenu(); if (isSwitchingCamera) return; if (selectedCameraId === camId && html5QrCode && html5QrCode.isScanning) return;
-    isSwitchingCamera = true; selectedCameraId = camId; triggerVibrate(20);
-    try {
-        torchEnabled = false; const torchBtn = document.getElementById('torchBtn'); if (torchBtn) torchBtn.classList.remove('active'); updateZoomButtonsUI(1);
-        if (html5QrCode) { try { if (html5QrCode.isScanning) await html5QrCode.stop(); } catch(e) {} try { await html5QrCode.clear(); } catch(e) {} html5QrCode = null; }
-        await new Promise(r => setTimeout(r, 250));
-        html5QrCode = new Html5Qrcode("reader", { experimentalFeatures: { useBarCodeDetectorIfSupported: true }, verbose: false });
-        await html5QrCode.start(camId, { fps: 22 }, onCodeDetected); showToast("Камера переключена");
-    } catch(err) {
-        showToast("Ошибка запуска сенсора");
-        try { if (!html5QrCode) html5QrCode = new Html5Qrcode("reader", { experimentalFeatures: { useBarCodeDetectorIfSupported: true } }); await html5QrCode.start({ facingMode: "environment" }, { fps: 22 }, onCodeDetected); } catch(e2) {}
-    } finally { isSwitchingCamera = false; }
-}
-
-async function toggleTorch() {
-    if (!html5QrCode) return; const nextTorchState = !torchEnabled; let applied = false;
-    try { const videoEl = document.querySelector("#reader video"); if (videoEl && videoEl.srcObject) { const track = videoEl.srcObject.getVideoTracks()[0]; if (track) { const caps = track.getCapabilities ? track.getCapabilities() : {}; if ('torch' in caps || caps.fillLightMode) { await track.applyConstraints({ advanced: [{ torch: nextTorchState }] }); applied = true; } } } } catch(e) {}
-    if (!applied) { try { await html5QrCode.applyVideoConstraints({ advanced: [{ torch: nextTorchState }] }); applied = true; } catch(e) {} }
-    if (applied) { torchEnabled = nextTorchState; document.getElementById('torchBtn').classList.toggle('active', torchEnabled); triggerVibrate(15); } else { showToast("Вспышка недоступна на этой камере"); }
-}
-
-function updateZoomButtonsUI(lvl) { document.querySelectorAll('.zoom-btn').forEach(b => { b.classList.toggle('active', Number(b.dataset.zoom) === lvl); }); }
-
-function setZoomLevel(lvl) {
-    updateZoomButtonsUI(lvl); triggerVibrate(15);
-    try { const videoEl = document.querySelector("#reader video"); if (videoEl && videoEl.srcObject) { const track = videoEl.srcObject.getVideoTracks()[0]; if (track) { const caps = track.getCapabilities ? track.getCapabilities() : {}; if (caps.zoom) { const target = Math.min(Math.max(lvl, caps.zoom.min || 1), caps.zoom.max || 10); track.applyConstraints({ advanced: [{ zoom: target }] }).catch(() => {}); return; } } } } catch(e) {}
-    if (html5QrCode) { html5QrCode.applyVideoConstraints({ advanced: [{ zoom: lvl }] }).catch(() => {}); }
-}
-
-function onCodeDetected(decodedText) {
-    if (isScannerPaused) return;
-    isScannerPaused = true;
-
-    // Проверяем, не является ли отсканированное пакетным списком
-    const batchItems = parsePayloadOrList(decodedText);
-    if (batchItems && batchItems.length > 1) {
-        showImportModal(batchItems);
-        return;
-    }
-
-    if (batchItems && batchItems.length === 1 && (decodedText.includes('-') || decodedText.includes(';') || decodedText.includes('\t'))) {
-        showImportModal(batchItems);
-        return;
-    }
-
-    // Одиночный товар
-    const cleanCode = normalizeBarcode(decodedText);
-    showNumpadForScan(cleanCode);
-}
-
-function stopScanner(resetNav = true) {
-    closeCameraMenu();
-    if (html5QrCode) { html5QrCode.stop().then(() => { try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; }).catch(() => { try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; }); }
-    torchEnabled = false; const torchBtn = document.getElementById('torchBtn'); if (torchBtn) torchBtn.classList.remove('active'); document.getElementById('scannerModal').style.display = 'none'; if (resetNav) updateNavState('onNavHome');
-}
-
-/* ================= ВЫГРУЗКА PAYLOAD ================= */
-function showTransferQR() {
-    if (currentCart.length === 0) { alert("Корзина пуста!"); updateNavState('onNavHome'); return; }
-    const payload = currentCart.map(i => `${i.code}-${i.qty}`).join(" "); const totalQty = currentCart.reduce((a, b) => a + b.qty, 0); saveToArchivePayload(currentCart, totalQty); renderQRModal(payload);
-}
-function showPalletQR(palletName) {
-    const items = currentCart.filter(i => i.pallet === palletName); if (!items.length) return; const payload = items.map(i => `${i.code}-${i.qty}`).join(" "); renderQRModal(payload);
-}
-function renderQRModal(payload) {
-    document.getElementById('qrModal').style.display = 'flex'; const canvas = document.getElementById('finalQrCanvas'); canvas.style.display = 'block'; window.currentPayload = payload; QRCode.toCanvas(canvas, payload, { width: 320, margin: 2 });
-}
-function closeQRModal() { document.getElementById('qrModal').style.display = 'none'; updateNavState('onNavHome'); }
-function downloadQR() { const canvas = document.getElementById('finalQrCanvas'), a = document.createElement('a'); a.download = `TSD_QR_${Date.now()}.png`; a.href = canvas.toDataURL("image/png"); a.click(); }
-function shareToExcel() { if (navigator.clipboard && window.currentPayload) { navigator.clipboard.writeText(window.currentPayload); showToast("Данные скопированы в буфер!"); } }
-
-function saveToArchivePayload(cartItems, totalQty) {
-    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [], now = new Date(), payload = cartItems.map(i => `${i.code}-${i.qty}`).join(" ");
-    archive.unshift({ date: now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }), lines: cartItems.length, totalQty: totalQty || cartItems.reduce((a, b) => a + b.qty, 0), payload: payload, cartData: JSON.parse(JSON.stringify(cartItems)) });
-    if (archive.length > 15) archive.pop(); localStorage.setItem('tsd_archive', JSON.stringify(archive));
-}
-
-function renderArchive() {
-    const archive = JSON.parse(localStorage.getItem('tsd_archive')) || [], container = document.getElementById('archiveList');
-    if (!archive.length) { container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);font-weight:700;">Архив пуст</div>'; } 
-    else { container.innerHTML = archive.map((item, idx) => `<div class="archive-item"><div class="archive-info-row"><div class="archive-date">${item.date}</div><div class="archive-stats">${item.lines} строк | ${item.totalQty} шт.</div></div><div class="archive-actions"><button class="archive-btn-secondary" onclick="restoreArchiveToTable(${idx})">Вернуть в таблицу</button><button class="archive-btn" onclick="openArchiveQR(${idx})">Показать QR</button></div></div>`).join(''); }
-}
-
-function openArchive() { document.getElementById('mainMenuModal').style.display = 'none'; renderArchive(); document.getElementById('archiveModal').style.display = 'flex'; }
-function restoreArchiveToTable(idx) { const archive = JSON.parse(localStorage.getItem('tsd_archive')) || []; if (!archive[idx]) return; if (confirm("Заменить текущие строки данными из архива?")) { if (archive[idx].cartData) { currentCart = JSON.parse(JSON.stringify(archive[idx].cartData)); } saveState(); renderCart(); closeAllModals(true); } }
-function openArchiveQR(idx) { const archive = JSON.parse(localStorage.getItem('tsd_archive')) || []; if (archive[idx] && archive[idx].payload) { document.getElementById('archiveModal').style.display = 'none'; renderQRModal(archive[idx].payload); } else { showToast("Ошибка: нет данных payload"); } }
-
-function openInstruction() { document.getElementById('mainMenuModal').style.display = 'none'; document.getElementById('instructionModal').style.display = 'flex'; }
-function openAbout() { document.getElementById('mainMenuModal').style.display = 'none'; document.getElementById('aboutModal').style.display = 'flex'; }
-
-/* ================= НАВИГАЦИЯ ================= */
-const navbarEl = document.getElementById('navbar'), beadEl = document.getElementById('navBead'), glowEl = document.getElementById('navGlow');
-
-function moveBeadTo(targetBtn, animate = true) {
-    if (!targetBtn || !navbarEl || !beadEl || !glowEl) return;
-    const navRect = navbarEl.getBoundingClientRect(), btnRect = targetBtn.getBoundingClientRect(), x = (btnRect.left - navRect.left) + (btnRect.width / 2) - 24;
-    if (!animate || isLowFx()) { beadEl.style.transition = 'none'; glowEl.style.transition = 'none'; }
-    beadEl.style.transform = `translateX(${x}px)`; glowEl.style.transform = `translateX(${x}px)`;
-    if (!animate || isLowFx()) { void beadEl.offsetWidth; beadEl.style.transition = ''; glowEl.style.transition = ''; }
-}
-
-function playBeadSquash() { if (isLowFx()) return; const beadInner = document.getElementById('beadInner'); if (!beadInner) return; beadInner.classList.remove('squash'); void beadInner.offsetWidth; beadInner.classList.add('squash'); }
-
-function switchNav(btn, executeAction = true) {
-    if (btn.classList.contains('active')) return; document.querySelectorAll('.navitem').forEach(el => el.classList.remove('active')); btn.classList.add('active'); moveBeadTo(btn, true);
-    if (!isLowFx()) setTimeout(playBeadSquash, 360);
-    if (executeAction) { const action = btn.dataset.action; if (typeof window[action] === 'function') window[action](); }
-}
-
-function updateNavState(actionName) {
-    const btn = document.querySelector(`[data-action="${actionName}"]`);
-    if (btn) { document.querySelectorAll('.navitem').forEach(el => el.classList.remove('active')); btn.classList.add('active'); moveBeadTo(btn, true); if (!isLowFx()) setTimeout(playBeadSquash, 360); }
-}
-
-function onNavHome() { closeAllModals(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-function onNavManual() { closeAllModals(false); showNumpadForManual(); }
-function onNavScan() { closeAllModals(false); startScanner(); }
-function onNavExport() { closeAllModals(false); showTransferQR(); }
-function onNavMenu() { closeAllModals(false); document.getElementById('mainMenuModal').style.display = 'flex'; }
-
-function closeAllModals(resetNavToHome = true) {
-    document.querySelectorAll('.modal-overlay').forEach(m => { if (m.id === 'scannerModal' && m.style.display !== 'none') stopScanner(false); else m.style.display = 'none'; });
-    if (resetNavToHome) updateNavState('onNavHome');
-}
-
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', function(e) {
-        if (e.target === this) {
-            if (this.id === 'numpadModal') numCancel();
-            else if (this.id === 'importModal') cancelImport();
-            else closeAllModals();
-        }
-    });
-});
-
-window.onload = function() {
-    initDeleteButton();
-    const saved = localStorage.getItem('tsd_lite_cart'); if (saved) { try { currentCart = JSON.parse(saved); } catch(e) {} }
-    renderCart(); const home = document.querySelector('[data-action="onNavHome"]'); if (home) moveBeadTo(home, false);
-};
-
-window.addEventListener('resize', () => { const active = document.querySelector('.navitem.active'); if (active) moveBeadTo(active, false); });
-
-(function createStars(){
-  const layer = document.getElementById('starsLayer'); if(!layer) return;
-  for (let i = 0; i < 8; i++){
-    const star = document.createElement('span'); star.className = 'star';
-    star.style.setProperty('--x', Math.random() * 60 + 6 + '%'); star.style.setProperty('--y', Math.random() * 55 + 15 + '%'); star.style.setProperty('--d', (Math.random() * 1.6).toFixed(2) + 's');
-    layer.appendChild(star);
-  }
-})();
-
-if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); }); }
-</script>
-</body>
-</html>
+function clearSearch() {
+    searchQuery = "";
+    const input = docume
