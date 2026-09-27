@@ -270,18 +270,18 @@ header {
 .delete-label { position: relative; display: inline-block; white-space: nowrap; }
 .letter { position: relative; display: inline-block; will-change: transform, opacity; }
 @keyframes flyIntoBinActive { 0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; } 35% { transform: translate(calc(var(--dx) * 0.4), calc(var(--dy) * 0.3 - 40px)) rotate(calc(var(--rot) * 0.5)) scale(1.3); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.15); opacity: 0; } }
-.letter.flying { animation: flyIntoBinActive 0.45s var(--ease-smooth) forwards; animation-delay: var(--delay, 0s); }
+.letter.flying { animation: flyIntoBinActive 0.35s var(--ease-smooth) forwards; animation-delay: var(--delay, 0s); }
 
 .cart-card { display: flex; flex-direction: column; flex: 1; background: rgba(var(--bg-card-rgb), 0.94); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 14px 10px; box-shadow: var(--shadow-soft); transition: background-color var(--t-theme), border-color var(--t-theme), box-shadow var(--t-theme); }
 .cart-header { padding: 0 4px 12px; display: flex; justify-content: space-between; align-items: center; }
 #cartStats { padding: 6px 11px; border-radius: 10px; background: var(--input-bg); color: var(--text-muted); font-size: 13px; font-weight: 800; transition: background-color var(--t-theme), color var(--t-theme); }
 
 .table-responsive { width: 100%; border-radius: 14px; margin-top: 2px; overflow-x: hidden; }
-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; table-layout: auto; }
+table { width: 100%; border-collapse: separate; border-spacing: 0 6px; table-layout: auto; }
 thead th { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); padding: 4px 3px 8px; text-align: center; border: none; white-space: nowrap; transition: color var(--t-theme); }
-tr { background: var(--input-bg); border-radius: var(--radius-md); box-shadow: 0 2px 6px rgba(0,0,0,0.03); transition: background-color var(--t-theme), border-color var(--t-theme); }
-[data-theme="dark"] tr { background: #13201a; }
-td { padding: 8px 6px; vertical-align: middle; text-align: center; border: none; }
+tr { background: var(--input-bg); border-radius: var(--radius-md); box-shadow: 0 1px 4px rgba(0,0,0,0.04); transition: background-color var(--t-theme), border-color var(--t-theme); }
+[data-theme="dark"] tr { background: #1a2c24; } /* Слегка осветлен фон рядов для лучшего контраста */
+td { padding: 8px 6px; vertical-align: middle; text-align: center; border: none; border-bottom: 1px solid transparent; }
 td:first-child { border-top-left-radius: var(--radius-md); border-bottom-left-radius: var(--radius-md); padding-left: 10px; width: 60%; }
 td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-radius: var(--radius-md); padding-right: 10px; width: 15%; }
 
@@ -378,8 +378,14 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 
 #qr-shaded-region, #reader__scan_region, #reader__dashboard_section, #reader div[style*="border"], #reader svg { display: none !important; border: none !important; box-shadow: none !important; }
 
-.custom-scanner-target { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68%; aspect-ratio: 1; max-width: 280px; max-height: 280px; border-radius: 22px; box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.52); pointer-events: none; z-index: 5; animation: targetPulse 2.8s infinite ease-in-out; }
-@keyframes targetPulse { 0%, 100% { box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.52), inset 0 0 0px rgba(255, 255, 255, 0); } 50% { box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.62), inset 0 0 20px rgba(255, 255, 255, 0.12); } }
+/* Оптимизация рамки сканера под GPU */
+.custom-scanner-target { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68%; aspect-ratio: 1; max-width: 280px; max-height: 280px; border-radius: 22px; box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.55); pointer-events: none; z-index: 5; }
+.custom-scanner-target::after {
+    content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.3);
+    animation: pulseOpacity 2.5s infinite ease-in-out; will-change: opacity; pointer-events: none;
+}
+@keyframes pulseOpacity { 0%, 100% { opacity: 0.1; } 50% { opacity: 1; } }
+
 .custom-scanner-target .corner { position: absolute; width: 42px; height: 42px; border-color: #cbd5e1; border-style: solid; border-width: 0; filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.6)); }
 .corner.tl { top: -2px; left: -2px; border-top-width: 4px; border-left-width: 4px; border-top-left-radius: 22px; animation: bracketTL 2s infinite ease-in-out; }
 .corner.tr { top: -2px; right: -2px; border-top-width: 4px; border-right-width: 4px; border-top-right-radius: 22px; animation: bracketTR 2s infinite ease-in-out; }
@@ -390,7 +396,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 @keyframes bracketBL { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(4px, -4px); } }
 @keyframes bracketBR { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-4px, -4px); } }
 
-.laser { position: absolute; left: 8%; right: 8%; height: 2px; background: linear-gradient(90deg, transparent 0%, rgba(203, 213, 225, 0.5) 15%, #e2e8f0 50%, rgba(203, 213, 225, 0.5) 85%, transparent 100%); box-shadow: 0 0 10px rgba(226, 232, 240, 0.6), 0 0 20px rgba(148, 163, 184, 0.3); border-radius: 999px; animation: scanGrayFade 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate; }
+.laser { position: absolute; left: 8%; right: 8%; height: 2px; background: linear-gradient(90deg, transparent 0%, rgba(203, 213, 225, 0.5) 15%, #e2e8f0 50%, rgba(203, 213, 225, 0.5) 85%, transparent 100%); box-shadow: 0 0 10px rgba(226, 232, 240, 0.6), 0 0 20px rgba(148, 163, 184, 0.3); border-radius: 999px; animation: scanGrayFade 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate; will-change: transform, opacity; }
 @keyframes scanGrayFade { 0% { top: 6%; opacity: 0; transform: scaleX(0.7); } 18% { opacity: 0.9; transform: scaleX(1); } 82% { opacity: 0.9; transform: scaleX(1); } 100% { top: 94%; opacity: 0; transform: scaleX(0.7); } }
 
 .scan-hint { position: absolute; left: -24px; right: -24px; bottom: -44px; text-align: center; font-size: 14px; font-weight: 800; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -423,7 +429,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .num-btn { background: var(--numpad-btn); color: var(--text-main); border: none; border-radius: 20px; font-size: 26px; font-weight: 900; padding: 18px 0; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; transition: background-color var(--t-theme), color var(--t-theme), transform 0.18s var(--ease-spring), box-shadow 0.18s; }
 .num-btn:active { background: var(--border-color); transform: scale(0.88) translateY(3px); box-shadow: none; }
 .num-btn.action-c { color: #dc2626; font-size: 22px; }
-.num-btn.action-back { color: #d97706; }
+.num-btn.action-back { color: var(--text-muted); }
 .numpad-actions { display: flex; gap: 12px; margin-top: 18px; }
 .btn-numpad-cancel { flex: 1; background: var(--border-color); color: var(--text-main); border: none; border-radius: 20px; font-size: 16px; font-weight: 800; cursor: pointer; padding: 18px 0; transition: background-color var(--t-theme), color var(--t-theme); }
 .btn-numpad-ok { flex: 2; background: var(--btn-add); color: white; border: none; border-radius: 20px; font-size: 18px; font-weight: 800; padding: 18px 0; box-shadow: 0 8px 20px rgba(5, 150, 105, 0.32); }
@@ -431,13 +437,14 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 /* ---------- BOTTOM NAVBAR ---------- */
 .navbar-wrap { position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; padding: 0 16px calc(12px + var(--safe-b)); pointer-events: none; z-index: 10005; }
 .navbar { position: relative; width: 100%; max-width: 520px; height: 62px; pointer-events: auto; }
-.navbar-goo-layer { position: absolute; inset: 0; filter: url(#gooey-filter-soft); }
+/* Аппаратное ускорение для тяжелого SVG-фильтра */
+.navbar-goo-layer { position: absolute; inset: 0; filter: url(#gooey-filter-soft); will-change: filter, transform; transform: translateZ(0); }
 .navbar-pill { position: absolute; inset: 0; background: var(--nav-bg); border-radius: 30px; box-shadow: var(--nav-shadow); border: 1px solid var(--nav-border); transition: background-color var(--t-theme), border-color var(--t-theme), box-shadow var(--t-theme); }
 .navbar-bead { position: absolute; top: -13px; left: 0; width: 48px; height: 48px; transform: translateX(0); transition: transform 0.45s var(--ease-spring); will-change: transform; }
 .bead-inner { width: 100%; height: 100%; border-radius: 50%; background: var(--nav-bead); transition: background-color var(--t-theme); }
 @keyframes beadSquash { 0% { transform: scale(1, 1); } 35% { transform: scale(1.18, 0.82); } 65% { transform: scale(0.92, 1.08); } 100% { transform: scale(1, 1); } }
 .bead-inner.squash { animation: beadSquash 0.42s var(--ease-spring); }
-.navbar-glow { position: absolute; top: -13px; left: 0; width: 48px; height: 48px; border-radius: 50%; transform: translateX(0); transition: transform 0.45s var(--ease-spring); box-shadow: 0 0 16px 4px var(--nav-glow); opacity: 0.85; pointer-events: none; }
+.navbar-glow { position: absolute; top: -13px; left: 0; width: 48px; height: 48px; border-radius: 50%; transform: translateX(0); transition: transform 0.45s var(--ease-spring); box-shadow: 0 0 16px 4px var(--nav-glow); opacity: 0.85; pointer-events: none; will-change: transform; }
 .navbar-items-layer { position: relative; z-index: 2; display: flex; height: 100%; }
 .navitem { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; height: 100%; background: none; border: none; cursor: pointer; color: var(--nav-icon-inactive); -webkit-user-select: none; user-select: none; }
 .navitem-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; transition: transform 0.45s var(--ease-spring), color var(--t-theme); }
@@ -521,6 +528,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 [data-fx="low"] .cam-overlay-menu { backdrop-filter: none !important; }
 [data-fx="low"] .character .head, [data-fx="low"] .arms .arm-l-group, [data-fx="low"] .arms .arm-r-group, [data-fx="low"] .code-lines rect, [data-fx="low"] .tg-icon-fly { animation: none !important; }
 [data-fx="low"] .custom-scanner-target { animation: none !important; }
+[data-fx="low"] .custom-scanner-target::after { animation: none !important; opacity: 0.1; }
 [data-fx="low"] .corner { animation: none !important; }
 </style>
 </head>
@@ -1228,7 +1236,7 @@ window.zoomBarcode = function(code) {
     triggerVibrate([25, 45, 25]);
     document.getElementById('zoomTextLabel').innerText = code; window.currentZoomCode = code; 
     document.getElementById('zoomModal').style.display = 'flex';
-    renderBarcodeSafe('zoomedBarcodeSvg', code, { width: 2.2, height: 85, displayValue: false, margin: 8 });
+    renderBarcodeSafe('zoomedBarcodeSvg', code, { width: 2.2, height: 85, displayValue: false, margin: 8 }, false);
 };
 window.startCopyTimer = function(e) { if (zoomCopyTimer) clearTimeout(zoomCopyTimer); zoomCopyTimer = setTimeout(() => { copyToClipboard(window.currentZoomCode); triggerVibrate([30, 50, 30]); }, 500); };
 window.cancelCopyTimer = function(e) { if (zoomCopyTimer) { clearTimeout(zoomCopyTimer); zoomCopyTimer = null; } };
@@ -1252,11 +1260,30 @@ function updateCartStats() {
 }
 function saveState() { localStorage.setItem('tsd_lite_cart', JSON.stringify(currentCart)); }
 
-function renderBarcodeSafe(targetId, code, opts = {}) {
-    const el = document.getElementById(targetId); if (!el) return;
-    try { JsBarcode(el, code, Object.assign({ format: "EAN13", lineColor: "#000", background: "transparent" }, opts)); } 
-    catch (e) { try { JsBarcode(el, code, Object.assign({ format: "CODE128", lineColor: "#000", background: "transparent" }, opts)); } 
-    catch (err) { el.outerHTML = `<span style="font-family:monospace;font-weight:900;font-size:13px;transition:color var(--t-theme);">${code}</span>`; } }
+function renderBarcodeSafe(targetContainerId, code, opts = {}, wrapWithDiv = true) {
+    const container = document.getElementById(targetContainerId); 
+    if (!container) return;
+    
+    // Если нужно создать SVG внутри контейнера (фикс перезаписи DOM)
+    let el = container;
+    if (wrapWithDiv) {
+        container.innerHTML = `<svg id="svg-${targetContainerId}"></svg>`;
+        el = document.getElementById(`svg-${targetContainerId}`);
+    }
+
+    try { 
+        JsBarcode(el, code, Object.assign({ format: "EAN13", lineColor: "#000", background: "transparent" }, opts)); 
+    } 
+    catch (e) { 
+        try { JsBarcode(el, code, Object.assign({ format: "CODE128", lineColor: "#000", background: "transparent" }, opts)); } 
+        catch (err) { 
+            if (wrapWithDiv) {
+                container.innerHTML = `<span style="font-family:monospace;font-weight:900;font-size:13px;transition:color var(--t-theme);">${code}</span>`; 
+            } else {
+                container.style.display = 'none';
+            }
+        } 
+    }
 }
 
 function addOrUpdateItem(code, qty = 1) {
@@ -1279,12 +1306,17 @@ function renderCart() {
         html += `<tbody><tr class="pallet-header-row"><td colspan="3"><div class="pallet-header-content"><span class="pallet-name"><span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span>${palletName}</span><button class="btn-pallet-qr" onclick="showPalletQR('${palletName}')"><span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Показать QR</button></div></td></tr>`;
         items.forEach((item, idx) => {
             const delay = Math.min(idx * 40, 240); const rowStyle = !isLowFx() ? `style="animation: popIn 0.4s var(--ease-spring) ${delay}ms forwards; opacity: 0;"` : '';
-            html += `<tr ${rowStyle}><td class="inline-barcode-container" onclick="zoomBarcode('${item.code}')"><div class="barcode-wrapper"><svg id="bc-${item.id}"></svg></div></td><td><button class="qty-box" onclick="showNumpadForEdit('${item.id}')">${item.qty}</button></td><td><button class="btn-remove" onclick="removeItem('${item.id}')"><span class="app-icon" style="width:18px;height:18px;"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></button></td></tr>`;
+            // Используем div вместо svg для безопасности ререндера
+            html += `<tr ${rowStyle}><td class="inline-barcode-container" onclick="zoomBarcode('${item.code}')"><div id="bc-wrap-${item.id}" class="barcode-wrapper"></div></td><td><button class="qty-box" onclick="showNumpadForEdit('${item.id}')">${item.qty}</button></td><td><button class="btn-remove" onclick="removeItem('${item.id}')"><span class="app-icon" style="width:18px;height:18px;"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></button></td></tr>`;
         });
         html += `</tbody>`;
     }
     html += `</table></div>`; area.innerHTML = html;
-    currentCart.forEach(item => { renderBarcodeSafe(`bc-${item.id}`, item.code, { width: 1.5, height: 36, displayValue: true, fontSize: 13, margin: 1 }); });
+    
+    // Рендерим штрихкоды
+    currentCart.forEach(item => { 
+        renderBarcodeSafe(`bc-wrap-${item.id}`, item.code, { width: 1.5, height: 36, displayValue: true, fontSize: 13, margin: 1 }, true); 
+    });
     updateCartStats();
 }
 
@@ -1528,14 +1560,20 @@ function updateNumpadUI() {
 function showNumpadForManual() { numpadMode = 'manual'; numpadVal = ""; document.getElementById('numpadTitle').style.display = "none"; updateNumpadUI(); document.getElementById('numpadModal').style.display = 'flex'; }
 function showNumpadForScan(code) { numpadMode = 'scan'; targetCode = code; let defQty = 1; if (MASTER_CODES[code] && MASTER_CODES[code].qtyInBox) { defQty = MASTER_CODES[code].qtyInBox; } numpadVal = String(defQty); const titleEl = document.getElementById('numpadTitle'); titleEl.style.display = "block"; titleEl.innerText = `ШК: ${code}`; updateNumpadUI(); document.getElementById('numpadModal').style.display = 'flex'; }
 function showNumpadForEdit(itemId) { const item = currentCart.find(i => i.id === itemId); if (!item) return; numpadMode = 'edit'; editingItemId = itemId; numpadVal = String(item.qty); const titleEl = document.getElementById('numpadTitle'); titleEl.style.display = "block"; titleEl.innerText = `Изменить кол-во: ${item.code}`; updateNumpadUI(); document.getElementById('numpadModal').style.display = 'flex'; }
-function numPress(n) { if (numpadVal === "0" && numpadMode !== 'manual') numpadVal = ""; if (numpadVal.length < 28) numpadVal += String(n); updateNumpadUI(); }
+function numPress(n) { 
+    if (numpadVal === "0" && numpadMode !== 'manual') numpadVal = ""; 
+    // Защита от переполнения (8 символов достаточно для количества, 28 для ручного ввода ШК)
+    if (numpadMode === 'manual' && numpadVal.length < 28) numpadVal += String(n); 
+    else if (numpadMode !== 'manual' && numpadVal.length < 8) numpadVal += String(n);
+    updateNumpadUI(); 
+}
 function numClear() { numpadVal = ""; updateNumpadUI(); }
 function numBackspace() { numpadVal = numpadVal.slice(0, -1); updateNumpadUI(); }
-function numCancel() { document.getElementById('numpadModal').style.display = 'none'; if (numpadMode === 'scan' && settings.continuous) isScannerPaused = false; else updateNavState('onNavHome'); }
+function numCancel() { document.getElementById('numpadModal').style.display = 'none'; if (numpadMode === 'scan' && settings.continuous) { isScannerPaused = false; } else { updateNavState('onNavHome'); } }
 function numConfirm() {
     document.getElementById('numpadModal').style.display = 'none';
     if (numpadMode === 'manual') { const c = numpadVal.trim(); if (c) { addOrUpdateItem(c, 1); } updateNavState('onNavHome'); } 
-    else if (numpadMode === 'scan') { const q = parseInt(numpadVal) || 1; if (targetCode) addOrUpdateItem(targetCode, Math.max(1, q)); if (settings.continuous) isScannerPaused = false; else stopScanner(true); } 
+    else if (numpadMode === 'scan') { const q = parseInt(numpadVal) || 1; if (targetCode) addOrUpdateItem(targetCode, Math.max(1, q)); if (settings.continuous) { isScannerPaused = false; } else { stopScanner(true); } } 
     else if (numpadMode === 'edit') { const item = currentCart.find(i => i.id === editingItemId); if (item) { item.qty = Math.max(1, parseInt(numpadVal) || 1); saveState(); renderCart(); } }
 }
 async function pasteToNumpad() { try { const text = await navigator.clipboard.readText(); if (text) { numpadVal = text.trim(); updateNumpadUI(); } } catch(e) {} }
