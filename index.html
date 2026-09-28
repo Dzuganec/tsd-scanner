@@ -437,7 +437,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .dropdown-item:active { background: var(--input-bg); }
 .menu-icon-box { width: 34px; height: 34px; border-radius: 11px; background: var(--input-bg); display: flex; align-items: center; justify-content: center; color: var(--btn-add); transition: background-color var(--t-theme); }
 
-/* МЕНЮ КАМЕРЫ */
+/* МЕНЮ КАМЕРЫ (КАМЕРЫ И НАСТРОЙКИ СОВМЕСТНОЕ ИСПОЛЬЗОВАНИЕ КЛАССОВ) */
 .cam-overlay-menu { position: absolute; inset: 0; z-index: 50; background: rgba(var(--bg-card-rgb), 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: var(--radius-lg); padding: 16px 14px 18px; display: flex; flex-direction: column; text-align: left; animation: slideInUp 0.25s var(--ease-smooth); border: 1px solid var(--border-color); box-shadow: 0 12px 36px rgba(0,0,0,0.15); transition: background-color var(--t-theme), border-color var(--t-theme); }
 .cam-overlay-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); transition: border-color var(--t-theme); }
 .cam-overlay-title { font-size: 16px; font-weight: 900; color: var(--text-main); display: flex; align-items: center; gap: 8px; transition: color var(--t-theme); }
@@ -466,12 +466,12 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .instruction-content ol { margin: 10px 0 0 0; padding-left: 20px; }
 .instruction-content li { margin-bottom: 12px; line-height: 1.5; color: var(--text-main); transition: color var(--t-theme); }
 
-/* НАСТРОЙКИ */
+/* НАСТРОЙКИ (ГЛОБАЛЬНЫЕ И СКАНЕРА) */
 .settings-section { text-align: left; margin-bottom: 6px; }
 .settings-section-title { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; padding: 14px 4px 6px; transition: color var(--t-theme); }
 .settings-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 13px 4px; border-bottom: 1px solid var(--border-color); transition: border-color var(--t-theme); }
 .settings-row:last-child { border-bottom: none; }
-.settings-row-label { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 800; }
+.settings-row-label { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 800; color: var(--text-main); transition: color var(--t-theme); }
 .settings-row-text small { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 2px; transition: color var(--t-theme); }
 
 .toggle { width: 54px; height: 32px; border-radius: 20px; background: var(--border-color); position: relative; cursor: pointer; transition: background-color var(--t-theme); flex-shrink: 0; }
@@ -566,7 +566,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 
 #qr-shaded-region, #reader__scan_region, #reader__dashboard_section, #reader div[style*="border"], #reader svg { display: none !important; border: none !important; box-shadow: none !important; }
 
-.custom-scanner-target { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68%; aspect-ratio: 1; max-width: 280px; max-height: 280px; border-radius: 22px; box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.55); pointer-events: none; z-index: 5; transition: box-shadow 0.25s, border-color 0.25s; }
+.custom-scanner-target { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); width: 68%; aspect-ratio: 1; max-width: 280px; max-height: 280px; border-radius: 22px; box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.55); pointer-events: none; z-index: 5; transition: box-shadow 0.25s, border-color 0.25s; }
 .custom-scanner-target::after {
     content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.3);
     animation: pulseOpacity 2.5s infinite ease-in-out; will-change: opacity; pointer-events: none;
@@ -589,13 +589,18 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .scan-hint { position: absolute; left: -24px; right: -24px; bottom: -44px; text-align: center; font-size: 14px; font-weight: 800; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; gap: 8px; }
 
 /* КНОПКИ СКАНЕРА */
-.btn-icon-torch { position: absolute; right: 14px; top: 14px; z-index: 6; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; width: 44px; height: 44px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform var(--t-fast) var(--ease-spring), background-color var(--t-fast); }
-.btn-icon-torch.active { background: #f59e0b; color: #111; box-shadow: 0 0 16px rgba(245, 158, 11, 0.65); }
 .btn-icon-camera { position: absolute; left: 14px; top: 14px; z-index: 6; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; width: 44px; height: 44px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform var(--t-fast) var(--ease-spring), background-color var(--t-fast); }
 .btn-icon-camera:active { transform: scale(0.88); background: rgba(255,255,255,0.25); }
-.zoom-pill { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); display: flex; gap: 4px; background: rgba(0,0,0,0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 24px; padding: 4px; z-index: 6; border: 1px solid rgba(255,255,255,0.15); }
+
+.btn-icon-settings { position: absolute; right: 14px; top: 14px; z-index: 6; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; width: 44px; height: 44px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform var(--t-fast) var(--ease-spring), background-color var(--t-fast); }
+.btn-icon-settings:active { transform: scale(0.88); background: rgba(255,255,255,0.25); }
+
+.zoom-pill { position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); display: flex; gap: 4px; background: rgba(0,0,0,0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 24px; padding: 4px; z-index: 6; border: 1px solid rgba(255,255,255,0.15); }
 .zoom-btn { border: none; background: transparent; color: rgba(255,255,255,0.85); font-weight: 800; font-size: 13.5px; padding: 7px 14px; border-radius: 18px; cursor: pointer; transition: background-color var(--t-fast), color var(--t-fast); }
 .zoom-btn.active { background: #fff; color: #111827; }
+
+.btn-icon-torch { position: absolute; right: 14px; bottom: 14px; z-index: 6; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; width: 44px; height: 44px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform var(--t-fast) var(--ease-spring), background-color var(--t-fast); }
+.btn-icon-torch.active { background: #f59e0b; color: #111; box-shadow: 0 0 16px rgba(245, 158, 11, 0.65); }
 
 /* ---------- NUMPAD И ДИАЛОГИ ПОВЕРХ КАМЕРЫ ---------- */
 #numpadModal, #importModal, #textImportModal {
@@ -926,7 +931,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
             </div>
             <div class="dropdown-item" onclick="openSettings()">
                 <div class="menu-icon-box"><span class="app-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span></div>
-                Настройки
+                Глобальные настройки
             </div>
             <div class="dropdown-item" onclick="openInstruction()">
                 <div class="menu-icon-box"><span class="app-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span></div>
@@ -941,52 +946,13 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
     </div>
 </div>
 
-<!-- НАСТРОЙКИ -->
+<!-- ГЛОБАЛЬНЫЕ НАСТРОЙКИ -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal-content">
-        <h3 class="modal-title">Настройки</h3>
+        <h3 class="modal-title">Глобальные настройки</h3>
         
         <div class="settings-section">
-            <div class="settings-section-title">Сканирование</div>
-            <div class="settings-row">
-                <div class="settings-row-label">
-                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
-                    <div class="settings-row-text">Непрерывный скан<small>Не закрывать камеру</small></div>
-                </div>
-                <div class="toggle" id="toggle-continuous" onclick="toggleSetting('continuous')"><div class="toggle-thumb"></div></div>
-            </div>
-            <div class="settings-row">
-                <div class="settings-row-label">
-                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
-                    <div class="settings-row-text">Авто-объектив<small>Сама подбирает макро/телевик</small></div>
-                </div>
-                <div class="toggle" id="toggle-autolens" onclick="toggleSetting('autolens')"><div class="toggle-thumb"></div></div>
-            </div>
-            <div class="settings-row">
-                <div class="settings-row-label">
-                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
-                    <div class="settings-row-text">AR-трекинг кода<small>Зеленая подсветка контура ШК</small></div>
-                </div>
-                <div class="toggle" id="toggle-arTracking" onclick="toggleSetting('arTracking')"><div class="toggle-thumb"></div></div>
-            </div>
-        </div>
-
-        <!-- ПОДДЕРЖИВАЕМЫЕ ФОРМАТЫ (КАК НА СКРИНШОТЕ) -->
-        <div class="settings-section">
-            <div class="settings-section-title">Поддерживаемые форматы (ШК)</div>
-            <p style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; padding: 0 4px;">Выберите активные стандарты для максимальной скорости распознавания:</p>
-            <div class="formats-grid" id="formatsGrid"></div>
-        </div>
-
-        <div class="settings-section">
             <div class="settings-section-title">Сигналы и отклик</div>
-            <div class="settings-row">
-                <div class="settings-row-label">
-                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
-                    <div class="settings-row-text">Звук сканера<small>Приятный пик считывания</small></div>
-                </div>
-                <div class="toggle" id="toggle-sound" onclick="toggleSetting('sound')"><div class="toggle-thumb"></div></div>
-            </div>
             <div class="settings-row">
                 <div class="settings-row-label">
                     <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
@@ -1000,13 +966,6 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
                     <div class="settings-row-text">Вибрация кнопок<small>Тактильный Haptic отклик</small></div>
                 </div>
                 <div class="toggle" id="toggle-vibro" onclick="toggleSetting('vibro')"><div class="toggle-thumb"></div></div>
-            </div>
-            <div class="settings-row">
-                <div class="settings-row-label">
-                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span>
-                    <div class="settings-row-text">Голосовое подтверждение<small>Озвучивать количество (TTS)</small></div>
-                </div>
-                <div class="toggle" id="toggle-tts" onclick="toggleSetting('tts')"><div class="toggle-thumb"></div></div>
             </div>
         </div>
 
@@ -1056,16 +1015,29 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
                 </span>
             </button>
 
+            <!-- НОВАЯ КНОПКА НАСТРОЕК КАМЕРЫ -->
+            <button class="btn-icon-settings" id="camSettingsBtn" onclick="openCamSettings()" title="Настройки сканера">
+                <span class="app-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                </span>
+            </button>
+
+            <!-- ПЕРЕНЕСЕНО ВНИЗ -->
             <div class="zoom-pill" id="zoomPill">
                 <button class="zoom-btn active" data-zoom="1" onclick="setZoomLevel(1)">1x</button>
                 <button class="zoom-btn" data-zoom="2" onclick="setZoomLevel(2)">2x</button>
                 <button class="zoom-btn" data-zoom="3" onclick="setZoomLevel(3)">3x</button>
             </div>
 
+            <!-- ПЕРЕНЕСЕНО ВНИЗ -->
             <button class="btn-icon-torch" id="torchBtn" onclick="toggleTorch()" title="Включить фонарик">
                 <span class="app-icon"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
             </button>
 
+            <!-- ОВЕРЛЕЙ ДЛЯ ВЫБОРА КАМЕРЫ -->
             <div class="cam-overlay-menu" id="camOverlayMenu" style="display:none;">
                 <div class="cam-overlay-header">
                     <span class="cam-overlay-title">
@@ -1078,6 +1050,65 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
                 </div>
                 <div class="cam-overlay-list" id="camOverlayList"></div>
             </div>
+
+            <!-- ОВЕРЛЕЙ ДЛЯ НАСТРОЕК СКАНЕРА -->
+            <div class="cam-overlay-menu" id="camSettingsOverlay" style="display:none;">
+                <div class="cam-overlay-header">
+                    <span class="cam-overlay-title">
+                        <span class="app-icon" style="color:var(--btn-add); width:18px; height:18px;"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+                        Настройки камеры
+                    </span>
+                    <button class="cam-overlay-close" onclick="closeCamSettings()">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="cam-overlay-list">
+                    <div class="settings-section">
+                        <div class="settings-row" style="padding-top:0;">
+                            <div class="settings-row-label">
+                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
+                                <div class="settings-row-text">Непрерывный скан<small>Не закрывать камеру</small></div>
+                            </div>
+                            <div class="toggle" id="toggle-cam-continuous" onclick="toggleSetting('continuous', 'toggle-cam-continuous')"><div class="toggle-thumb"></div></div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-row-label">
+                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
+                                <div class="settings-row-text">Авто-объектив<small>Сама подбирает макро/телевик</small></div>
+                            </div>
+                            <div class="toggle" id="toggle-cam-autolens" onclick="toggleSetting('autolens', 'toggle-cam-autolens')"><div class="toggle-thumb"></div></div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-row-label">
+                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+                                <div class="settings-row-text">AR-трекинг кода<small>Зеленая подсветка контура ШК</small></div>
+                            </div>
+                            <div class="toggle" id="toggle-cam-arTracking" onclick="toggleSetting('arTracking', 'toggle-cam-arTracking')"><div class="toggle-thumb"></div></div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-row-label">
+                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
+                                <div class="settings-row-text">Звук сканера<small>Приятный пик считывания</small></div>
+                            </div>
+                            <div class="toggle" id="toggle-cam-sound" onclick="toggleSetting('sound', 'toggle-cam-sound')"><div class="toggle-thumb"></div></div>
+                        </div>
+                        <div class="settings-row" style="border-bottom:none;">
+                            <div class="settings-row-label">
+                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span>
+                                <div class="settings-row-text">Голосовое подтверждение<small>Озвучивать количество (TTS)</small></div>
+                            </div>
+                            <div class="toggle" id="toggle-cam-tts" onclick="toggleSetting('tts', 'toggle-cam-tts')"><div class="toggle-thumb"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section" style="margin-top: 6px;">
+                        <div class="settings-section-title">Поддерживаемые форматы</div>
+                        <p style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; padding: 0 4px;">Выберите активные стандарты для максимальной скорости распознавания:</p>
+                        <div class="formats-grid" id="camFormatsGrid"></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <button class="btn-modal btn-close" onclick="stopScanner()">Завершить</button>
     </div>
@@ -1211,10 +1242,9 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
             <ol>
                 <li>Нажмите кнопку сканера снизу, чтобы отсканировать штрихкод товара.</li>
                 <li>Товар добавится в таблицу с количеством. Вы можете изменить количество нажав на него.</li>
-                <li>Вверху экрана сканера доступны кнопки: <b>Выбор камеры</b> (слева), <b>Зум 1x, 2x, 3x</b> (по центру), <b>Фонарик</b> (справа).</li>
+                <li>Прямо в камере доступны кнопки: <b>Настройки сканера</b> (сверху справа), <b>Выбор камеры</b> (сверху слева), <b>Зум 1x, 2x, 3x</b> и <b>Фонарик</b> (снизу).</li>
                 <li>Нажмите на штрихкод в таблице для увеличения. <b>Зажмите увеличенный код пальцем на 0.5 сек</b>, чтобы скопировать.</li>
                 <li>Нажмите кнопку <b>«Выгрузить»</b>, чтобы сгенерировать итоговый QR-код со всеми собранными данными для переноса на ПК или другой телефон.</li>
-                <li>При сканировании общего QR-кода со списком приложение автоматически откроет окно импорта прямо поверх камеры.</li>
             </ol>
         </div>
         <button class="btn-modal btn-close" onclick="closeAllModals()">Понятно</button>
@@ -1274,7 +1304,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
               <line x1="0" y1="125" x2="160" y2="125" stroke="var(--border-color)" stroke-width="4" stroke-linecap="round" />
             </svg>
             <p style="font-size: 19px; font-weight: 900; color: var(--text-main); transition: color var(--t-theme);">Сергей Джугань</p>
-            <p style="font-size: 13.5px; color: var(--text-muted); font-weight: 700; margin-top: 2px; transition: color var(--t-theme);">Версия: 18.5 (AR Tracking & Formats Edition)</p>
+            <p style="font-size: 13.5px; color: var(--text-muted); font-weight: 700; margin-top: 2px; transition: color var(--t-theme);">Версия: 18.7 (Cam Settings & Custom Pause Edition)</p>
             <a href="https://t.me/segarey" target="_blank" class="tg-dev-btn">
                 <svg class="tg-icon-fly" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Написать в Telegram
             </a>
@@ -1438,7 +1468,7 @@ applyTheme(settings.theme);
 function paintToggle(id, val) { const el = document.getElementById(id); if (el) el.classList.toggle('active', !!val); }
 
 function renderFormatsGrid() {
-    const container = document.getElementById('formatsGrid');
+    const container = document.getElementById('camFormatsGrid');
     if (!container) return;
     if (!settings.formats) settings.formats = {};
     container.innerHTML = BARCODE_DEFINITIONS.map(f => {
@@ -1460,11 +1490,13 @@ function renderFormatsGrid() {
     }).join('');
 }
 
+let formatsChanged = false;
 function toggleFormat(key) {
     if (!settings.formats) settings.formats = {};
     settings.formats[key] = !settings.formats[key];
     saveSettings();
     renderFormatsGrid();
+    formatsChanged = true;
 }
 
 function getSelectedHtml5Formats() {
@@ -1495,22 +1527,50 @@ function getSelectedHtml5Formats() {
     ];
 }
 
+// Открытие глобальных настроек (в главном меню)
 function openSettings() {
     document.getElementById('mainMenuModal').style.display = 'none';
-    paintToggle('toggle-continuous', settings.continuous);
-    paintToggle('toggle-autolens', settings.autolens);
-    paintToggle('toggle-arTracking', settings.arTracking);
-    paintToggle('toggle-sound', settings.sound);
     paintToggle('toggle-uiSound', settings.uiSound);
     paintToggle('toggle-vibro', settings.vibro);
-    paintToggle('toggle-tts', settings.tts);
     paintToggle('toggle-amoled', settings.amoled);
     paintToggle('toggle-simplemode', isLowFx());
-    renderFormatsGrid();
     document.getElementById('settingsModal').style.display = 'flex';
 }
 
-function toggleSetting(key) { settings[key] = !settings[key]; paintToggle('toggle-' + key, settings[key]); saveSettings(); }
+// Открытие настроек камеры (в сканере)
+function openCamSettings() {
+    const overlay = document.getElementById('camSettingsOverlay');
+    if (overlay.style.display === 'flex') { closeCamSettings(); return; }
+    
+    closeCameraMenu(); // Закрываем меню выбора камеры, если оно открыто
+    paintToggle('toggle-cam-continuous', settings.continuous);
+    paintToggle('toggle-cam-autolens', settings.autolens);
+    paintToggle('toggle-cam-arTracking', settings.arTracking);
+    paintToggle('toggle-cam-sound', settings.sound);
+    paintToggle('toggle-cam-tts', settings.tts);
+    
+    formatsChanged = false;
+    renderFormatsGrid();
+    
+    overlay.style.display = 'flex';
+}
+
+function closeCamSettings() {
+    document.getElementById('camSettingsOverlay').style.display = 'none';
+    
+    // Если поменяли форматы штрихкодов, нужно мягко перезагрузить сенсор камеры
+    if (formatsChanged && html5QrCode && html5QrCode.isScanning) {
+        formatsChanged = false;
+        selectCameraById(selectedCameraId);
+    }
+}
+
+function toggleSetting(key, elementId = null) { 
+    settings[key] = !settings[key]; 
+    if (elementId) paintToggle(elementId, settings[key]);
+    else paintToggle('toggle-' + key, settings[key]); 
+    saveSettings(); 
+}
 
 function toggleSimpleMode() {
     const willBeLow = !isLowFx();
@@ -2050,7 +2110,7 @@ function getBestDefaultCameraId() {
 }
 
 async function startScanner() {
-    isScannerPaused = false; document.getElementById('scannerModal').style.display = 'flex'; closeCameraMenu();
+    isScannerPaused = false; document.getElementById('scannerModal').style.display = 'flex'; closeCameraMenu(); closeCamSettings();
     if (html5QrCode) { try { await html5QrCode.stop(); } catch(e) {} try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; }
     
     const activeFormats = getSelectedHtml5Formats();
@@ -2084,6 +2144,8 @@ async function startScanner() {
 
 async function toggleCameraOverlayMenu() {
     const overlay = document.getElementById('camOverlayMenu'); if (overlay && overlay.style.display === 'flex') { closeCameraMenu(); return; }
+    closeCamSettings(); // Если открыты настройки - закрываем
+    
     if (!allCamerasList || !allCamerasList.length) await detectAllCameras(); if (!allCamerasList || !allCamerasList.length) { showToast("Камеры не найдены"); return; }
     const listContainer = document.getElementById('camOverlayList');
     listContainer.innerHTML = allCamerasList.map((cam, idx) => {
@@ -2095,7 +2157,7 @@ async function toggleCameraOverlayMenu() {
 function closeCameraMenu(e) { if (e) e.stopPropagation(); const overlay = document.getElementById('camOverlayMenu'); if (overlay) overlay.style.display = 'none'; }
 
 async function selectCameraById(camId) {
-    closeCameraMenu(); if (isSwitchingCamera) return; if (selectedCameraId === camId && html5QrCode && html5QrCode.isScanning) return;
+    closeCameraMenu(); if (isSwitchingCamera) return; if (selectedCameraId === camId && html5QrCode && html5QrCode.isScanning && !formatsChanged) return;
     isSwitchingCamera = true; selectedCameraId = camId; triggerVibrate(20);
     try {
         torchEnabled = false; const torchBtn = document.getElementById('torchBtn'); if (torchBtn) torchBtn.classList.remove('active'); updateZoomButtonsUI(1);
@@ -2195,12 +2257,13 @@ function drawARHighlight(decodedResult) {
         flashScannerTarget();
     }
 
+    // Время жизни зеленой рамки перед появлением клавиатуры (1 секунда)
     setTimeout(() => {
         if (canvas) {
             const c2 = canvas.getContext('2d');
             if (c2) c2.clearRect(0, 0, canvas.width, canvas.height);
         }
-    }, 750);
+    }, 1000); 
 }
 
 function flashScannerTarget() {
@@ -2222,6 +2285,7 @@ function onCodeDetected(decodedText, decodedResult) {
 
     drawARHighlight(decodedResult);
 
+    // Пауза 1.2 секунды перед открытием окна Numpad (чтобы рассмотреть AR-рамку)
     setTimeout(() => {
         const batchItems = parsePayloadOrList(decodedText);
         if (batchItems && batchItems.length > 1) {
@@ -2236,11 +2300,12 @@ function onCodeDetected(decodedText, decodedResult) {
 
         const cleanCode = normalizeBarcode(decodedText);
         showNumpadForScan(cleanCode);
-    }, 280);
+    }, 1200); 
 }
 
 function stopScanner(resetNav = true) {
     closeCameraMenu();
+    closeCamSettings();
     if (html5QrCode) { html5QrCode.stop().then(() => { try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; }).catch(() => { try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; }); }
     torchEnabled = false; const torchBtn = document.getElementById('torchBtn'); if (torchBtn) torchBtn.classList.remove('active'); document.getElementById('scannerModal').style.display = 'none'; if (resetNav) updateNavState('onNavHome');
 }
