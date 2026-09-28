@@ -131,7 +131,6 @@
     --nav-icon-inactive: #758e82;
 }
 
-/* AMOLED ТЕМА ДЛЯ TRUE BLACK */
 html[data-amoled="true"][data-theme="dark"] body { --bg-body: #000000; --bg-card: #050505; --modal-bg: rgba(0,0,0,0.9); }
 html[data-amoled="true"][data-theme="dark"] body::before, 
 html[data-amoled="true"][data-theme="dark"] body::after { display: none !important; }
@@ -319,6 +318,108 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 #snackbar.show { visibility: visible; opacity: 1; transform: translate(-50%, 0) scale(1); pointer-events: auto; transition: background-color var(--t-theme), color var(--t-theme), border-color var(--t-theme), visibility 0s 0s, transform 0.35s var(--ease-spring), opacity 0.3s ease; }
 .snackbar-btn { background: var(--btn-add); color: white; border: none; padding: 9px 18px; border-radius: 13px; font-weight: 800; font-size: 13.5px; cursor: pointer; display: none; }
 
+/* ---------- ПЛАШКА УСТАНОВКИ ПРИЛОЖЕНИЯ (PWA PROMPT) ---------- */
+.install-banner-wrap {
+    position: fixed;
+    left: 0; right: 0;
+    bottom: calc(76px + var(--safe-b));
+    display: none;
+    justify-content: center;
+    padding: 0 14px;
+    z-index: 10003;
+    pointer-events: none;
+}
+.install-banner {
+    pointer-events: auto;
+    width: 100%;
+    max-width: 520px;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border-color);
+    border-radius: 22px;
+    box-shadow: 0 14px 34px -4px rgba(0, 0, 0, 0.22);
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: popIn 0.35s var(--ease-smooth);
+    transition: background-color var(--t-theme), border-color var(--t-theme);
+}
+.install-banner-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.install-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+}
+.install-info {
+    flex: 1;
+    text-align: left;
+}
+.install-title {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--text-main);
+    line-height: 1.2;
+}
+.install-desc {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    line-height: 1.3;
+    margin-top: 2px;
+}
+.install-banner-close {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.install-actions {
+    display: flex;
+    gap: 8px;
+}
+.btn-install-ok {
+    flex: 2;
+    background: var(--btn-add);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 9px 12px;
+    font-weight: 800;
+    font-size: 13.5px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(5,150,105,0.25);
+    transition: transform var(--t-fast);
+}
+.btn-install-ok:active { transform: scale(0.96); }
+.btn-install-later {
+    flex: 1;
+    background: var(--input-bg);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 9px 12px;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+}
+
 /* ---------- МОДАЛЬНЫЕ ОКНА ---------- */
 .modal-overlay { display: none; position: fixed; inset: 0; background: var(--modal-bg); backdrop-filter: var(--modal-backdrop); -webkit-backdrop-filter: var(--modal-backdrop); z-index: 9999; justify-content: center; align-items: flex-end; transition: background-color var(--t-theme); }
 .modal-content { background: var(--bg-card); color: var(--text-main); padding: 28px 20px 20px; border-radius: 34px 34px 0 0; width: 100%; max-width: 520px; text-align: center; box-shadow: 0 -22px 46px rgba(0,0,0,0.22); animation: slideInUp 0.35s var(--ease-smooth); position: relative; padding-bottom: calc(95px + var(--safe-b)); max-height: 94vh; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; transition: background-color var(--t-theme), color var(--t-theme); }
@@ -364,7 +465,6 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .instruction-content { padding: 10px 0; font-size: 15px; color: var(--text-muted); font-weight: 600; text-align: left; transition: color var(--t-theme); }
 .instruction-content ol { margin: 10px 0 0 0; padding-left: 20px; }
 .instruction-content li { margin-bottom: 12px; line-height: 1.5; color: var(--text-main); transition: color var(--t-theme); }
-.browser-note { padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; text-align: left; background: var(--warn-bg); color: var(--warn-text); margin-top: 15px; transition: background-color var(--t-theme), color var(--t-theme); }
 
 /* НАСТРОЙКИ */
 .settings-section { text-align: left; margin-bottom: 6px; }
@@ -379,6 +479,83 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .toggle.active { background: var(--btn-add); }
 .toggle.active .toggle-thumb { transform: translateX(22px); }
 
+/* Сетка выбора форматов штрихкодов в настройках */
+.formats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 6px;
+}
+.format-card {
+    background: var(--input-bg);
+    border: 1.5px solid var(--border-color);
+    border-radius: 14px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    cursor: pointer;
+    transition: border-color var(--t-fast), background-color var(--t-theme);
+}
+.format-card.checked {
+    border-color: var(--btn-add);
+    background: var(--info-bg);
+}
+[data-theme="dark"] .format-card.checked {
+    background: rgba(16, 185, 129, 0.18);
+    border-color: #10b981;
+}
+.format-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.format-card-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.format-tag {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(5, 150, 105, 0.12);
+    color: var(--btn-add);
+}
+.format-card-desc {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    line-height: 1.3;
+}
+.format-checkbox {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-card);
+    flex-shrink: 0;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+.format-card.checked .format-checkbox {
+    background: var(--btn-add);
+    border-color: var(--btn-add);
+    color: #fff;
+}
+.format-checkbox svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 3;
+}
+
 /* ---------- СКАНЕР И ПРИЦЕЛ ---------- */
 #scannerModal { align-items: center; z-index: 9999; }
 #scannerModal .modal-content { height: 100dvh; max-height: 100dvh; width: 100%; max-width: 100%; border-radius: 0; margin: 0; display: flex; flex-direction: column; padding: calc(36px + var(--safe-t)) 16px calc(95px + var(--safe-b)) 16px; }
@@ -389,8 +566,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 
 #qr-shaded-region, #reader__scan_region, #reader__dashboard_section, #reader div[style*="border"], #reader svg { display: none !important; border: none !important; box-shadow: none !important; }
 
-/* Оптимизация рамки сканера под GPU */
-.custom-scanner-target { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68%; aspect-ratio: 1; max-width: 280px; max-height: 280px; border-radius: 22px; box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.55); pointer-events: none; z-index: 5; transition: box-shadow 0.2s, border-color 0.2s; }
+.custom-scanner-target { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68%; aspect-ratio: 1; max-width: 280px; max-height: 280px; border-radius: 22px; box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.55); pointer-events: none; z-index: 5; transition: box-shadow 0.25s, border-color 0.25s; }
 .custom-scanner-target::after {
     content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.3);
     animation: pulseOpacity 2.5s infinite ease-in-out; will-change: opacity; pointer-events: none;
@@ -433,7 +609,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 .numpad-display { flex: 1; font-size: clamp(28px, 8vw, 34px); font-weight: 900; padding: 10px; text-align: left; color: var(--text-main); letter-spacing: 1px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; transition: color var(--t-theme); }
 .numpad-display::-webkit-scrollbar { display: none; }
 .numpad-cursor { display: inline-block; width: 2.5px; height: 0.9em; background-color: var(--btn-add); vertical-align: text-bottom; margin-left: 4px; margin-bottom: 2px; border-radius: 2px; animation: blinkCursor 1.1s step-end infinite; }
-@keyframes blinkCursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes blinkCursor { 0%, 100% { opacity: 1; } 50% { opacity: 1; } }
 .numpad-placeholder { color: var(--text-muted); opacity: 0.6; font-size: 16px; font-weight: 700; transition: color var(--t-theme); }
 .numpad-paste-btn { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 13px; width: 46px; height: 46px; display: flex; justify-content: center; align-items: center; cursor: pointer; flex-shrink: 0; transition: background-color var(--t-theme), color var(--t-theme), border-color var(--t-theme); }
 .numpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
@@ -448,7 +624,6 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 /* ---------- BOTTOM NAVBAR ---------- */
 .navbar-wrap { position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; padding: 0 16px calc(12px + var(--safe-b)); pointer-events: none; z-index: 10005; }
 .navbar { position: relative; width: 100%; max-width: 520px; height: 62px; pointer-events: auto; }
-/* Аппаратное ускорение для тяжелого SVG-фильтра */
 .navbar-goo-layer { position: absolute; inset: 0; filter: url(#gooey-filter-soft); will-change: filter, transform; transform: translateZ(0); }
 .navbar-pill { position: absolute; inset: 0; background: var(--nav-bg); border-radius: 30px; box-shadow: var(--nav-shadow); border: 1px solid var(--nav-border); transition: background-color var(--t-theme), border-color var(--t-theme), box-shadow var(--t-theme); }
 .navbar-bead { position: absolute; top: -13px; left: 0; width: 48px; height: 48px; transform: translateX(0); transition: transform 0.45s var(--ease-spring); will-change: transform; }
@@ -528,8 +703,6 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 
 .zoom-touch-target { position: relative; display: inline-block; cursor: pointer; border-radius: 16px; overflow: hidden; padding: 6px; transition: transform var(--t-fast), opacity var(--t-fast); }
 .zoom-touch-target:active { transform: scale(0.97); opacity: 0.85; }
-
-/* Безопасные стили для SVG в зум-модалке */
 #zoomedBarcodeContainer svg { max-width: 100%; max-height: 220px; display: block; margin: 0 auto; }
 
 [data-fx="low"] .sun, [data-fx="low"] .moon, [data-fx="low"] .clouds, [data-fx="low"] .stars { transition: none !important; animation: none !important; }
@@ -613,6 +786,32 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
             </button>
         </div>
         <div id="cartContentArea"></div>
+    </div>
+</div>
+
+<!-- ПЛАШКА УСТАНОВКИ НА РАБОЧИЙ СТОЛ (PWA) -->
+<div class="install-banner-wrap" id="installBannerWrap">
+    <div class="install-banner">
+        <div class="install-banner-main">
+            <div class="install-icon-box">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+            </div>
+            <div class="install-info">
+                <div class="install-title">Установите «Мой ТСД»</div>
+                <div class="install-desc">Быстрый запуск с рабочего стола и автономная работа сканера</div>
+            </div>
+            <button class="install-banner-close" onclick="dismissInstallBanner()" title="Закрыть">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="install-actions">
+            <button class="btn-install-later" onclick="dismissInstallBanner()">Позже</button>
+            <button class="btn-install-ok" onclick="triggerPwaInstall()">Установить</button>
+        </div>
     </div>
 </div>
 
@@ -746,6 +945,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 <div class="modal-overlay" id="settingsModal">
     <div class="modal-content">
         <h3 class="modal-title">Настройки</h3>
+        
         <div class="settings-section">
             <div class="settings-section-title">Сканирование</div>
             <div class="settings-row">
@@ -762,7 +962,22 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
                 </div>
                 <div class="toggle" id="toggle-autolens" onclick="toggleSetting('autolens')"><div class="toggle-thumb"></div></div>
             </div>
+            <div class="settings-row">
+                <div class="settings-row-label">
+                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+                    <div class="settings-row-text">AR-трекинг кода<small>Зеленая подсветка контура ШК</small></div>
+                </div>
+                <div class="toggle" id="toggle-arTracking" onclick="toggleSetting('arTracking')"><div class="toggle-thumb"></div></div>
+            </div>
         </div>
+
+        <!-- ПОДДЕРЖИВАЕМЫЕ ФОРМАТЫ (КАК НА СКРИНШОТЕ) -->
+        <div class="settings-section">
+            <div class="settings-section-title">Поддерживаемые форматы (ШК)</div>
+            <p style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; padding: 0 4px;">Выберите активные стандарты для максимальной скорости распознавания:</p>
+            <div class="formats-grid" id="formatsGrid"></div>
+        </div>
+
         <div class="settings-section">
             <div class="settings-section-title">Сигналы и отклик</div>
             <div class="settings-row">
@@ -794,6 +1009,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
                 <div class="toggle" id="toggle-tts" onclick="toggleSetting('tts')"><div class="toggle-thumb"></div></div>
             </div>
         </div>
+
         <div class="settings-section">
             <div class="settings-section-title">Производительность</div>
             <div class="settings-row">
@@ -811,6 +1027,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
                 <div class="toggle" id="toggle-simplemode" onclick="toggleSimpleMode()"><div class="toggle-thumb"></div></div>
             </div>
         </div>
+
         <button class="btn-modal btn-close" onclick="closeAllModals()">Готово</button>
     </div>
 </div>
@@ -821,7 +1038,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
         <h3 class="modal-title">Наведите камеру на штрихкод</h3>
         <div class="scanner-wrapper">
             <div id="reader"></div>
-            <!-- AR Canvas для трекинга -->
+            <!-- AR Canvas для трекинга контуров штрихкода -->
             <canvas id="arCanvas"></canvas>
             <div class="custom-scanner-target">
                 <div class="corner tl"></div><div class="corner tr"></div>
@@ -1057,7 +1274,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
               <line x1="0" y1="125" x2="160" y2="125" stroke="var(--border-color)" stroke-width="4" stroke-linecap="round" />
             </svg>
             <p style="font-size: 19px; font-weight: 900; color: var(--text-main); transition: color var(--t-theme);">Сергей Джугань</p>
-            <p style="font-size: 13.5px; color: var(--text-muted); font-weight: 700; margin-top: 2px; transition: color var(--t-theme);">Версия: 18.3 (Ultimate Features Edition)</p>
+            <p style="font-size: 13.5px; color: var(--text-muted); font-weight: 700; margin-top: 2px; transition: color var(--t-theme);">Версия: 18.5 (AR Tracking & Formats Edition)</p>
             <a href="https://t.me/segarey" target="_blank" class="tg-dev-btn">
                 <svg class="tg-icon-fly" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Написать в Telegram
             </a>
@@ -1071,7 +1288,7 @@ function isLowFx() { return document.documentElement.getAttribute('data-fx') ===
 
 document.addEventListener('pointerdown', function(e) {
     if (isLowFx()) return;
-    const target = e.target.closest('.btn-modal, .toggle, .pallet-bar');
+    const target = e.target.closest('.btn-modal, .toggle, .pallet-bar, .format-card');
     if (!target) return;
     const rect = target.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height);
@@ -1157,12 +1374,55 @@ const SoundFX = {
 function triggerVibrate(pattern = 12) { if (settings.vibro && navigator.vibrate) try { navigator.vibrate(pattern); } catch(e) {} }
 
 document.addEventListener('pointerdown', (e) => {
-    const interactive = e.target.closest('button, .navitem, .toggle, .pallet-bar, .dropdown-item, .qty-box, .numpad-paste-btn, .num-btn, .zoom-touch-target, .cam-choice-card, .daynight-toggle');
+    const interactive = e.target.closest('button, .navitem, .toggle, .pallet-bar, .dropdown-item, .qty-box, .numpad-paste-btn, .num-btn, .zoom-touch-target, .cam-choice-card, .daynight-toggle, .format-card');
     if (interactive) { SoundFX.tap(); triggerVibrate(12); }
 });
 
+/* ================= СПИСОК ФОРМАТОВ И ИХ ОПИСАНИЕ ================= */
+const BARCODE_DEFINITIONS = [
+    { key: 'ean_13', name: 'EAN-13', tag: 'Розница / Товары', desc: 'Основной 13-значный стандарт упаковки товаров в РФ, СНГ и Европе.' },
+    { key: 'ean_8', name: 'EAN-8', tag: 'Малые упаковки', desc: 'Компактный 8-значный код для небольших упаковок (жвачки, косметика, штучный товар).' },
+    { key: 'code_128', name: 'Code 128', tag: 'Склад и логистика', desc: 'Универсальный высокоплотный код. Используется маркетплейсами (WB, Ozon) и транспортными компаниями.' },
+    { key: 'data_matrix', name: 'Data Matrix', tag: 'Честный ЗНАК', desc: '2D-матрица для обязательной маркировки (обувь, табак, лекарства, вода, парфюмерия).' },
+    { key: 'qr_code', name: 'QR Code', tag: '2D-код / Ссылки', desc: 'Квадратный двухмерный код. Применяется для передачи списков ТСД, оплат (СБП) и URL-ссылок.' },
+    { key: 'itf', name: 'ITF-14', tag: 'Гофрокороба', desc: '14-значный штрихкод с широкими полосами для маркировки групповых коробок и паллет.' },
+    { key: 'code_39', name: 'Code 39', tag: 'Инвентарь', desc: 'Классический буквенно-цифровой штрихкод оборудования, шильдиков и заводских номеров.' },
+    { key: 'code_93', name: 'Code 93', tag: 'Компактный склад', desc: 'Плотная и защищенная версия Code 39 с контрольными суммами для электроники.' },
+    { key: 'codabar', name: 'Codabar', tag: 'Библиотеки / Лаборатории', desc: 'Специфический штрихкод для пробирок, анализов, книг и почтовых служб (FedEx).' },
+    { key: 'upc_a', name: 'UPC-A', tag: 'Импорт США', desc: 'Американский 12-значный аналог EAN-13. Часто встречается на импортных товарах из США.' },
+    { key: 'upc_e', name: 'UPC-E', tag: 'Импорт США (мини)', desc: 'Сжатая 6-значная версия UPC-A для компактной продукции американского рынка.' },
+    { key: 'pdf417', name: 'PDF417', tag: 'ЕГАИС / Акцизы', desc: 'Двумерный полосковый код. Используется на алкогольных марках, посадочных талонах и правах.' },
+    { key: 'aztec', name: 'Aztec Code', tag: 'Билеты / ЖД', desc: 'Двумерный код с «мишенью» в центре. Используется на ЖД-билетах (РЖД), авиабилетах и проездных.' }
+];
+
 /* ================= НАСТРОЙКИ & ТЕМА ================= */
-let settings = Object.assign({ theme: 'light', continuous: true, autolens: true, sound: true, uiSound: true, vibro: true, tts: false, amoled: false }, JSON.parse(localStorage.getItem('tsd_settings')) || {});
+let settings = Object.assign({
+    theme: 'light',
+    continuous: true,
+    autolens: true,
+    arTracking: true,
+    sound: true,
+    uiSound: true,
+    vibro: true,
+    tts: false,
+    amoled: false,
+    formats: {
+        ean_13: true,
+        ean_8: true,
+        code_128: true,
+        data_matrix: true,
+        qr_code: true,
+        itf: true,
+        code_39: false,
+        code_93: false,
+        codabar: false,
+        upc_a: true,
+        upc_e: false,
+        pdf417: false,
+        aztec: false
+    }
+}, JSON.parse(localStorage.getItem('tsd_settings')) || {});
+
 function saveSettings() { localStorage.setItem('tsd_settings', JSON.stringify(settings)); }
 function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
@@ -1177,16 +1437,76 @@ applyTheme(settings.theme);
 
 function paintToggle(id, val) { const el = document.getElementById(id); if (el) el.classList.toggle('active', !!val); }
 
+function renderFormatsGrid() {
+    const container = document.getElementById('formatsGrid');
+    if (!container) return;
+    if (!settings.formats) settings.formats = {};
+    container.innerHTML = BARCODE_DEFINITIONS.map(f => {
+        const isChecked = !!settings.formats[f.key];
+        return `
+            <div class="format-card ${isChecked ? 'checked' : ''}" onclick="toggleFormat('${f.key}')">
+                <div class="format-card-info">
+                    <div class="format-card-title">
+                        <span>${f.name}</span>
+                        <span class="format-tag">${f.tag}</span>
+                    </div>
+                    <div class="format-card-desc">${f.desc}</div>
+                </div>
+                <div class="format-checkbox">
+                    ${isChecked ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function toggleFormat(key) {
+    if (!settings.formats) settings.formats = {};
+    settings.formats[key] = !settings.formats[key];
+    saveSettings();
+    renderFormatsGrid();
+}
+
+function getSelectedHtml5Formats() {
+    const mapping = {
+        ean_13: Html5QrcodeSupportedFormats.EAN_13,
+        ean_8: Html5QrcodeSupportedFormats.EAN_8,
+        code_128: Html5QrcodeSupportedFormats.CODE_128,
+        data_matrix: Html5QrcodeSupportedFormats.DATA_MATRIX,
+        qr_code: Html5QrcodeSupportedFormats.QR_CODE,
+        itf: Html5QrcodeSupportedFormats.ITF,
+        code_39: Html5QrcodeSupportedFormats.CODE_39,
+        code_93: Html5QrcodeSupportedFormats.CODE_93,
+        codabar: Html5QrcodeSupportedFormats.CODABAR,
+        upc_a: Html5QrcodeSupportedFormats.UPC_A,
+        upc_e: Html5QrcodeSupportedFormats.UPC_E,
+        pdf417: Html5QrcodeSupportedFormats.PDF_417,
+        aztec: Html5QrcodeSupportedFormats.AZTEC
+    };
+    const active = [];
+    for (const [key, enabled] of Object.entries(settings.formats || {})) {
+        if (enabled && mapping[key] !== undefined) active.push(mapping[key]);
+    }
+    return active.length > 0 ? active : [
+        Html5QrcodeSupportedFormats.EAN_13,
+        Html5QrcodeSupportedFormats.CODE_128,
+        Html5QrcodeSupportedFormats.QR_CODE,
+        Html5QrcodeSupportedFormats.DATA_MATRIX
+    ];
+}
+
 function openSettings() {
     document.getElementById('mainMenuModal').style.display = 'none';
     paintToggle('toggle-continuous', settings.continuous);
     paintToggle('toggle-autolens', settings.autolens);
+    paintToggle('toggle-arTracking', settings.arTracking);
     paintToggle('toggle-sound', settings.sound);
     paintToggle('toggle-uiSound', settings.uiSound);
     paintToggle('toggle-vibro', settings.vibro);
     paintToggle('toggle-tts', settings.tts);
     paintToggle('toggle-amoled', settings.amoled);
     paintToggle('toggle-simplemode', isLowFx());
+    renderFormatsGrid();
     document.getElementById('settingsModal').style.display = 'flex';
 }
 
@@ -1200,6 +1520,51 @@ function toggleSimpleMode() {
     const activeBtn = document.querySelector('.navitem.active');
     if (activeBtn) moveBeadTo(activeBtn, false);
 }
+
+/* ================= УСТАНОВКА НА РАБОЧИЙ СТОЛ (PWA BANNER) ================= */
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const isDismissed = sessionStorage.getItem('tsd_install_dismissed');
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (!isDismissed && !isStandalone) {
+        setTimeout(() => {
+            const banner = document.getElementById('installBannerWrap');
+            if (banner) banner.style.display = 'flex';
+        }, 1200);
+    }
+});
+
+function dismissInstallBanner() {
+    const banner = document.getElementById('installBannerWrap');
+    if (banner) banner.style.display = 'none';
+    sessionStorage.setItem('tsd_install_dismissed', 'true');
+}
+
+function triggerPwaInstall() {
+    const banner = document.getElementById('installBannerWrap');
+    if (banner) banner.style.display = 'none';
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                showToast("Приложение добавляется на экран!");
+            }
+            deferredPrompt = null;
+        });
+    } else {
+        alert("Для добавления на рабочий стол откройте меню браузера (три точки) и выберите «Установить приложение» или «Добавить на главный экран».");
+    }
+}
+
+window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    const banner = document.getElementById('installBannerWrap');
+    if (banner) banner.style.display = 'none';
+    showToast("Приложение успешно установлено!");
+});
 
 /* ================= АНИМАЦИЯ КОРЗИНЫ ================= */
 let deleteLetters = [];
@@ -1334,7 +1699,6 @@ function addOrUpdateItem(code, qty = 1) {
     }
     saveState(); renderCart(); SoundFX.success(); triggerVibrate([20, 35, 20]); flashCartStats();
 
-    // Голосовое подтверждение TTS
     if (settings.tts && window.speechSynthesis) {
         window.speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(String(finalQty));
@@ -1688,14 +2052,33 @@ function getBestDefaultCameraId() {
 async function startScanner() {
     isScannerPaused = false; document.getElementById('scannerModal').style.display = 'flex'; closeCameraMenu();
     if (html5QrCode) { try { await html5QrCode.stop(); } catch(e) {} try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; }
-    html5QrCode = new Html5Qrcode("reader", { formatsToSupport: [ Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.EAN_8, Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.QR_CODE ], experimentalFeatures: { useBarCodeDetectorIfSupported: true }, verbose: false });
-    const config = { fps: 22 }; await detectAllCameras(); if (!selectedCameraId) selectedCameraId = getBestDefaultCameraId();
+    
+    const activeFormats = getSelectedHtml5Formats();
+    html5QrCode = new Html5Qrcode("reader", { 
+        formatsToSupport: activeFormats, 
+        experimentalFeatures: { useBarCodeDetectorIfSupported: true }, 
+        verbose: false 
+    });
+    
+    const config = { fps: 22 }; 
+    await detectAllCameras(); 
+    if (!selectedCameraId) selectedCameraId = getBestDefaultCameraId();
+    
     try {
-        if (selectedCameraId) await html5QrCode.start(selectedCameraId, config, onCodeDetected); else await html5QrCode.start({ facingMode: "environment" }, config, onCodeDetected);
+        if (selectedCameraId) await html5QrCode.start(selectedCameraId, config, onCodeDetected); 
+        else await html5QrCode.start({ facingMode: "environment" }, config, onCodeDetected);
         updateZoomButtonsUI(1);
     } catch(err) {
-        try { await html5QrCode.start({ facingMode: "environment" }, config, onCodeDetected); updateZoomButtonsUI(1); } 
-        catch(err2) { document.getElementById('scannerModal').style.display = 'none'; if (html5QrCode) { try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; } alert("Не удалось запустить камеру. Проверьте разрешения в браузере."); updateNavState('onNavHome'); }
+        try { 
+            await html5QrCode.start({ facingMode: "environment" }, config, onCodeDetected); 
+            updateZoomButtonsUI(1); 
+        } 
+        catch(err2) { 
+            document.getElementById('scannerModal').style.display = 'none'; 
+            if (html5QrCode) { try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; } 
+            alert("Не удалось запустить камеру. Проверьте разрешения в браузере."); 
+            updateNavState('onNavHome'); 
+        }
     }
 }
 
@@ -1718,11 +2101,11 @@ async function selectCameraById(camId) {
         torchEnabled = false; const torchBtn = document.getElementById('torchBtn'); if (torchBtn) torchBtn.classList.remove('active'); updateZoomButtonsUI(1);
         if (html5QrCode) { try { if (html5QrCode.isScanning) await html5QrCode.stop(); } catch(e) {} try { await html5QrCode.clear(); } catch(e) {} html5QrCode = null; }
         await new Promise(r => setTimeout(r, 250));
-        html5QrCode = new Html5Qrcode("reader", { experimentalFeatures: { useBarCodeDetectorIfSupported: true }, verbose: false });
+        html5QrCode = new Html5Qrcode("reader", { formatsToSupport: getSelectedHtml5Formats(), experimentalFeatures: { useBarCodeDetectorIfSupported: true }, verbose: false });
         await html5QrCode.start(camId, { fps: 22 }, onCodeDetected); showToast("Камера переключена");
     } catch(err) {
         showToast("Ошибка запуска сенсора");
-        try { if (!html5QrCode) html5QrCode = new Html5Qrcode("reader", { experimentalFeatures: { useBarCodeDetectorIfSupported: true } }); await html5QrCode.start({ facingMode: "environment" }, { fps: 22 }, onCodeDetected); } catch(e2) {}
+        try { if (!html5QrCode) html5QrCode = new Html5Qrcode("reader", { formatsToSupport: getSelectedHtml5Formats(), experimentalFeatures: { useBarCodeDetectorIfSupported: true } }); await html5QrCode.start({ facingMode: "environment" }, { fps: 22 }, onCodeDetected); } catch(e2) {}
     } finally { isSwitchingCamera = false; }
 }
 
@@ -1741,65 +2124,91 @@ function setZoomLevel(lvl) {
     if (html5QrCode) { html5QrCode.applyVideoConstraints({ advanced: [{ zoom: lvl }] }).catch(() => {}); }
 }
 
+/* ================= AR-ТРЕКИНГ ОТСКАНЕРОВАННОГО КОДА ================= */
 function drawARHighlight(decodedResult) {
+    if (!settings.arTracking) {
+        flashScannerTarget();
+        return;
+    }
     const canvas = document.getElementById('arCanvas');
     const video = document.querySelector('#reader video');
     if (!canvas || !video) { flashScannerTarget(); return; }
-    
-    canvas.width = video.clientWidth;
-    canvas.height = video.clientHeight;
+
+    const clientW = video.clientWidth;
+    const clientH = video.clientHeight;
+    canvas.width = clientW;
+    canvas.height = clientH;
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     const points = decodedResult?.result?.points;
-    if (points && points.length > 0) {
-        // Учет кропа видео из-за object-fit: cover
-        const videoRatio = video.videoWidth / video.videoHeight;
-        const elementRatio = video.clientWidth / video.clientHeight;
+    if (points && points.length >= 2) {
+        const vW = video.videoWidth || clientW;
+        const vH = video.videoHeight || clientH;
+        const videoRatio = vW / vH;
+        const elementRatio = clientW / clientH;
         let scale = 1, offsetX = 0, offsetY = 0;
-        
+
         if (videoRatio > elementRatio) {
-            scale = video.clientHeight / video.videoHeight;
-            offsetX = (video.videoWidth * scale - video.clientWidth) / 2;
+            scale = clientH / vH;
+            offsetX = (vW * scale - clientW) / 2;
         } else {
-            scale = video.clientWidth / video.videoWidth;
-            offsetY = (video.videoHeight * scale - video.clientHeight) / 2;
+            scale = clientW / vW;
+            offsetY = (vH * scale - clientH) / 2;
         }
 
+        const screenPts = points.map(p => ({
+            x: (p.x * scale) - offsetX,
+            y: (p.y * scale) - offsetY
+        }));
+
+        ctx.save();
         ctx.beginPath();
-        points.forEach((p, i) => {
-            const x = (p.x * scale) - offsetX;
-            const y = (p.y * scale) - offsetY;
-            if (i === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
+        screenPts.forEach((p, idx) => {
+            if (idx === 0) ctx.moveTo(p.x, p.y);
+            else ctx.lineTo(p.x, p.y);
         });
         ctx.closePath();
-        
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = '#10b981';
+
+        // Неоновое свечение и заливка
         ctx.shadowColor = '#10b981';
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 18;
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 4;
         ctx.stroke();
-        ctx.fillStyle = 'rgba(16, 185, 129, 0.4)';
+
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.3)';
         ctx.fill();
+
+        // Угловые точки трекера
+        screenPts.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#34d399';
+            ctx.fill();
+        });
+
+        ctx.restore();
     } else {
         flashScannerTarget();
     }
-    
-    setTimeout(() => { 
-        if(canvas) {
-            const ctx2 = canvas.getContext('2d');
-            if (ctx2) ctx2.clearRect(0, 0, canvas.width, canvas.height);
+
+    setTimeout(() => {
+        if (canvas) {
+            const c2 = canvas.getContext('2d');
+            if (c2) c2.clearRect(0, 0, canvas.width, canvas.height);
         }
-    }, 800);
+    }, 750);
 }
 
 function flashScannerTarget() {
     const target = document.querySelector('.custom-scanner-target');
-    if(!target) return;
+    if (!target) return;
     const oldShadow = target.style.boxShadow;
     const oldBorder = target.style.borderColor;
-    target.style.boxShadow = '0 0 0 4000px rgba(0, 0, 0, 0.55), inset 0 0 40px #10b981, 0 0 40px #10b981';
+    target.style.boxShadow = '0 0 0 4000px rgba(0, 0, 0, 0.55), inset 0 0 40px #10b981, 0 0 35px #10b981';
     target.style.borderColor = '#10b981';
     setTimeout(() => { 
         target.style.boxShadow = oldShadow; 
@@ -1811,10 +2220,8 @@ function onCodeDetected(decodedText, decodedResult) {
     if (isScannerPaused) return;
     isScannerPaused = true;
 
-    // Включаем AR-анимацию поверх кадра
     drawARHighlight(decodedResult);
 
-    // Задержка 250мс чтобы пользователь увидел зеленый трекинг штрихкода перед открытием окна
     setTimeout(() => {
         const batchItems = parsePayloadOrList(decodedText);
         if (batchItems && batchItems.length > 1) {
@@ -1829,7 +2236,7 @@ function onCodeDetected(decodedText, decodedResult) {
 
         const cleanCode = normalizeBarcode(decodedText);
         showNumpadForScan(cleanCode);
-    }, 250);
+    }, 280);
 }
 
 function stopScanner(resetNav = true) {
@@ -1855,7 +2262,7 @@ function shareToExcel() { if (navigator.clipboard && window.currentPayload) { na
 
 function downloadCSV() {
     if (currentCart.length === 0) { showToast("Корзина пуста"); return; }
-    let csvContent = '\uFEFF'; // BOM для корректного отображения кириллицы в Excel
+    let csvContent = '\uFEFF';
     csvContent += "Штрихкод;Количество;Паллет\n";
     currentCart.forEach(item => {
         csvContent += `${item.code};${item.qty};${item.pallet}\n`;
