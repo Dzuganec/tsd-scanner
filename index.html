@@ -1350,12 +1350,9 @@ function updateCartStats() {
 function saveState() { localStorage.setItem('tsd_lite_cart', JSON.stringify(currentCart)); }
 
 /* ================= ПОИСК ПО ТАБЛИЦЕ ================= */
+let searchDebounce = null;
 function filterCart(val) {
     searchQuery = (val || '').trim().toLowerCase();
     const clearBtn = document.getElementById('searchClearBtn');
     if (clearBtn) clearBtn.style.display = searchQuery ? 'flex' : 'none';
-    renderCart();
-}
-function clearSearch() {
-    searchQuery = "";
-    const input = docume
+    // Дебаунс: не перерисовываем всю таблицу и штрихкоды на каж
