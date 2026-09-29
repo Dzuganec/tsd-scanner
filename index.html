@@ -768,12 +768,12 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
     <div class="pallet-bar" onclick="openPalletModal()">
         <div class="pallet-bar-left">
             <span class="app-icon" style="color:var(--btn-add)">
-                <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
             </span>
             <span class="pallet-bar-text">Текущий паллет:</span>
         </div>
         <div class="pallet-badge" id="currentPalletBadge">
-            <span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
+            <span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
             Основной
         </div>
     </div>
@@ -783,7 +783,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
             <span id="cartStats">0 строк (0 шт.)</span>
             
             <button class="delete-btn" id="deleteBtn" type="button" onclick="clearCart()">
-              <svg class="bin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg class="bin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                 <line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>
               </svg>
@@ -810,7 +810,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
                 <div class="install-desc">Быстрый запуск с рабочего стола и автономная работа сканера</div>
             </div>
             <button class="install-banner-close" onclick="dismissInstallBanner()" title="Закрыть">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
         <div class="install-actions">
@@ -917,52 +917,60 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 <div class="modal-overlay" id="mainMenuModal">
     <div class="modal-content">
         <h3 class="modal-title">
-            <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
-            Меню функций
+            <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+            <span data-i18n="menuTitle">Меню функций</span>
         </h3>
         <div style="margin-top: 15px; text-align: left;">
             <div class="dropdown-item" onclick="openTextImportModal()">
-                <div class="menu-icon-box"><span class="app-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span></div>
-                Импорт списка (текст/буфер)
+                <div class="menu-icon-box"><span class="app-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span></div>
+                <span data-i18n="menuImport">Импорт списка (текст/буфер)</span>
             </div>
             <div class="dropdown-item" onclick="openArchive()">
-                <div class="menu-icon-box"><span class="app-icon"><svg viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></span></div>
-                Архив выгрузок
+                <div class="menu-icon-box"><span class="app-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></span></div>
+                <span data-i18n="menuArchive">Архив выгрузок</span>
             </div>
             <div class="dropdown-item" onclick="openSettings()">
-                <div class="menu-icon-box"><span class="app-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span></div>
-                Глобальные настройки
+                <div class="menu-icon-box">
+                    <span class="app-icon">
+                        <!-- ИСПРАВЛЕННАЯ ШЕСТЕРЕНКА -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </span>
+                </div>
+                <span data-i18n="menuSettings">Глобальные настройки</span>
             </div>
             <div class="dropdown-item" onclick="openInstruction()">
-                <div class="menu-icon-box"><span class="app-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span></div>
-                Инструкция
+                <div class="menu-icon-box"><span class="app-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span></div>
+                <span data-i18n="menuHelp">Инструкция</span>
             </div>
             <div class="dropdown-item" onclick="openAbout()">
-                <div class="menu-icon-box"><span class="app-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span></div>
-                О приложении
+                <div class="menu-icon-box"><span class="app-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span></div>
+                <span data-i18n="menuAbout">О приложении</span>
             </div>
         </div>
-        <button class="btn-modal btn-close" onclick="closeAllModals()">Закрыть</button>
+        <button class="btn-modal btn-close" onclick="closeAllModals()"><span data-i18n="btnClose">Закрыть</span></button>
     </div>
 </div>
 
 <!-- ГЛОБАЛЬНЫЕ НАСТРОЙКИ -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal-content">
-        <h3 class="modal-title">Глобальные настройки</h3>
+        <h3 class="modal-title" data-i18n="menuSettings">Глобальные настройки</h3>
         
         <div class="settings-section">
             <div class="settings-section-title">Сигналы и отклик</div>
             <div class="settings-row">
                 <div class="settings-row-label">
-                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
                     <div class="settings-row-text">Звуки интерфейса<small>Мягкие клики при тапах</small></div>
                 </div>
                 <div class="toggle" id="toggle-uiSound" onclick="toggleSetting('uiSound')"><div class="toggle-thumb"></div></div>
             </div>
             <div class="settings-row">
                 <div class="settings-row-label">
-                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/><path d="M1 9l2 3-2 3M23 9l-2 3 2 3"/></svg></span>
+                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/><path d="M1 9l2 3-2 3M23 9l-2 3 2 3"/></svg></span>
                     <div class="settings-row-text">Вибрация кнопок<small>Тактильный Haptic отклик</small></div>
                 </div>
                 <div class="toggle" id="toggle-vibro" onclick="toggleSetting('vibro')"><div class="toggle-thumb"></div></div>
@@ -973,21 +981,39 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
             <div class="settings-section-title">Производительность</div>
             <div class="settings-row">
                 <div class="settings-row-label">
-                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
                     <div class="settings-row-text">AMOLED (Глубокий черный)<small>Отключает фон в темной теме</small></div>
                 </div>
                 <div class="toggle" id="toggle-amoled" onclick="toggleSetting('amoled'); applyTheme(settings.theme)"><div class="toggle-thumb"></div></div>
             </div>
             <div class="settings-row">
                 <div class="settings-row-label">
-                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+                    <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
                     <div class="settings-row-text">Упрощённый режим<small>Меньше анимаций для слабых устройств</small></div>
                 </div>
                 <div class="toggle" id="toggle-simplemode" onclick="toggleSimpleMode()"><div class="toggle-thumb"></div></div>
             </div>
         </div>
 
-        <button class="btn-modal btn-close" onclick="closeAllModals()">Готово</button>
+        <!-- НОВАЯ СЕКЦИЯ: ЛОКАЛИЗАЦИЯ -->
+        <div class="settings-section">
+            <div class="settings-section-title" data-i18n="secLanguage">Локализация</div>
+            <div class="settings-row">
+                <div class="settings-row-label">
+                    <span class="app-icon" style="color:var(--btn-add)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                    </span>
+                    <div class="settings-row-text"><span data-i18n="lblLanguage">Язык интерфейса</span><small data-i18n="lblLanguageDesc">Выберите язык приложения</small></div>
+                </div>
+                <button id="langSelectBtn" class="btn-modal" style="width:auto; padding:6px 14px; margin:0; font-size:13px;" onclick="cycleLanguage()">Русский</button>
+            </div>
+        </div>
+
+        <button class="btn-modal btn-close" onclick="closeAllModals()"><span data-i18n="btnClose">Готово</span></button>
     </div>
 </div>
 
@@ -1008,44 +1034,43 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
             
             <button class="btn-icon-camera" id="cameraBtn" onclick="toggleCameraOverlayMenu()" title="Выбрать камеру">
                 <span class="app-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2v2"/>
                         <circle cx="12" cy="13" r="4"/>
                     </svg>
                 </span>
             </button>
 
-            <!-- НОВАЯ КНОПКА НАСТРОЕК КАМЕРЫ -->
+            <!-- КНОПКА НАСТРОЕК КАМЕРЫ -->
             <button class="btn-icon-settings" id="camSettingsBtn" onclick="openCamSettings()" title="Настройки сканера">
                 <span class="app-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="3"/>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    <!-- ИСПРАВЛЕННАЯ ШЕСТЕРЕНКА -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                     </svg>
                 </span>
             </button>
 
-            <!-- ПЕРЕНЕСЕНО ВНИЗ -->
             <div class="zoom-pill" id="zoomPill">
                 <button class="zoom-btn active" data-zoom="1" onclick="setZoomLevel(1)">1x</button>
                 <button class="zoom-btn" data-zoom="2" onclick="setZoomLevel(2)">2x</button>
                 <button class="zoom-btn" data-zoom="3" onclick="setZoomLevel(3)">3x</button>
             </div>
 
-            <!-- ПЕРЕНЕСЕНО ВНИЗ -->
             <button class="btn-icon-torch" id="torchBtn" onclick="toggleTorch()" title="Включить фонарик">
-                <span class="app-icon"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+                <span class="app-icon"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
             </button>
 
             <!-- ОВЕРЛЕЙ ДЛЯ ВЫБОРА КАМЕРЫ -->
             <div class="cam-overlay-menu" id="camOverlayMenu" style="display:none;">
                 <div class="cam-overlay-header">
                     <span class="cam-overlay-title">
-                        <span class="app-icon" style="color:var(--btn-add); width:18px; height:18px;"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2v2"/><circle cx="12" cy="13" r="4"/></svg></span>
+                        <span class="app-icon" style="color:var(--btn-add); width:18px; height:18px;"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2v2"/><circle cx="12" cy="13" r="4"/></svg></span>
                         Камеры устройства
                     </span>
                     <button class="cam-overlay-close" onclick="closeCameraMenu(event)">
-                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </button>
                 </div>
                 <div class="cam-overlay-list" id="camOverlayList"></div>
@@ -1055,50 +1080,62 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
             <div class="cam-overlay-menu" id="camSettingsOverlay" style="display:none;">
                 <div class="cam-overlay-header">
                     <span class="cam-overlay-title">
-                        <span class="app-icon" style="color:var(--btn-add); width:18px; height:18px;"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+                        <span class="app-icon" style="color:var(--btn-add); width:18px; height:18px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                        </span>
                         Настройки камеры
                     </span>
                     <button class="cam-overlay-close" onclick="closeCamSettings()">
-                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </button>
                 </div>
                 <div class="cam-overlay-list">
                     <div class="settings-section">
                         <div class="settings-row" style="padding-top:0;">
                             <div class="settings-row-label">
-                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
+                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
                                 <div class="settings-row-text">Непрерывный скан<small>Не закрывать камеру</small></div>
                             </div>
                             <div class="toggle" id="toggle-cam-continuous" onclick="toggleSetting('continuous', 'toggle-cam-continuous')"><div class="toggle-thumb"></div></div>
                         </div>
                         <div class="settings-row">
                             <div class="settings-row-label">
-                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
+                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
                                 <div class="settings-row-text">Авто-объектив<small>Сама подбирает макро/телевик</small></div>
                             </div>
                             <div class="toggle" id="toggle-cam-autolens" onclick="toggleSetting('autolens', 'toggle-cam-autolens')"><div class="toggle-thumb"></div></div>
                         </div>
                         <div class="settings-row">
                             <div class="settings-row-label">
-                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
                                 <div class="settings-row-text">AR-трекинг кода<small>Зеленая подсветка контура ШК</small></div>
                             </div>
                             <div class="toggle" id="toggle-cam-arTracking" onclick="toggleSetting('arTracking', 'toggle-cam-arTracking')"><div class="toggle-thumb"></div></div>
                         </div>
                         <div class="settings-row">
                             <div class="settings-row-label">
-                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
+                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
                                 <div class="settings-row-text">Звук сканера<small>Приятный пик считывания</small></div>
                             </div>
                             <div class="toggle" id="toggle-cam-sound" onclick="toggleSetting('sound', 'toggle-cam-sound')"><div class="toggle-thumb"></div></div>
                         </div>
                         <div class="settings-row" style="border-bottom:none;">
                             <div class="settings-row-label">
-                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span>
+                                <span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span>
                                 <div class="settings-row-text">Голосовое подтверждение<small>Озвучивать количество (TTS)</small></div>
                             </div>
                             <div class="toggle" id="toggle-cam-tts" onclick="toggleSetting('tts', 'toggle-cam-tts')"><div class="toggle-thumb"></div></div>
                         </div>
+                    </div>
+                    
+                    <!-- НОВАЯ СЕКЦИЯ: КАЧЕСТВО КАМЕРЫ -->
+                    <div class="settings-section" style="margin-top: 6px;">
+                        <div class="settings-section-title">Разрешение камеры</div>
+                        <p style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; padding: 0 4px;">Влияет на фокус и энергопотребление:</p>
+                        <div class="formats-grid" id="camQualityGrid"></div>
                     </div>
 
                     <div class="settings-section" style="margin-top: 6px;">
@@ -1119,7 +1156,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
     <div class="modal-content" style="max-height: 90vh;">
         <h3 class="modal-title">
             <span class="app-icon" style="color:var(--btn-add)">
-                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             </span>
             Импорт списка товаров
         </h3>
@@ -1161,7 +1198,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
         <div class="numpad-input-group" id="numpadInputGroup">
             <div class="numpad-display" id="numpadDisplay"></div>
             <button class="numpad-paste-btn" id="numpadPasteBtn" onclick="pasteToNumpad()">
-                <span class="app-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span>
+                <span class="app-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span>
             </button>
         </div>
         <div class="numpad-grid">
@@ -1177,7 +1214,7 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
             <button class="num-btn action-c" onclick="numClear()">C</button>
             <button class="num-btn" onclick="numPress(0)">0</button>
             <button class="num-btn action-back" onclick="numBackspace()">
-                <span class="app-icon"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg></span>
+                <span class="app-icon"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg></span>
             </button>
         </div>
         <div class="numpad-actions">
@@ -1229,15 +1266,15 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 
 <div class="modal-overlay" id="archiveModal">
     <div class="modal-content">
-        <h3 class="modal-title">История выгрузок</h3>
+        <h3 class="modal-title" data-i18n="menuArchive">История выгрузок</h3>
         <div id="archiveList" class="archive-list"></div>
-        <button class="btn-modal btn-close" onclick="closeAllModals()" style="margin-top: 18px;">Закрыть</button>
+        <button class="btn-modal btn-close" onclick="closeAllModals()" style="margin-top: 18px;"><span data-i18n="btnClose">Закрыть</span></button>
     </div>
 </div>
 
 <div class="modal-overlay" id="instructionModal">
     <div class="modal-content">
-        <h3 class="modal-title">Инструкция</h3>
+        <h3 class="modal-title" data-i18n="menuHelp">Инструкция</h3>
         <div class="instruction-content">
             <ol>
                 <li>Нажмите кнопку сканера снизу, чтобы отсканировать штрихкод товара.</li>
@@ -1247,13 +1284,13 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
                 <li>Нажмите кнопку <b>«Выгрузить»</b>, чтобы сгенерировать итоговый QR-код со всеми собранными данными для переноса на ПК или другой телефон.</li>
             </ol>
         </div>
-        <button class="btn-modal btn-close" onclick="closeAllModals()">Понятно</button>
+        <button class="btn-modal btn-close" onclick="closeAllModals()"><span data-i18n="btnClose">Понятно</span></button>
     </div>
 </div>
 
 <div class="modal-overlay" id="aboutModal">
     <div class="modal-content">
-        <h3 class="modal-title">О приложении</h3>
+        <h3 class="modal-title" data-i18n="menuAbout">О приложении</h3>
         <div class="dev-card">
             <svg viewBox="0 0 160 160" class="dev-avatar-svg" xmlns="http://www.w3.org/2000/svg">
               <defs>
@@ -1304,12 +1341,12 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
               <line x1="0" y1="125" x2="160" y2="125" stroke="var(--border-color)" stroke-width="4" stroke-linecap="round" />
             </svg>
             <p style="font-size: 19px; font-weight: 900; color: var(--text-main); transition: color var(--t-theme);">Сергей Джугань</p>
-            <p style="font-size: 13.5px; color: var(--text-muted); font-weight: 700; margin-top: 2px; transition: color var(--t-theme);">Версия: 18.7 (Cam Settings & Custom Pause Edition)</p>
+            <p style="font-size: 13.5px; color: var(--text-muted); font-weight: 700; margin-top: 2px; transition: color var(--t-theme);">Версия: 18.8 (Cam Quality & i18n Edition)</p>
             <a href="https://t.me/segarey" target="_blank" class="tg-dev-btn">
                 <svg class="tg-icon-fly" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Написать в Telegram
             </a>
         </div>
-        <button class="btn-modal btn-close" onclick="closeAllModals()">Закрыть</button>
+        <button class="btn-modal btn-close" onclick="closeAllModals()"><span data-i18n="btnClose">Закрыть</span></button>
     </div>
 </div>
 
@@ -1408,6 +1445,63 @@ document.addEventListener('pointerdown', (e) => {
     if (interactive) { SoundFX.tap(); triggerVibrate(12); }
 });
 
+/* ================= ЛОКАЛИЗАЦИЯ (МУЛЬТИЯЗЫЧНОСТЬ) ================= */
+const TRANSLATIONS = {
+    ru: {
+        menuTitle: "Меню функций",
+        menuImport: "Импорт списка (текст/буфер)",
+        menuArchive: "Архив выгрузок",
+        menuSettings: "Глобальные настройки",
+        menuHelp: "Инструкция",
+        menuAbout: "О приложении",
+        btnClose: "Закрыть",
+        secLanguage: "Локализация",
+        lblLanguage: "Язык интерфейса",
+        lblLanguageDesc: "Выберите язык приложения"
+    },
+    en: {
+        menuTitle: "Features Menu",
+        menuImport: "Import List (Text/Clipboard)",
+        menuArchive: "Export Archive",
+        menuSettings: "Global Settings",
+        menuHelp: "Instructions",
+        menuAbout: "About App",
+        btnClose: "Close",
+        secLanguage: "Localization",
+        lblLanguage: "Interface Language",
+        lblLanguageDesc: "Select app language"
+    }
+};
+
+const LANGUAGES = [
+    { key: 'ru', name: 'Русский' },
+    { key: 'en', name: 'English' }
+];
+
+function applyTranslations() {
+    const dict = TRANSLATIONS[settings.lang] || TRANSLATIONS.ru;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.innerText = dict[key];
+    });
+}
+
+function initLanguageUI() {
+    const l = LANGUAGES.find(l => l.key === settings.lang) || LANGUAGES[0];
+    const btn = document.getElementById('langSelectBtn');
+    if (btn) btn.innerText = l.name;
+}
+
+function cycleLanguage() {
+    let idx = LANGUAGES.findIndex(l => l.key === settings.lang);
+    idx = (idx + 1) % LANGUAGES.length;
+    settings.lang = LANGUAGES[idx].key;
+    saveSettings();
+    initLanguageUI();
+    applyTranslations();
+    showToast(settings.lang === 'en' ? "Language changed!" : "Язык изменён!");
+}
+
 /* ================= СПИСОК ФОРМАТОВ И ИХ ОПИСАНИЕ ================= */
 const BARCODE_DEFINITIONS = [
     { key: 'ean_13', name: 'EAN-13', tag: 'Розница / Товары', desc: 'Основной 13-значный стандарт упаковки товаров в РФ, СНГ и Европе.' },
@@ -1428,6 +1522,8 @@ const BARCODE_DEFINITIONS = [
 /* ================= НАСТРОЙКИ & ТЕМА ================= */
 let settings = Object.assign({
     theme: 'light',
+    lang: 'ru',
+    camQuality: '720p',
     continuous: true,
     autolens: true,
     arTracking: true,
@@ -1467,6 +1563,39 @@ applyTheme(settings.theme);
 
 function paintToggle(id, val) { const el = document.getElementById(id); if (el) el.classList.toggle('active', !!val); }
 
+/* ================= НАСТРОЙКИ КАЧЕСТВА КАМЕРЫ ================= */
+const CAM_QUALITIES = [
+    { key: '480p', name: '480p (Базовое)', desc: 'Экономит заряд, для старых устройств' },
+    { key: '720p', name: '720p (Стандарт)', desc: 'Баланс производительности и качества' },
+    { key: '1080p', name: '1080p (Высокое)', desc: 'Максимальная четкость для мелких кодов' }
+];
+
+function renderCamQualityGrid() {
+    const container = document.getElementById('camQualityGrid');
+    if (!container) return;
+    container.innerHTML = CAM_QUALITIES.map(q => {
+        const isChecked = settings.camQuality === q.key;
+        return `
+            <div class="format-card ${isChecked ? 'checked' : ''}" onclick="setCamQuality('${q.key}')">
+                <div class="format-card-info">
+                    <div class="format-card-title">${q.name}</div>
+                    <div class="format-card-desc">${q.desc}</div>
+                </div>
+                <div class="format-checkbox">
+                    ${isChecked ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function setCamQuality(key) {
+    settings.camQuality = key;
+    saveSettings();
+    renderCamQualityGrid();
+    formatsChanged = true; // Триггер перезапуска камеры при закрытии окна
+}
+
 function renderFormatsGrid() {
     const container = document.getElementById('camFormatsGrid');
     if (!container) return;
@@ -1483,7 +1612,7 @@ function renderFormatsGrid() {
                     <div class="format-card-desc">${f.desc}</div>
                 </div>
                 <div class="format-checkbox">
-                    ${isChecked ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+                    ${isChecked ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
                 </div>
             </div>
         `;
@@ -1534,6 +1663,7 @@ function openSettings() {
     paintToggle('toggle-vibro', settings.vibro);
     paintToggle('toggle-amoled', settings.amoled);
     paintToggle('toggle-simplemode', isLowFx());
+    initLanguageUI();
     document.getElementById('settingsModal').style.display = 'flex';
 }
 
@@ -1551,6 +1681,7 @@ function openCamSettings() {
     
     formatsChanged = false;
     renderFormatsGrid();
+    renderCamQualityGrid();
     
     overlay.style.display = 'flex';
 }
@@ -1558,7 +1689,7 @@ function openCamSettings() {
 function closeCamSettings() {
     document.getElementById('camSettingsOverlay').style.display = 'none';
     
-    // Если поменяли форматы штрихкодов, нужно мягко перезагрузить сенсор камеры
+    // Если поменяли форматы штрихкодов или качество, нужно мягко перезагрузить сенсор камеры
     if (formatsChanged && html5QrCode && html5QrCode.isScanning) {
         formatsChanged = false;
         selectCameraById(selectedCameraId);
@@ -1771,7 +1902,7 @@ function addOrUpdateItem(code, qty = 1) {
 function renderCart() {
     const area = document.getElementById('cartContentArea'); if (!area) return;
     if (currentCart.length === 0) {
-        area.innerHTML = `<div class="no-data-card"><span class="app-icon" style="width:44px;height:44px;color:var(--btn-add);"><svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg></span><span>Наведите камеру на штрихкод</span></div>`;
+        area.innerHTML = `<div class="no-data-card"><span class="app-icon" style="width:44px;height:44px;color:var(--btn-add);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg></span><span>Наведите камеру на штрихкод</span></div>`;
         updateCartStats(); return;
     }
 
@@ -1779,10 +1910,10 @@ function renderCart() {
     let html = `<div class="table-responsive"><table><thead><tr><th>Штрихкод</th><th style="width:54px;">Кол</th><th style="width:50px;"></th></tr></thead>`;
 
     for (const [palletName, items] of Object.entries(pallets)) {
-        html += `<tbody><tr class="pallet-header-row"><td colspan="3"><div class="pallet-header-content"><span class="pallet-name"><span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span>${palletName}</span><button class="btn-pallet-qr" onclick="showPalletQR('${palletName}')"><span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Показать QR</button></div></td></tr>`;
+        html += `<tbody><tr class="pallet-header-row"><td colspan="3"><div class="pallet-header-content"><span class="pallet-name"><span class="app-icon" style="color:var(--btn-add)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span>${palletName}</span><button class="btn-pallet-qr" onclick="showPalletQR('${palletName}')"><span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Показать QR</button></div></td></tr>`;
         items.forEach((item, idx) => {
             const delay = Math.min(idx * 40, 240); const rowStyle = !isLowFx() ? `style="animation: popIn 0.4s var(--ease-spring) ${delay}ms forwards; opacity: 0;"` : '';
-            html += `<tr ${rowStyle}><td class="inline-barcode-container" onclick="zoomBarcode('${item.code}')"><div id="bc-wrap-${item.id}" class="barcode-wrapper"></div></td><td><button class="qty-box" onclick="showNumpadForEdit('${item.id}')">${item.qty}</button></td><td><button class="btn-remove" onclick="removeItem('${item.id}')"><span class="app-icon" style="width:18px;height:18px;"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></button></td></tr>`;
+            html += `<tr ${rowStyle}><td class="inline-barcode-container" onclick="zoomBarcode('${item.code}')"><div id="bc-wrap-${item.id}" class="barcode-wrapper"></div></td><td><button class="qty-box" onclick="showNumpadForEdit('${item.id}')">${item.qty}</button></td><td><button class="btn-remove" onclick="removeItem('${item.id}')"><span class="app-icon" style="width:18px;height:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></button></td></tr>`;
         });
         html += `</tbody>`;
     }
@@ -2071,7 +2202,7 @@ function openPalletModal() {
     container.innerHTML = pallets.map(p => `<button style="background:var(--input-bg); border:1px solid var(--border-color); border-radius:11px; padding:8px 14px; font-weight:800; font-size:14px; color:var(--text-main); cursor:pointer; transition: background-color var(--t-theme), color var(--t-theme), border-color var(--t-theme);" onclick="document.getElementById('palletInput').value='${p}'">${p}</button>`).join('');
     document.getElementById('palletModal').style.display = 'flex';
 }
-function confirmPallet() { activePallet = document.getElementById('palletInput').value.trim() || "Основной"; document.getElementById('currentPalletBadge').innerHTML = `<span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>${activePallet}`; document.getElementById('palletModal').style.display = 'none'; }
+function confirmPallet() { activePallet = document.getElementById('palletInput').value.trim() || "Основной"; document.getElementById('currentPalletBadge').innerHTML = `<span class="app-icon" style="width:14px;height:14px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>${activePallet}`; document.getElementById('palletModal').style.display = 'none'; }
 
 /* ================= УПРАВЛЕНИЕ КАМЕРОЙ И AR ================= */
 let html5QrCode = null, isScannerPaused = false, torchEnabled = false, allCamerasList = [], selectedCameraId = null, isSwitchingCamera = false;
@@ -2109,6 +2240,18 @@ function getBestDefaultCameraId() {
     return allCamerasList.find(c => !c.label.toLowerCase().includes('front'))?.id || allCamerasList[0].id;
 }
 
+function getVideoConfig() {
+    let config = { fps: 22 };
+    if (settings.camQuality === '1080p') {
+        config.videoConstraints = { width: { ideal: 1920 }, height: { ideal: 1080 } };
+    } else if (settings.camQuality === '720p') {
+        config.videoConstraints = { width: { ideal: 1280 }, height: { ideal: 720 } };
+    } else if (settings.camQuality === '480p') {
+        config.videoConstraints = { width: { ideal: 640 }, height: { ideal: 480 } };
+    }
+    return config;
+}
+
 async function startScanner() {
     isScannerPaused = false; document.getElementById('scannerModal').style.display = 'flex'; closeCameraMenu(); closeCamSettings();
     if (html5QrCode) { try { await html5QrCode.stop(); } catch(e) {} try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; }
@@ -2120,7 +2263,7 @@ async function startScanner() {
         verbose: false 
     });
     
-    const config = { fps: 22 }; 
+    const config = getVideoConfig();
     await detectAllCameras(); 
     if (!selectedCameraId) selectedCameraId = getBestDefaultCameraId();
     
@@ -2150,7 +2293,7 @@ async function toggleCameraOverlayMenu() {
     const listContainer = document.getElementById('camOverlayList');
     listContainer.innerHTML = allCamerasList.map((cam, idx) => {
         const info = parseRussianCameraLabel(cam, idx), isActive = (cam.id === selectedCameraId) || (!selectedCameraId && idx === 0);
-        return `<div class="cam-choice-card ${isActive ? 'active' : ''}" onclick="selectCameraById('${cam.id}')"><div class="cam-card-info"><div class="cam-card-name"><span>${info.title}</span><span class="cam-badge-tag">${info.badge}</span></div><div class="cam-card-desc">${info.desc}</div></div>${isActive ? '<span class="app-icon" style="color:var(--btn-add); width:20px; height:20px;"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>' : ''}</div>`;
+        return `<div class="cam-choice-card ${isActive ? 'active' : ''}" onclick="selectCameraById('${cam.id}')"><div class="cam-card-info"><div class="cam-card-name"><span>${info.title}</span><span class="cam-badge-tag">${info.badge}</span></div><div class="cam-card-desc">${info.desc}</div></div>${isActive ? '<span class="app-icon" style="color:var(--btn-add); width:20px; height:20px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>' : ''}</div>`;
     }).join(''); overlay.style.display = 'flex';
 }
 
@@ -2164,10 +2307,10 @@ async function selectCameraById(camId) {
         if (html5QrCode) { try { if (html5QrCode.isScanning) await html5QrCode.stop(); } catch(e) {} try { await html5QrCode.clear(); } catch(e) {} html5QrCode = null; }
         await new Promise(r => setTimeout(r, 250));
         html5QrCode = new Html5Qrcode("reader", { formatsToSupport: getSelectedHtml5Formats(), experimentalFeatures: { useBarCodeDetectorIfSupported: true }, verbose: false });
-        await html5QrCode.start(camId, { fps: 22 }, onCodeDetected); showToast("Камера переключена");
+        await html5QrCode.start(camId, getVideoConfig(), onCodeDetected); showToast("Камера переключена");
     } catch(err) {
         showToast("Ошибка запуска сенсора");
-        try { if (!html5QrCode) html5QrCode = new Html5Qrcode("reader", { formatsToSupport: getSelectedHtml5Formats(), experimentalFeatures: { useBarCodeDetectorIfSupported: true } }); await html5QrCode.start({ facingMode: "environment" }, { fps: 22 }, onCodeDetected); } catch(e2) {}
+        try { if (!html5QrCode) html5QrCode = new Html5Qrcode("reader", { formatsToSupport: getSelectedHtml5Formats(), experimentalFeatures: { useBarCodeDetectorIfSupported: true } }); await html5QrCode.start({ facingMode: "environment" }, getVideoConfig(), onCodeDetected); } catch(e2) {}
     } finally { isSwitchingCamera = false; }
 }
 
@@ -2411,6 +2554,11 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 window.onload = function() {
     initDeleteButton();
     const saved = localStorage.getItem('tsd_lite_cart'); if (saved) { try { currentCart = JSON.parse(saved); } catch(e) {} }
+    
+    // Инициализация языка интерфейса
+    initLanguageUI();
+    applyTranslations();
+    
     renderCart(); const home = document.querySelector('[data-action="onNavHome"]'); if (home) moveBeadTo(home, false);
 };
 
