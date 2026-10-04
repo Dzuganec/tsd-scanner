@@ -2,21 +2,47 @@
 <html lang="ru">
 <head>
 <script>
-(function(){
+/* Определение старых устройств (iOS 9-12, Android <= 6). Только синтаксис ES5 — должен работать даже в Safari 9. */
+function detectLegacyDevice() {
     try {
-        var forced = localStorage.getItem('tsd_force_simple');
+        var ua = (navigator && navigator.userAgent) ? navigator.userAgent : '';
+        var m;
+        if (/iP(hone|ad|od)/.test(ua)) {
+            m = ua.match(/OS (\d+)[_.]/);
+            if (m && parseInt(m[1], 10) <= 12) return true;
+            return false;
+        }
+        if (/Android/i.test(ua)) {
+            m = ua.match(/Android[\s\/]*(\d+)/i);
+            if (m && parseInt(m[1], 10) <= 6) return true;
+            return false;
+        }
+    } catch (e) {}
+    return false;
+}
+
+(function(){
+    var legacy = false;
+    try {
+        legacy = detectLegacyDevice();
         var tier = 'high';
-        if (forced === 'true') {
+        if (legacy) {
+            try { localStorage.setItem('tsd_force_simple', 'true'); } catch (e1) {}
             tier = 'low';
-        } else if (forced === 'false') {
-            tier = 'high';
         } else {
-            var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            tier = reduced ? 'low' : 'high';
+            var forced = localStorage.getItem('tsd_force_simple');
+            if (forced === 'true') {
+                tier = 'low';
+            } else if (forced === 'false') {
+                tier = 'high';
+            } else {
+                var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                tier = reduced ? 'low' : 'high';
+            }
         }
         document.documentElement.setAttribute('data-fx', tier);
     } catch(e) {
-        document.documentElement.setAttribute('data-fx', 'high');
+        document.documentElement.setAttribute('data-fx', legacy ? 'low' : 'high');
     }
 })();
 </script>
@@ -722,6 +748,86 @@ td:last-child { border-top-right-radius: var(--radius-md); border-bottom-right-r
 [data-fx="low"] .custom-scanner-target { animation: none !important; }
 [data-fx="low"] .custom-scanner-target::after { animation: none !important; opacity: 0.1; }
 [data-fx="low"] .corner { animation: none !important; }
+
+/* ============================================================
+   АГРЕССИВНОЕ ОТКЛЮЧЕНИЕ ТЯЖЁЛЫХ ЭФФЕКТОВ (старые устройства)
+   Действует ТОЛЬКО при <html data-fx="low">
+   ============================================================ */
+
+/* 1. Никакого размытия фона нигде (включая inline-стили и псевдоэлементы) */
+[data-fx="low"] *,
+[data-fx="low"] *::before,
+[data-fx="low"] *::after {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* 2. SVG-фильтр gooey: отключаем применение и скрываем сам SVG с определением */
+[data-fx="low"] .navbar-goo-layer {
+    filter: none !important;
+    -webkit-filter: none !important;
+    will-change: auto !important;
+    transform: none !important;
+}
+[data-fx="low"] #gooey-filter-soft,
+[data-fx="low"] .navbar-wrap > svg {
+    display: none !important;
+}
+
+/* 3. Свечение под бусиной навбара — полностью убираем */
+[data-fx="low"] .navbar-glow {
+    display: none !important;
+}
+
+/* 4. Тени у крупных элементов (модалки, навбар, карточки) */
+[data-fx="low"] .modal-content,
+[data-fx="low"] .navbar-pill,
+[data-fx="low"] .navbar,
+[data-fx="low"] .cart-card,
+[data-fx="low"] .pallet-bar,
+[data-fx="low"] .no-data-card,
+[data-fx="low"] .cam-overlay-menu,
+[data-fx="low"] .install-banner,
+[data-fx="low"] .archive-item,
+[data-fx="low"] .dev-card,
+[data-fx="low"] #snackbar,
+[data-fx="low"] header,
+[data-fx="low"] tr {
+    box-shadow: none !important;
+}
+
+/* 5. Статичный сплошной фон вместо анимированных/радиальных градиентов */
+[data-fx="low"] body::before,
+[data-fx="low"] body::after {
+    display: none !important;
+    animation: none !important;
+}
+[data-fx="low"] body {
+    background-image: none !important;
+    background-color: var(--bg-body) !important;
+}
+[data-fx="low"] header {
+    background: #059669 !important;
+    background-image: none !important;
+    animation: none !important;
+}
+[data-fx="low"][data-theme="dark"] header {
+    background: #064e3b !important;
+    background-image: none !important;
+}
+html[data-fx="low"][data-amoled="true"][data-theme="dark"] header {
+    background: #000000 !important;
+}
+
+/* 6. Лишние бесконечные анимации, грузящие слабый GPU/CPU */
+[data-fx="low"] .brightness-text,
+[data-fx="low"] .laser,
+[data-fx="low"] .star,
+[data-fx="low"] .smoke,
+[data-fx="low"] .numpad-cursor {
+    animation: none !important;
+}
+[data-fx="low"] .bead-inner.squash { animation: none !important; }
 </style>
 </head>
 <body>
@@ -1549,6 +1655,15 @@ let settings = Object.assign({
     }
 }, JSON.parse(localStorage.getItem('tsd_settings')) || {});
 
+/* На старых устройствах принудительно ставим лёгкие настройки сканера */
+function applyLegacyScannerDefaults() {
+    if (typeof detectLegacyDevice === 'function' && detectLegacyDevice()) {
+        settings.camQuality = '480p';
+        settings.arTracking = false;
+    }
+}
+applyLegacyScannerDefaults();
+
 function saveSettings() { localStorage.setItem('tsd_settings', JSON.stringify(settings)); }
 function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
@@ -2237,7 +2352,8 @@ function getBestDefaultCameraId() {
     if (!allCamerasList || !allCamerasList.length) return null;
     let best = allCamerasList.find(c => { const l = (c.label || '').toLowerCase(), isNotFront = !l.includes('front') && !l.includes('user') && !l.includes('передн') && !l.includes('selfie'), isNotAux = !l.includes('ultra') && !l.includes('0.5') && !l.includes('macro') && !l.includes('depth') && !l.includes('широк'); return isNotFront && isNotAux && (l.includes('camera2 0') || l.includes('camera 0') || l.includes('0, facing back') || l.includes('main')); }); if (best) return best.id;
     best = allCamerasList.find(c => { const l = (c.label || '').toLowerCase(), isNotFront = !l.includes('front') && !l.includes('user') && !l.includes('передн') && !l.includes('selfie'); return isNotFront && !l.includes('ultra') && !l.includes('0.5') && !l.includes('macro') && !l.includes('depth') && !l.includes('широк'); }); if (best) return best.id;
-    return allCamerasList.find(c => !c.label.toLowerCase().includes('front'))?.id || allCamerasList[0].id;
+    const nonFrontCam = allCamerasList.find(c => !c.label.toLowerCase().includes('front'));
+    return (nonFrontCam && nonFrontCam.id) || allCamerasList[0].id;
 }
 
 function getVideoConfig() {
@@ -2253,6 +2369,7 @@ function getVideoConfig() {
 }
 
 async function startScanner() {
+    applyLegacyScannerDefaults(); // старые устройства: camQuality = '480p', arTracking = false
     isScannerPaused = false; document.getElementById('scannerModal').style.display = 'flex'; closeCameraMenu(); closeCamSettings();
     if (html5QrCode) { try { await html5QrCode.stop(); } catch(e) {} try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; }
     
@@ -2346,7 +2463,7 @@ function drawARHighlight(decodedResult) {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const points = decodedResult?.result?.points;
+    const points = decodedResult && decodedResult.result && decodedResult.result.points;
     if (points && points.length >= 2) {
         const vW = video.videoWidth || clientW;
         const vH = video.videoHeight || clientH;
