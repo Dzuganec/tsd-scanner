@@ -1,5 +1,5 @@
-// sw.js — Оптимизированный Service Worker для «Мой ТСД»
-const CACHE_VERSION = 'v8';
+// sw.js — Оптимизированный Service Worker для «Мой ТСД» (под v19.0 Legacy Compat)
+const CACHE_VERSION = 'v19';
 const CACHE_NAME = 'moy-tsd-cache-' + CACHE_VERSION;
 
 // Критически важные файлы для мгновенного офлайн-старта
@@ -8,10 +8,12 @@ const APP_SHELL = [
     './index.html',
     './manifest.json',
     './icon.png',
-    // Версионированные библиотеки (фиксированные URL):
+    // Основные библиотеки сканера и генерации штрихкодов:
     'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js',
     'https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js',
-    'https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js',
+    // Декодеры для фото-скана (чтобы работали офлайн):
+    'https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js',
     // Точный URL шрифта со стилем 900:
     'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap'
 ];
@@ -21,7 +23,7 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             return Promise.all(
-                APP_SHELL.map((url) => 
+                APP_SHELL.map((url) =>
                     cache.add(url).catch((err) => {
                         console.warn(`[SW] Пропущен ресурс при предзагрузке: ${url}`, err);
                     })
@@ -57,7 +59,7 @@ self.addEventListener('fetch', (event) => {
                 if (cached) return cached;
 
                 return fetch(req).then((res) => {
-                    if (!res || res.status !== 200 && res.type !== 'opaque') {
+                    if (!res || (res.status !== 200 && res.type !== 'opaque')) {
                         return res;
                     }
                     const resClone = res.clone();
@@ -85,4 +87,3 @@ self.addEventListener('fetch', (event) => {
         })
     );
 });
-
